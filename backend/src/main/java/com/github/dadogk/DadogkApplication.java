@@ -1,4 +1,4 @@
-package com.github.potato_y.dadogk;
+package com.github.dadogk;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
