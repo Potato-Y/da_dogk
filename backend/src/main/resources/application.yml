@@ -1,0 +1,21 @@
+spring:
+  devtools:
+    livereload:
+      enabled: true # 프론트 코드 변경시 자동 적용
+    restart:
+      enabled: true # 코드 변경시 자동 재시작
+  jpa:
+    # 전송 쿼리 확인
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
