@@ -26,16 +26,17 @@ public class WebSecurityConfig {
 
     /**
      * 스프링 시큐리티 기능 비활성화
+     *
      * @return
      */
-    public WebSecurityCustomizer configure(){
+    public WebSecurityCustomizer configure() {
         return web -> web.ignoring()
                 .requestMatchers(toH2Console())
                 .requestMatchers("/chatt");
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http)throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
@@ -43,7 +44,7 @@ public class WebSecurityConfig {
                 .logout(AbstractHttpConfigurer::disable)
 
                 // JWT 사용을 위해 세션 사용 비활성화
-                .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 // 헤더를 확인하는 커스텀 필터 추가
                 .addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
@@ -63,6 +64,7 @@ public class WebSecurityConfig {
 
     /**
      * 패스워드 인코더로 사용할 빈 등록
+     *
      * @return
      */
     @Bean

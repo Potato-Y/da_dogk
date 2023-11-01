@@ -27,7 +27,7 @@ public class TokenProvider {
     /**
      * JWT 토큰 생성
      *
-     * @param user user 객체
+     * @param user      user 객체
      * @param expiredAt 유효 시간
      * @return Token
      */
@@ -41,7 +41,7 @@ public class TokenProvider {
      * JWT 토큰을 만들어 반환
      *
      * @param expiry 유효 기간
-     * @param user 유저 객체
+     * @param user   유저 객체
      * @return Token
      */
     private String makeToken(Date expiry, User user) {
@@ -107,6 +107,7 @@ public class TokenProvider {
 
     /**
      * 토큰에서 body 부분 추출
+     *
      * @param token Token
      * @return Claims
      */
