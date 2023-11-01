@@ -22,13 +22,24 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-websocket'
-	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	runtimeOnly 'com.h2database:h2'
+	implementation('org.springframework.boot:spring-boot-starter-web')
+    implementation('org.springframework.boot:spring-boot-starter-data-jpa:3.1.1') // Spring Data JPA
+    implementation('org.springframework.boot:spring-boot-starter-security:3.0.4') // 스프링 시큐리티
+	implementation('org.springframework.boot:spring-boot-starter-websocket:3.1.5') // web socket
+    implementation('io.jsonwebtoken:jjwt:0.9.1') // 자바 jwt 라이브러리
+    implementation('org.springframework.boot:spring-boot-starter-validation:3.1.1') // validation
+
 	annotationProcessor 'org.projectlombok:lombok'
+
+    developmentOnly('org.springframework.boot:spring-boot-devtools:3.0.4') // 변경 내용 자동 재시작 추가
+
+    compileOnly('org.projectlombok:lombok:1.18.26')
+    compileOnly('org.springframework.boot:spring-boot-starter-actuator:3.1.1')
+
+	runtimeOnly 'com.h2database:h2'
+
+    testAnnotationProcessor('org.projectlombok:lombok:1.18.26')
+    testImplementation('org.springframework.security:spring-security-test:6.0.2')
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
