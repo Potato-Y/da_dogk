@@ -10,6 +10,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class TokenProvider {
 
+    private static final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
     private final JwtProperties jwtProperties;
 
     /**
@@ -47,6 +50,7 @@ public class TokenProvider {
     private String makeToken(Date expiry, User user) {
         Date now = new Date();
 
+        logger.info("makeToken. token 생성. userId={}", user.getId());
         return Jwts.builder()
                 .setHeaderParam(Header.TYPE, Header.JWT_TYPE) // 헤더 type: JWT
                 // 내용 iss: propertise에서 가져온 값
@@ -75,6 +79,7 @@ public class TokenProvider {
 
             return true;
         } catch (Exception e) { // 복호화 과정에서 오류가 발생할 경우 false 반환
+            logger.warn("validToken. Token 검증 실패. token={}", token);
             return false;
         }
     }
