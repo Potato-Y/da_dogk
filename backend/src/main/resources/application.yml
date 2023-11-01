@@ -19,3 +19,7 @@ spring:
     console:
       enabled: true
       path: /h2-console
+
+jwt:
+  issuer: admin@email.com
+  secret_key: sample-key
