@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".activities.MainActivity">
 
     <TextView
         android:layout_width="wrap_content"
@@ -19,7 +19,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:text="이메일"
+        android:text="아이디"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:layout_marginLeft="42dp"
@@ -30,8 +30,8 @@
 
 
     <EditText
-        android:id="@+id/editText_email_login"
-        android:hint="이메일을 입력해 주세요"
+        android:id="@+id/editTextId_Login"
+        android:hint="아이디를 입력해 주세요"
         android:layout_marginLeft="42dp"
         android:layout_marginTop="255dp"
         android:layout_width="344dp"
@@ -55,7 +55,7 @@
 
     <EditText
         android:hint="비밀번호를 입력해 주세요"
-        android:id="@+id/editText_password"
+        android:id="@+id/editTextPassword_Login"
         android:layout_marginLeft="42dp"
         android:layout_marginTop="389dp"
         android:layout_width="344dp"

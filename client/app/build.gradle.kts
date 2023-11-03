@@ -1,6 +1,9 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    //추가
+    id("kotlin-kapt")
+
 }
 
 android {
@@ -36,6 +39,11 @@ android {
 }
 
 dependencies {
+    //추가
+    implementation ("com.squareup.retrofit2:retrofit2:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("com.github.bumptech.glide:compiler:4.11.0")
+    //kapt ("com.github.bumptech.glide:compiler:4.11.0") 오류
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
