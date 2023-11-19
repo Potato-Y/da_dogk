@@ -5,63 +5,70 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.MainActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:background="#000000">
 
-    <EditText
-        android:id="@+id/editTextId_Resister"
+    <TextView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="text"
-        android:text="id"
-        tools:layout_editor_absoluteX="74dp"
-        tools:layout_editor_absoluteY="38dp" />
+        android:layout_height="51dp"
+        android:gravity="center_horizontal"
+        android:lineSpacingExtra="16sp"
+        android:text="회원가입"
+        android:textColor="#FFFFFF"
+        android:textSize="35sp"
+        android:textStyle="bold" />
 
-    <EditText
-        android:id="@+id/editTextPassword_Resister"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="text"
-        android:text="password"
-        tools:layout_editor_absoluteX="70dp"
-        tools:layout_editor_absoluteY="97dp" />
     <EditText
         android:id="@+id/editTextEmail_Resister"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="344dp"
+        android:layout_height="70dp"
+        android:textSize="18sp"
         android:ems="10"
         android:inputType="text"
         android:text="email"
+        android:textColor="#ffffff"
         tools:layout_editor_absoluteX="74dp"
-        tools:layout_editor_absoluteY="38dp" />
+        tools:layout_editor_absoluteY="38dp"
+        android:layout_marginTop="30dp"/>
 
     <EditText
-        android:id="@+id/editTextName_Resister"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/editTextPassword_Resister"
+        android:layout_width="344dp"
+        android:layout_height="70dp"
+        android:textSize="18sp"
         android:ems="10"
         android:inputType="text"
-        android:text="name"
+        android:text="password"
+        android:textColor="#ffffff"
         tools:layout_editor_absoluteX="70dp"
-        tools:layout_editor_absoluteY="97dp" />
+        tools:layout_editor_absoluteY="97dp"
+        android:layout_marginTop="30dp"/>
+
     <EditText
-        android:id="@+id/editTextPhoneNum_Resister"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/editTextNickname_Resister"
+        android:layout_width="344dp"
+        android:layout_height="70dp"
+        android:textSize="18sp"
         android:ems="10"
         android:inputType="text"
-        android:text="phoneNum"
-        tools:layout_editor_absoluteX="74dp"
-        tools:layout_editor_absoluteY="38dp" />
+        android:text="nickname"
+        android:textColor="#ffffff"
+        tools:layout_editor_absoluteX="70dp"
+        tools:layout_editor_absoluteY="97dp"
+        android:layout_marginTop="30dp"/>
 
-    <Button
+
+    <android.widget.Button
+        android:text="회원가입하기"
         android:id="@+id/button_Resister"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="회원가입"
+        android:layout_marginTop="30dp"
+        android:layout_width="344dp"
+        android:layout_height="60dp"
+        android:textSize="18sp"
+        android:textColor="#ffffff"
+        android:background="#808080"
+        />
 
-        tools:layout_editor_absoluteX="104dp"
-        tools:layout_editor_absoluteY="174dp" />
 
 </LinearLayout>

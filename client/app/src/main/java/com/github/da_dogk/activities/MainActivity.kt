@@ -8,7 +8,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import com.github.da_dogk.R
-import com.github.da_dogk.interface_folder.SignService
+import com.github.da_dogk.interface_folder.LoginService
 import com.github.da_dogk.response.LoginResponse
 import retrofit2.Call
 import retrofit2.Callback
@@ -16,9 +16,9 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() { //LoginActivity
 
-    lateinit var id : EditText
+    lateinit var email : EditText
     lateinit var password : EditText
     lateinit var button : Button
 
@@ -27,24 +27,26 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        id = findViewById(R.id.editTextId_Login)
+
+        email = findViewById(R.id.editTextEmail_Login)
         password = findViewById(R.id.editTextPassword_Login)
         button = findViewById(R.id.button_login)
 
         btnResister = findViewById(R.id.registerTextButton)
 
         //레트로핏 설정
+
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://3.34.141.115(서버 주소)")
+            .baseUrl("주소")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        val service = retrofit.create(SignService::class.java)
+        val service = retrofit.create(LoginService::class.java)
 
         button.setOnClickListener {
-            val idStr = id.text.toString()
+            val emailStr = email.text.toString()
             val pwStr = password.text.toString()
-            service.login(idStr,pwStr).enqueue(object : Callback<LoginResponse> {
+            service.login(emailStr,pwStr).enqueue(object : Callback<LoginResponse> {
                 override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                     val result = response.body()
                     Log.d("로그인","${result}")
