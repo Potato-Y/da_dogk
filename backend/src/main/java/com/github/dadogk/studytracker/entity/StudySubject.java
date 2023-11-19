@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -25,7 +26,7 @@ public class StudySubject {
     private Long id; // 자동 생성 고유 ID
 
     @ManyToOne
-    @Column(name = "user_id", updatable = false)
+    @JoinColumn(name = "user_id", updatable = false)
     private User user;
 
     @Column(name = "title", nullable = false)

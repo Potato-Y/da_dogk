@@ -6,6 +6,7 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
@@ -29,7 +30,7 @@ public class StudyRecord {
     private Long id; // 자동 생성 고유 ID
 
     @ManyToOne
-    @Column(name = "study_subject_id")
+    @JoinColumn(name = "study_subject_id")
     private StudySubject subject;
 
     @CreatedDate
