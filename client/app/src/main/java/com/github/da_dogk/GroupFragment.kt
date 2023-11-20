@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.material.tabs.TabLayout
 
 // TODO: Rename parameter arguments, choose names that match
@@ -25,7 +26,7 @@ class GroupFragment : Fragment() {
 
     lateinit var tabLayout: TabLayout
     lateinit var layoutGroup: LinearLayout
-    lateinit var layoutSchool: LinearLayout
+    lateinit var layoutSchool: ConstraintLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,8 +43,8 @@ class GroupFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_group, container, false)
 
         tabLayout = view.findViewById(R.id.tab_layout_group)
-        layoutGroup = view.findViewById(R.id.L_group)
-        layoutSchool = view.findViewById(R.id.L_school)
+        layoutGroup = view.findViewById(R.id.LL_group)
+        layoutSchool = view.findViewById(R.id.CL_school)
 
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
