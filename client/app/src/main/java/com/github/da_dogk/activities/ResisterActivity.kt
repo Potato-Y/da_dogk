@@ -50,7 +50,7 @@ class ResisterActivity : AppCompatActivity() {
                 startActivity(this)
             }
         }
-
+/*
         //레트로핏 설정
         val retrofit = Retrofit.Builder()
             .baseUrl("주소")
@@ -80,6 +80,8 @@ class ResisterActivity : AppCompatActivity() {
                 }
             })
         }
+
+ */
 
     }
 }

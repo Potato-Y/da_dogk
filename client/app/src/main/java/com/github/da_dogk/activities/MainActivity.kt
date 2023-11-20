@@ -34,8 +34,14 @@ class MainActivity : AppCompatActivity() { //LoginActivity
 
         btnResister = findViewById(R.id.registerTextButton)
 
-        //레트로핏 설정
+        btnResister.setOnClickListener {
+            Intent(this, ResisterActivity::class.java).run {
+                startActivity(this)
+            }
+        }
 
+        /*
+        //레트로핏 설정
         val retrofit = Retrofit.Builder()
             .baseUrl("주소")
             .addConverterFactory(GsonConverterFactory.create())
@@ -58,11 +64,9 @@ class MainActivity : AppCompatActivity() { //LoginActivity
             })
         }
 
-        btnResister.setOnClickListener {
-            Intent(this, ResisterActivity::class.java).run {
-                startActivity(this)
-            }
-        }
+
+
+         */
 
 
     }
