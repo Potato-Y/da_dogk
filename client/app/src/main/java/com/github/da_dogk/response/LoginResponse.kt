@@ -1,14 +1,19 @@
 package com.github.da_dogk.response
 
+import com.google.gson.annotations.SerializedName
+
 data class LoginResponse(
-    val email: Int,
-    val id: Int,
-    val name: String,
+    @SerializedName("email")
+    val email: String,
+
+    @SerializedName("password")
     val password: String,
-    val phoneNum: String,
-    val seq: String,
-    val success:Boolean
+
+    @SerializedName("nickname")
+    val nickname: String
 )
+
+
 //성공시 success : true
 //실패시 {
 //          "success" : false

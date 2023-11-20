@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- 뒤로가기 버튼 -->
+        <ImageButton
+            android:id="@+id/promotion_detail_btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="43dp"
+            android:layout_marginTop="53dp"
+            android:background="@drawable/arrow_left" />
+
+        <!-- 신청하기 버튼 -->
+        <android.widget.Button
+            android:id="@+id/promotion_apply_btn"
+            android:layout_width="77dp"
+            android:layout_height="48dp"
+            android:layout_marginLeft="309dp"
+            android:layout_marginTop="42dp"
+            android:background="@drawable/btn_round_blue_box"
+            android:text="그룹 가입"
+            android:textColor="#ffffff"
+            android:textSize="16sp" />
+
+        <!-- 이미지 -->
+        <ImageView
+            android:id="@+id/image_promotion"
+            android:layout_width="344dp"
+            android:layout_height="200dp"
+            android:layout_marginLeft="42dp"
+            android:layout_marginTop="135dp"
+            android:background="@drawable/ic_launcher_foreground"
+            android:scaleType="centerCrop" />
+
+        <!-- 글 제목 -->
+        <TextView
+            android:id="@+id/promotion_detail_text_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="380dp"
+            android:gravity="center_horizontal"
+            android:text="그룹의 이름"
+            android:textColor="#ffffff"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/image_clock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="59.8dp"
+            android:layout_marginTop="530dp"
+            android:background="@drawable/promotion_detail_clock" />
+
+        <ImageView
+            android:id="@+id/image_people"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="59.8dp"
+            android:layout_marginTop="565.2dp"
+            android:background="@drawable/promotion_detail_people" />
+
+        <TextView
+            android:id="@+id/text_recruitment_period"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="99dp"
+            android:layout_marginTop="524dp"
+            android:text="평균 시간"
+            android:textColor="#ffffff"
+            android:textSize="18sp" />
+
+        <!-- 날짜 텍스트 -->
+        <TextView
+            android:id="@+id/promotion_detail_text_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="199dp"
+            android:layout_marginTop="524dp"
+            android:text="02:39:15"
+            android:textColor="#ffffff"
+            android:textSize="18sp" />
+
+        <!-- 여러 사람들 아이콘 -->
+
+        <!-- 모집인원 텍스트 -->
+        <TextView
+            android:id="@+id/text_recruitment_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="99dp"
+            android:layout_marginTop="559dp"
+            android:text="그룹원 수"
+            android:textColor="#ffffff"
+            android:textSize="18sp" />
+
+        <!-- 모집인원 수 -->
+        <TextView
+            android:id="@+id/text_recruitment_count_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="199dp"
+            android:layout_marginTop="560dp"
+            android:text="23"
+            android:textColor="#ffffff"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/see"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="구성인원보기"
+            android:layout_marginLeft="300dp"
+            android:layout_marginTop="564dp"
+            android:textColor="#939393"
+            />
+
+    </RelativeLayout>
+</ScrollView>

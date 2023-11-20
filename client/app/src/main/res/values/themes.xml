@@ -6,4 +6,7 @@
     </style>
 
     <style name="Theme.DaDogk" parent="Base.Theme.DaDogk" />
+    <style name="tabLayoutTextStyle" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">30sp</item>
+    </style>
 </resources>
