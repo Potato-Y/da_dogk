@@ -34,9 +34,10 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
-        android:id="@+id/L_group"
+        android:id="@+id/LL_group"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_weight="20">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -45,18 +46,37 @@
             android:textSize="30dp"/>
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/L_school"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/CL_school"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_weight="20"
         android:visibility="gone">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+
+        <EditText
+            android:id="@+id/ET_school_email_certify"
+            android:layout_width="300dp"
+            android:layout_height="70dp"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="31dp"
+            android:background="@drawable/edittext_rounded_corner_rectangle"
+            android:text="    xxxx@xxxxx"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <android.widget.Button
+            android:id="@+id/button_next"
+            android:layout_width="77dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="17dp"
+            android:background="@drawable/btn_round_blue_box"
+            android:text="인증"
             android:textColor="#ffffff"
-            android:text="대학교그룹소개 리사이클러뷰"
-            android:textSize="30dp"/>
-    </LinearLayout>
+            android:textSize="15sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/ET_school_email_certify"
+            app:layout_constraintEnd_toEndOf="@+id/ET_school_email_certify" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </LinearLayout>

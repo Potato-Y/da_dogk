@@ -78,7 +78,7 @@
 
     <!--내 공부 시간 측정 -->
     <LinearLayout
-        android:id="@+id/L_myStudy"
+        android:id="@+id/LL_myStudy"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="8">
@@ -93,7 +93,7 @@
 
     <!--그룹 공부 시간 측정 -->
     <LinearLayout
-        android:id="@+id/L_groupStudy"
+        android:id="@+id/LL_groupStudy"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="8"

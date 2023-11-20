@@ -29,8 +29,8 @@ class HomeFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
         tabLayout = view.findViewById(R.id.tab_layout_home)
-        layoutMyStudy = view.findViewById(R.id.L_myStudy)
-        layoutGroupStudy = view.findViewById(R.id.L_groupStudy)
+        layoutMyStudy = view.findViewById(R.id.LL_myStudy)
+        layoutGroupStudy = view.findViewById(R.id.LL_groupStudy)
 
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
