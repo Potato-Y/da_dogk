@@ -1,5 +1,6 @@
 package com.github.dadogk.user;
 
+import com.github.dadogk.studytracker.StudyService;
 import com.github.dadogk.user.dto.AddUserRequest;
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.entity.UserRepository;
@@ -15,6 +16,7 @@ public class UserService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
+    private final StudyService studyService;
 
     public User save(AddUserRequest dto) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -28,6 +30,7 @@ public class UserService {
         logger.info("save. userId={}, userEmail={}, userNickname={}",
                 user.getId(), user.getEmail(), user.getNickname());
 
+        studyService.defaultSetting(user); // 과목 기본 설정
         return user;
     }
 
