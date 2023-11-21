@@ -1,10 +1,12 @@
 package com.github.da_dogk
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.android.material.tabs.TabLayout
@@ -27,6 +29,7 @@ class GroupFragment : Fragment() {
     lateinit var tabLayout: TabLayout
     lateinit var layoutGroup: LinearLayout
     lateinit var layoutSchool: ConstraintLayout
+    lateinit var buttonWritePost :Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,6 +74,20 @@ class GroupFragment : Fragment() {
 
             }
         })
+
+        /*
+        buttonWritePost = view.findViewById(R.id.B_write_post)
+
+        buttonWritePost.setOnClickListener {
+            activity?.let{
+                val intent = Intent(context, GroupGenerateActivity::class.java)
+                startActivity(intent)
+            }
+        }
+
+         */
+
+
 
 
         return view

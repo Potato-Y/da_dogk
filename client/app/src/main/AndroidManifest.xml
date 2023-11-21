@@ -15,6 +15,9 @@
         android:theme="@style/Theme.DaDogk"
         tools:targetApi="31">
         <activity
+            android:name=".GroupGenerateActivity"
+            android:exported="false" />
+        <activity
             android:name=".NaviActivity"
             android:exported="false" />
         <activity

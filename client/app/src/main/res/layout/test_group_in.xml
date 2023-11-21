@@ -32,6 +32,8 @@
             android:textSize="16sp" />
 
         <!-- 이미지 -->
+
+        <!-- 글 제목 -->
         <ImageView
             android:id="@+id/image_promotion"
             android:layout_width="344dp"
@@ -41,7 +43,6 @@
             android:background="@drawable/ic_launcher_foreground"
             android:scaleType="centerCrop" />
 
-        <!-- 글 제목 -->
         <TextView
             android:id="@+id/promotion_detail_text_title"
             android:layout_width="match_parent"
