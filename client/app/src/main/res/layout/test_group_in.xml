@@ -36,8 +36,8 @@
         <!-- 글 제목 -->
         <ImageView
             android:id="@+id/image_promotion"
-            android:layout_width="344dp"
-            android:layout_height="200dp"
+            android:layout_width="340dp"
+            android:layout_height="159dp"
             android:layout_marginLeft="42dp"
             android:layout_marginTop="135dp"
             android:background="@drawable/ic_launcher_foreground"
@@ -47,7 +47,7 @@
             android:id="@+id/promotion_detail_text_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="380dp"
+            android:layout_marginTop="300dp"
             android:gravity="center_horizontal"
             android:text="그룹의 이름"
             android:textColor="#ffffff"
@@ -59,7 +59,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="59.8dp"
-            android:layout_marginTop="530dp"
+            android:layout_marginTop="360dp"
             android:background="@drawable/promotion_detail_clock" />
 
         <ImageView
@@ -67,7 +67,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="59.8dp"
-            android:layout_marginTop="565.2dp"
+            android:layout_marginTop="400dp"
             android:background="@drawable/promotion_detail_people" />
 
         <TextView
@@ -75,7 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="99dp"
-            android:layout_marginTop="524dp"
+            android:layout_marginTop="355dp"
             android:text="평균 시간"
             android:textColor="#ffffff"
             android:textSize="18sp" />
@@ -86,7 +86,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="199dp"
-            android:layout_marginTop="524dp"
+            android:layout_marginTop="355dp"
             android:text="02:39:15"
             android:textColor="#ffffff"
             android:textSize="18sp" />
@@ -99,7 +99,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="99dp"
-            android:layout_marginTop="559dp"
+            android:layout_marginTop="400dp"
             android:text="그룹원 수"
             android:textColor="#ffffff"
             android:textSize="18sp" />
@@ -110,7 +110,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="199dp"
-            android:layout_marginTop="560dp"
+            android:layout_marginTop="400dp"
             android:text="23"
             android:textColor="#ffffff"
             android:textSize="18sp" />
@@ -121,8 +121,17 @@
             android:layout_height="wrap_content"
             android:text="구성인원보기"
             android:layout_marginLeft="300dp"
-            android:layout_marginTop="564dp"
-            android:textColor="#939393"
+            android:layout_marginTop="400dp"
+            android:textColor="#FFFFFF"
+            />
+        <TextView
+            android:id="@+id/sasd"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:text="그룹소개\n여기는 무엇을 하는곳\n주저리주저리"
+            android:layout_marginLeft="60dp"
+            android:layout_marginTop="450dp"
+            android:textColor="#FFFFFF"
             />
 
     </RelativeLayout>

@@ -1,20 +1,19 @@
-package com.github.da_dogk
+package com.github.da_dogk.activities.fragment
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.Fragment
+//import com.github.da_dogk.ARG_PARAM1
+//import com.github.da_dogk.ARG_PARAM2
+import com.github.da_dogk.activities.GroupGenerateActivity
+import com.github.da_dogk.R
 import com.google.android.material.tabs.TabLayout
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
@@ -29,13 +28,13 @@ class GroupFragment : Fragment() {
     lateinit var tabLayout: TabLayout
     lateinit var layoutGroup: LinearLayout
     lateinit var layoutSchool: ConstraintLayout
-    lateinit var buttonWritePost :Button
+    lateinit var buttonWritePost : ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            //param1 = it.getString(ARG_PARAM1)
+            //param2 = it.getString(ARG_PARAM2)
         }
     }
 
@@ -75,8 +74,8 @@ class GroupFragment : Fragment() {
             }
         })
 
-        /*
-        buttonWritePost = view.findViewById(R.id.B_write_post)
+
+        buttonWritePost = view.findViewById(R.id.B_write_post1)
 
         buttonWritePost.setOnClickListener {
             activity?.let{
@@ -85,7 +84,6 @@ class GroupFragment : Fragment() {
             }
         }
 
-         */
 
 
 
@@ -107,8 +105,8 @@ class GroupFragment : Fragment() {
         fun newInstance(param1: String, param2: String) =
             GroupFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                    //putString(ARG_PARAM1, param1)
+                    //putString(ARG_PARAM2, param2)
                 }
             }
     }
