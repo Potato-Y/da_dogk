@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/HomeFragment"
+        android:title="홈"
+        android:icon="@drawable/ic_home_black_24dp"/>
+        />
+    <item
+        android:id="@+id/GroupFragment"
+        android:title="그룹"
+        android:icon="@drawable/baseline_group_24"/>
+    />
+    <item
+        android:id="@+id/MyProfileFragment"
+        android:title="마이페이지"
+        android:icon="@drawable/baseline_person_24"/>
+    />
+
+</menu>
