@@ -3,18 +3,9 @@ package com.github.da_dogk.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
-import com.github.da_dogk.NaviActivity
 import com.github.da_dogk.R
-import com.github.da_dogk.interface_folder.ResisterService
-import com.github.da_dogk.response.LoginResponse
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 /*
 import com.github.da_dogk.interface_folder.ResisterService
@@ -25,6 +16,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 */
+
 class ResisterActivity : AppCompatActivity() {
 
     lateinit var email: EditText

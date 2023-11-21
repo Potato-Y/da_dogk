@@ -4,17 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000">
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="28dp"
-        android:layout_height="24dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginTop="53dp"
-        android:layout_marginLeft="43dp"
-        android:background="#00000000"></ImageView>
+    android:background="@color/black"
+    tools:context=".activities.GroupGenerateActivity">
 
     <TextView
         android:id="@+id/textView2"
@@ -34,7 +25,7 @@
         android:textSize="28sp" />
 
     <android.widget.Button
-        android:id="@+id/button_next"
+        android:id="@+id/B_group_generate"
         android:layout_width="77dp"
         android:layout_height="45dp"
         android:layout_alignParentTop="true"
@@ -47,7 +38,6 @@
         android:textSize="15sp" />
 
     <View
-        android:id="@+id/view2"
         android:layout_width="3dp"
         android:layout_height="20dp"
         android:layout_alignParentTop="true"
@@ -57,7 +47,6 @@
         android:background="@drawable/btn_round_blue_box"></View>
 
     <View
-        android:id="@+id/view"
         android:layout_width="3dp"
         android:layout_height="20dp"
         android:layout_alignParentTop="true"
@@ -67,7 +56,7 @@
         android:background="@drawable/btn_round_blue_box"></View>
 
     <EditText
-        android:id="@+id/editTextTkext"
+        android:id="@+id/ET_group_name"
         android:layout_width="344dp"
         android:layout_height="70dp"
         android:layout_alignParentLeft="true"
@@ -83,7 +72,7 @@
         android:textColor="#000000" />
 
     <EditText
-        android:id="@+id/editTextText2"
+        android:id="@+id/ET_group_intro"
         android:layout_width="344dp"
         android:layout_height="192dp"
         android:layout_alignParentTop="true"
@@ -100,7 +89,6 @@
         android:gravity="top"/>
 
     <TextView
-        android:id="@+id/textView3"
         android:layout_width="100dp"
         android:layout_height="24dp"
         android:layout_alignParentTop="true"
@@ -115,7 +103,6 @@
         android:textSize="16sp"/>
 
     <TextView
-        android:id="@+id/textView4"
         android:layout_width="100dp"
         android:layout_height="24dp"
         android:layout_alignParentTop="true"
@@ -130,7 +117,6 @@
         android:textSize="16sp" />
 
     <View
-        android:id="@+id/view6"
         android:layout_width="3dp"
         android:layout_height="20dp"
         android:layout_alignParentTop="true"
@@ -140,14 +126,12 @@
         android:background="@drawable/btn_round_blue_box"></View>
 
     <TextView
-        android:id="@+id/textView5"
         android:layout_width="132dp"
         android:layout_height="24dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="55dp"
         android:layout_marginTop="545dp"
-
         android:includeFontPadding="false"
         android:lineSpacingExtra="8sp"
         android:text="그룹 암호 설정"
@@ -155,7 +139,7 @@
         android:textSize="16sp" />
 
     <EditText
-        android:id="@+id/editTextText"
+        android:id="@+id/ET_group_password"
         android:layout_width="344dp"
         android:layout_height="70dp"
         android:layout_alignParentLeft="true"
@@ -169,6 +153,5 @@
         android:inputType="text"
         android:text="그룹 암호는 선택사항 입니다."
         android:textColor="#000000" />
-
 
 </RelativeLayout>

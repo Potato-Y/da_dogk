@@ -16,5 +16,6 @@ class SplashActivity : AppCompatActivity() {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }, 3000) // 3초 후 MainActivity로 이동
+
     }
 }

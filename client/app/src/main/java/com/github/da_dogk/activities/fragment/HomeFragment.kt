@@ -1,4 +1,4 @@
-package com.github.da_dogk
+package com.github.da_dogk.activities.fragment
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import com.github.da_dogk.R
 import com.google.android.material.tabs.TabLayout
 
 class HomeFragment : Fragment() {

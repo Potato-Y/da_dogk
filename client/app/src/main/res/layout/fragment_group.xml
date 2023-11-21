@@ -6,8 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/black"
     android:orientation="vertical"
-    tools:context=".GroupFragment">
-
+    tools:context=".activities.fragment.GroupFragment">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -17,6 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/black"
+            android:layout_marginTop="100dp"
             app:tabTextAppearance="@style/tabLayoutTextStyle"><!--텍스트 크기 불러오기-->
 
             <com.google.android.material.tabs.TabItem
@@ -36,14 +36,22 @@
     <LinearLayout
         android:id="@+id/LL_group"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="20">
+        android:layout_height="579dp"
+        android:layout_weight="20"
+        android:orientation="horizontal">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#ffffff"
             android:text="그룹소개 리사이클러뷰"
-            android:textSize="30dp"/>
+            android:textColor="#ffffff"
+            android:textSize="30dp" />
+
+        <ImageButton
+            android:id="@+id/B_write_post1"
+            android:layout_width="66dp"
+            android:layout_height="66dp"
+            android:background="@drawable/btn_writing" />
     </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
