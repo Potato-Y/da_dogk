@@ -19,4 +19,9 @@ public class UserUtil {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundUserException("Unexpected user"));
     }
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundUserException("Unexpected user"));
+    }
 }

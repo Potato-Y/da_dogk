@@ -4,7 +4,7 @@ import com.github.dadogk.config.jwt.TokenProvider;
 import com.github.dadogk.token.dto.AuthenticateRequest;
 import com.github.dadogk.token.dto.AuthenticateResponse;
 import com.github.dadogk.token.dto.TokenRequest;
-import com.github.dadogk.user.UserService;
+import com.github.dadogk.user.UserUtil;
 import com.github.dadogk.user.dto.UserResponse;
 import com.github.dadogk.user.entity.User;
 import java.time.Duration;
@@ -27,7 +27,7 @@ public class TokenService {
 
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final UserService userService;
+    private final UserUtil userUtil;
 
     /**
      * 새로운 Access Token을 생성
@@ -48,7 +48,7 @@ public class TokenService {
         ////
 
         Long userId = tokenProvider.getUserId(dto.getRefreshToken());
-        User user = userService.findById(userId);
+        User user = userUtil.findById(userId);
 
         return tokenProvider.generateToken(user, ACCESS_TOKEN_DURATION);
     }
@@ -67,7 +67,7 @@ public class TokenService {
 
         // 정상적으로 수행될 경우 user 객체 생성
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        User user = userService.findByEmail(userDetails.getUsername());
+        User user = userUtil.findByEmail(userDetails.getUsername());
 
         // refresh token 생성
         String refreshToken = tokenProvider.generateToken(user, REFRESH_TOKEN_DURATION);
