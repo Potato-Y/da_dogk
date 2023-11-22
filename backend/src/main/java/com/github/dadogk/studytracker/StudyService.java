@@ -1,10 +1,15 @@
 package com.github.dadogk.studytracker;
 
+import com.github.dadogk.studytracker.dto.api.SubjectTitleResponse;
 import com.github.dadogk.studytracker.entity.StudyRecord;
 import com.github.dadogk.studytracker.entity.StudyRecordRepository;
 import com.github.dadogk.studytracker.entity.StudySubject;
 import com.github.dadogk.studytracker.entity.StudySubjectRepository;
+import com.github.dadogk.user.UserUtil;
+import com.github.dadogk.user.dto.UserResponse;
 import com.github.dadogk.user.entity.User;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -18,6 +23,7 @@ public class StudyService {
     private static final Logger logger = LoggerFactory.getLogger(StudyService.class);
     private final StudySubjectRepository subjectRepository;
     private final StudyRecordRepository studyRecordRepository;
+    private final UserUtil userUtil;
 
     /**
      * 과목 기본 설정을 한다.
@@ -66,5 +72,29 @@ public class StudyService {
 
     public StudyRecord endStudy(StudyRecord record) {
         return studyRecordRepository.save(record.updateEndAt());
+    }
+
+    /**
+     * 특정 유저의 과목 리스트를 불러온다.
+     *
+     * @param userId 조회하려는 UserId
+     * @return List<SubjectTitleResponse>
+     */
+    public List<SubjectTitleResponse> getUserStudySubjectList(Long userId) {
+        User findUser = userUtil.findById(userId); // 찾으려는 유저 불러오기
+        List<StudySubject> studySubjects = subjectRepository.findAllByUser(findUser); // 유저의 목록을 가져온다.
+
+        List<SubjectTitleResponse> subjectTitleResponses = new ArrayList<>();
+        if (studySubjects.isEmpty()) { // 만약 비어있다면 빈 리스트를 반환한다.
+            return subjectTitleResponses;
+        }
+
+        UserResponse userResponse = new UserResponse(findUser.getId(), findUser.getEmail(), findUser.getNickname());
+        for (StudySubject subject : // 유저의 과목 목록을 dto 리스트에 담는다.
+                studySubjects) {
+            subjectTitleResponses.add(new SubjectTitleResponse(subject.getId(), userResponse, subject.getTitle()));
+        }
+
+        return subjectTitleResponses;
     }
 }
