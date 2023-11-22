@@ -1,13 +1,23 @@
 package com.github.dadogk.studytracker;
 
+import static com.github.dadogk.studytracker.model.ResponseMessage.ALREADY_PROCESSED;
+import static com.github.dadogk.studytracker.model.ResponseMessage.SUBJECT_ID_ERROR;
+import static com.github.dadogk.studytracker.model.ResponseMessage.SUCCESS_PROCESSED;
+import static com.github.dadogk.studytracker.model.ResponseMessage.TOKEN_ERROR;
+import static com.github.dadogk.studytracker.model.ResponseType.FAIL;
+import static com.github.dadogk.studytracker.model.ResponseType.FORBIDDEN;
+import static com.github.dadogk.studytracker.model.ResponseType.NOT_FOUND;
+import static com.github.dadogk.studytracker.model.ResponseType.OK;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dadogk.config.jwt.TokenProvider;
 import com.github.dadogk.studytracker.dto.StudyStartRequest;
-import com.github.dadogk.studytracker.model.ClientInfo;
-import com.github.dadogk.studytracker.model.MessageType;
+import com.github.dadogk.studytracker.dto.socket.SimpleResponse;
 import com.github.dadogk.studytracker.entity.StudyRecord;
 import com.github.dadogk.studytracker.entity.StudySubject;
+import com.github.dadogk.studytracker.model.ClientInfo;
+import com.github.dadogk.studytracker.model.RequestType;
 import com.github.dadogk.user.UserService;
 import java.io.IOException;
 import java.util.Collections;
@@ -36,13 +46,13 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         try {
             JsonNode jsonNode = objectMapper.readTree(message.getPayload());
-            MessageType messageType = MessageType.valueOf(jsonNode.get("type").asText()); // 메시지 타입을 가져온다.
+            RequestType requestType = RequestType.valueOf(jsonNode.get("type").asText()); // 메시지 타입을 가져온다.
 
-            if (messageType == MessageType.STUDY_START) {
+            if (requestType == RequestType.STUDY_START) {
                 studyStart(session, objectMapper.treeToValue(jsonNode, StudyStartRequest.class));
                 return;
             }
-            if (messageType == MessageType.GET_GROUP_INFO) {
+            if (requestType == RequestType.GET_GROUP_INFO) {
             }
         } catch (IllegalArgumentException e) {
             log.warn("handleTextMessage. NotFound MessageType session={}, message={}", session, message.getPayload());
@@ -59,12 +69,13 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
      */
     private void studyStart(WebSocketSession session, StudyStartRequest dto) throws IOException {
         if (CLIENTS.containsKey(session.getId())) {
+            sendSimpleMessage(session, new SimpleResponse(FAIL, ALREADY_PROCESSED));
             return; // 만약 이미 CLIENT에 있는 Session 이라면 진행하지 않는다.
         }
 
         // Token 검증
         if (!tokenProvider.validToken(dto.getAccessToken())) {
-            session.sendMessage(new TextMessage("TOKEN ERROR"));
+            sendSimpleMessage(session, new SimpleResponse(FORBIDDEN, TOKEN_ERROR));
             session.close();
         }
 
@@ -74,9 +85,10 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
             StudyRecord studyRecord = studyService.startStudy(subject);
 
             CLIENTS.put(session.getId(), new ClientInfo(session, userId, studyRecord));
+            sendSimpleMessage(session, new SimpleResponse(OK, SUCCESS_PROCESSED));
             log.info("studyStart. Start Study. sessionId={}", session.getId());
         } catch (IllegalArgumentException e) {
-            session.sendMessage(new TextMessage("SUBJECT ID ERROR"));
+            sendSimpleMessage(session, new SimpleResponse(NOT_FOUND, SUBJECT_ID_ERROR));
             session.close();
         }
     }
@@ -99,5 +111,9 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
 
         CLIENTS.remove(session.getId());
         log.info("afterConnectionClosed. Close session. sessionId={}", session.getId());
+    }
+
+    private void sendSimpleMessage(WebSocketSession session, SimpleResponse dto) throws IOException {
+        session.sendMessage(new TextMessage(objectMapper.writeValueAsString(dto)));
     }
 }
