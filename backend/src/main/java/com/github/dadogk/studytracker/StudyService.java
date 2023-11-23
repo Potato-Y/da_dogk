@@ -5,7 +5,7 @@ import com.github.dadogk.studytracker.entity.StudyRecord;
 import com.github.dadogk.studytracker.entity.StudyRecordRepository;
 import com.github.dadogk.studytracker.entity.StudySubject;
 import com.github.dadogk.studytracker.entity.StudySubjectRepository;
-import com.github.dadogk.user.UserUtil;
+import com.github.dadogk.user.util.UserUtil;
 import com.github.dadogk.user.dto.UserResponse;
 import com.github.dadogk.user.entity.User;
 import java.util.ArrayList;

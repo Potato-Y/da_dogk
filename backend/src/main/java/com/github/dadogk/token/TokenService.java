@@ -4,7 +4,7 @@ import com.github.dadogk.config.jwt.TokenProvider;
 import com.github.dadogk.token.dto.AuthenticateRequest;
 import com.github.dadogk.token.dto.AuthenticateResponse;
 import com.github.dadogk.token.dto.TokenRequest;
-import com.github.dadogk.user.UserUtil;
+import com.github.dadogk.user.util.UserUtil;
 import com.github.dadogk.user.dto.UserResponse;
 import com.github.dadogk.user.entity.User;
 import java.time.Duration;
