@@ -40,15 +40,15 @@ class MainActivity : AppCompatActivity() { //LoginActivity
             }
         }
 
-        /*
         //레트로핏 설정
         val retrofit = Retrofit.Builder()
-            .baseUrl("주소")
+            .baseUrl("https://dadogk.duckdns.org/")    //"http://localhost:8080/"
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
         val service = retrofit.create(LoginService::class.java)
 
+        //버튼 클릭시 로그인
         button.setOnClickListener {
             val emailStr = email.text.toString()
             val pwStr = password.text.toString()
@@ -63,11 +63,6 @@ class MainActivity : AppCompatActivity() { //LoginActivity
                 }
             })
         }
-
-
-
-         */
-
 
     }
 }

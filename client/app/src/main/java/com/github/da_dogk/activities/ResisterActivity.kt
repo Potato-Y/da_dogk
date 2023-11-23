@@ -3,9 +3,17 @@ package com.github.da_dogk.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import com.github.da_dogk.R
+import com.github.da_dogk.interface_folder.ResisterService
+import com.github.da_dogk.response.LoginResponse
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 /*
 import com.github.da_dogk.interface_folder.ResisterService
@@ -36,26 +44,28 @@ class ResisterActivity : AppCompatActivity() {
 
         button = findViewById(R.id.button_Resister)
 
-
+        /*
         button.setOnClickListener {
             Intent(this, NaviActivity::class.java).run {
                 startActivity(this)
             }
         }
-/*
+
+         */
+
         //레트로핏 설정
         val retrofit = Retrofit.Builder()
-            .baseUrl("주소")
+            .baseUrl("https://dadogk.duckdns.org/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
         val service = retrofit.create(ResisterService::class.java)
 
+        //버튼 클릭시 회원가입
         button.setOnClickListener {
             val pwStr = password.text.toString()
             val nameStr = nickname.text.toString()
             val emailStr = email.text.toString()
-
 
             service.register(emailStr, pwStr, nameStr).enqueue(object :
                 Callback<LoginResponse> {
@@ -64,16 +74,14 @@ class ResisterActivity : AppCompatActivity() {
                     response: Response<LoginResponse>
                 ) {
                     val result = response.body()
-                    Log.d("로그인", "${result}")
+                    Log.d("회원가입", "${result}")
                 }
 
                 override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                    Log.e("로그인", "${t.localizedMessage}")
+                    Log.e("회원가입", "${t.localizedMessage}")
                 }
             })
         }
-
- */
 
     }
 }

@@ -82,12 +82,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="8">
-        <TextView
-            android:layout_width="wrap_content"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/RV_myStudy"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="40dp"
-            android:text="내 공부 시간"
-            android:textColor="#ffffff"/>
+            android:orientation="vertical" />
 
     </LinearLayout>
 

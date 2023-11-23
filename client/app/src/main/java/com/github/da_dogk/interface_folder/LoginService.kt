@@ -7,12 +7,15 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 
 interface LoginService {
-    @FormUrlEncoded
-    @POST("주소")
+    @FormUrlEncoded //body로 바꿔야함
+    @POST("api/authenticate")
     fun login(
         @Field("email") email: String,
         @Field("password") pw: String
     ): Call<LoginResponse>  //Call은 retrofit 선택
+    //test@mail.com
+    //test
+    //test user
 }
 /*
    json으로 통신하는방법, 파라미터롤 통신하는방법이 있음
