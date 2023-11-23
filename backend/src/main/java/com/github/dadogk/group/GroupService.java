@@ -1,11 +1,16 @@
 package com.github.dadogk.group;
 
+import com.github.dadogk.enums.State;
 import com.github.dadogk.group.dto.SignupGroupRequest;
+import com.github.dadogk.group.dto.create.CreateGroupRequest;
+import com.github.dadogk.group.dto.create.GroupResponse;
 import com.github.dadogk.group.entity.Group;
 import com.github.dadogk.group.entity.GroupMember;
 import com.github.dadogk.group.entity.GroupMemberRepository;
 import com.github.dadogk.group.entity.GroupRepository;
+import com.github.dadogk.group.entity.GroupType;
 import com.github.dadogk.group.exception.NotFoundGroupException;
+import com.github.dadogk.group.util.GroupUtil;
 import com.github.dadogk.security.exception.PasswordIncorrectException;
 import com.github.dadogk.security.util.PasswordUtil;
 import com.github.dadogk.security.util.SecurityUtil;
@@ -22,8 +27,36 @@ import org.springframework.stereotype.Service;
 public class GroupService {
     private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
+    private final GroupUtil groupUtil;
     private final SecurityUtil securityUtil;
     private final PasswordUtil passwordUtil;
+
+    public GroupResponse createGroup(CreateGroupRequest dto) {
+        User hostUser = securityUtil.getCurrentUser(); // 그룹을 생성하려는 사람의 정보를 가져온다.
+
+        // 그룹을 생성한다.
+        Group group = Group.builder()
+                .groupName(dto.getGroupName())
+                .hostUser(hostUser)
+                .state(State.ACTIVE)
+                .type(GroupType.COMMON)
+                .build();
+
+        boolean isPassword = dto.getPassword() != null; // 암호 여부
+        group.updatePrivacyState(isPassword);
+        if (isPassword) {
+            group.updatePassword(passwordUtil.convertPassword(dto.getPassword()));
+        }
+
+        groupRepository.save(group);
+
+        groupMemberRepository.save(GroupMember.builder()
+                .group(group)
+                .user(hostUser)
+                .build());
+
+        return groupUtil.convertGroup(group);
+    }
 
     public void signupGroup(Long groupId, SignupGroupRequest dto) {
         Optional<Group> group = groupRepository.findById(groupId);

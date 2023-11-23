@@ -1,6 +1,8 @@
 package com.github.dadogk.group;
 
 import com.github.dadogk.group.dto.SignupGroupRequest;
+import com.github.dadogk.group.dto.create.CreateGroupRequest;
+import com.github.dadogk.group.dto.create.GroupResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -17,7 +19,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/groups")
 public class GroupApiController {
-    private GroupService groupService;
+    private final GroupService groupService;
+
+    @PostMapping("")
+    public ResponseEntity<GroupResponse> createGroup(@Validated @RequestBody CreateGroupRequest request) {
+        GroupResponse groupResponse = groupService.createGroup(request);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(groupResponse);
+    }
 
     @PostMapping("/{groupId}/members")
     public ResponseEntity<String> signupGroup(@PathVariable Long groupId,

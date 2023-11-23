@@ -1,5 +1,6 @@
 package com.github.dadogk.user.util;
 
+import com.github.dadogk.user.dto.UserResponse;
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.entity.UserRepository;
 import com.github.dadogk.user.exception.NotFoundUserException;
@@ -23,5 +24,9 @@ public class UserUtil {
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new NotFoundUserException("Unexpected user"));
+    }
+
+    public UserResponse convertUserResponse(User user) {
+        return new UserResponse(user.getId(), user.getEmail(), user.getNickname());
     }
 }

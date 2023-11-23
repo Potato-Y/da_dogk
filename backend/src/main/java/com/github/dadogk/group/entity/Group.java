@@ -33,9 +33,6 @@ public class Group {
     @Column(name = "id", updatable = false)
     private Long id; // 자동 생성 고유 ID
 
-    @Column(name = "group_uri", nullable = false, unique = true, updatable = false)
-    private String groupUri; // 외부에 사용될 고유 id
-
     @Column(name = "group_name", nullable = false)
     private String groupName; // 그룹 이름
 
@@ -62,9 +59,8 @@ public class Group {
     private LocalDateTime createdAt;
 
     @Builder
-    public Group(String groupUri, String groupName, User hostUser, State state, GroupType type, boolean privacyState,
+    public Group(String groupName, User hostUser, State state, GroupType type, boolean privacyState,
                  String password) {
-        this.groupUri = groupUri;
         this.groupName = groupName;
         this.hostUser = hostUser;
         this.state = state;
@@ -87,6 +83,12 @@ public class Group {
 
     public Group updatePrivacyState(boolean privacyState) {
         this.privacyState = privacyState;
+
+        return this;
+    }
+
+    public Group updatePassword(String password) {
+        this.password = password;
 
         return this;
     }
