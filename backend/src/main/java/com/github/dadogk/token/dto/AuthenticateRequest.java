@@ -1,16 +1,16 @@
 package com.github.dadogk.token.dto;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class AuthenticateRequest {
-    @NotNull
+    @NotBlank
     @Email
     private String email;
-    @NotNull
+    @NotBlank
     private String password;
 }

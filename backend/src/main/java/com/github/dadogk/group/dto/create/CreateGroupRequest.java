@@ -1,6 +1,6 @@
 package com.github.dadogk.group.dto.create;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class CreateGroupRequest {
-    @NotNull
+    @NotBlank
     private String groupName;
     private String password;
 }
