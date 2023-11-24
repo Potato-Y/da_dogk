@@ -63,7 +63,7 @@ public class GroupService {
         User user = securityUtil.getCurrentUser();
 
         if (group.isEmpty()) {
-            log.info("signupGroup: Not found group. userId={}, groupId={}", user.getId(), groupId);
+            log.warn("signupGroup: Not found group. userId={}, groupId={}", user.getId(), groupId);
             throw new NotFoundGroupException("그룹이 없음");
         }
 
@@ -75,6 +75,7 @@ public class GroupService {
 
         Optional<GroupMember> member = groupMemberRepository.findByGroupAndUser(group.get(), user);
         if (!member.isEmpty()) { // 그룹에 이미 있는 경우 예외 발생
+            log.warn("signupGroup: Duplicate group. userId={}, groupId={}", user.getId(), groupId);
             throw new DuplicateGroupMemberException("중복 가입");
         }
 
