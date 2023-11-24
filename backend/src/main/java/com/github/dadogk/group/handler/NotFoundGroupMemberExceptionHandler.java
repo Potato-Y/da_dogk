@@ -3,11 +3,13 @@ package com.github.dadogk.group.handler;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.github.dadogk.error.dto.ErrorResponse;
 import com.github.dadogk.error.handler.AbstractExceptionHandler;
 import com.github.dadogk.group.exception.NotFoundGroupMemberException;
 
+@RestControllerAdvice
 public class NotFoundGroupMemberExceptionHandler extends AbstractExceptionHandler<NotFoundGroupMemberException> {
     @Override
     @ExceptionHandler(NotFoundGroupMemberException.class)
