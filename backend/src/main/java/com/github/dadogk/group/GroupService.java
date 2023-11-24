@@ -10,6 +10,7 @@ import com.github.dadogk.group.entity.GroupMemberRepository;
 import com.github.dadogk.group.entity.GroupRepository;
 import com.github.dadogk.group.entity.GroupType;
 import com.github.dadogk.group.exception.NotFoundGroupException;
+import com.github.dadogk.group.exception.NotFoundGroupMemberException;
 import com.github.dadogk.group.util.GroupUtil;
 import com.github.dadogk.security.exception.PasswordIncorrectException;
 import com.github.dadogk.security.util.PasswordUtil;
@@ -87,4 +88,26 @@ public class GroupService {
         groupMemberRepository.save(signupMember);
     }
 
+    /**
+     * 그룹을 탈퇴한다.
+     * 
+     * @param groupId 탈퇴할 그룹 id
+     * @param user    탈퇴할 유저
+     */
+    public void leaveGroup(Long groupId, User user) {
+        Optional<Group> group = groupRepository.findById(groupId);
+        if (group.isEmpty()) {
+            log.warn("leaveGroup: Not found group. userId={}, groupId={}", user.getId(), groupId);
+            throw new NotFoundGroupException("그룹이 없음");
+        }
+
+        Optional<GroupMember> groupMember = groupMemberRepository.findByGroupAndUser(null, user);
+        if (groupMember.isEmpty()) {
+            log.warn("leaveGroup: Not found group member. userId={}, groupId={}", user.getId(), groupId);
+            throw new NotFoundGroupMemberException("해당 유저가 그룹 멤버가 아님");
+        }
+
+        groupMemberRepository.delete(groupMember.get());
+        log.info("leaveGroup: Leave group. userId={}, groupId={}", user.getId(), group.get().getId());
+    }
 }
