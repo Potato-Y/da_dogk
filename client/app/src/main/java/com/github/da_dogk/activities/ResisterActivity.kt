@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import com.github.da_dogk.R
 import com.github.da_dogk.interface_folder.ResisterService
 import com.github.da_dogk.response.LoginResponse
@@ -32,7 +33,6 @@ class ResisterActivity : AppCompatActivity() {
     lateinit var nickname: EditText
 
 
-
     lateinit var button: Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,18 +44,10 @@ class ResisterActivity : AppCompatActivity() {
 
         button = findViewById(R.id.button_Resister)
 
-        /*
-        button.setOnClickListener {
-            Intent(this, NaviActivity::class.java).run {
-                startActivity(this)
-            }
-        }
-
-         */
 
         //레트로핏 설정
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://dadogk.duckdns.org/")
+            .baseUrl("https://dadogk.duckdns.org/api/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
@@ -69,12 +61,17 @@ class ResisterActivity : AppCompatActivity() {
 
             service.register(emailStr, pwStr, nameStr).enqueue(object :
                 Callback<LoginResponse> {
-                override fun onResponse(
-                    call: Call<LoginResponse>,
-                    response: Response<LoginResponse>
-                ) {
-                    val result = response.body()
-                    Log.d("회원가입", "${result}")
+                override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                    if (response.isSuccessful) {
+                        // 회원가입 성공
+                        val result = response.body()
+                        Log.d("회원가입", "${result}")
+                        showToast("회원가입 성공")
+                    } else {
+                        // 회원가입 실패
+                        Log.e("회원가입", "실패: ${response.code()}")
+                        showToast("회원가입 실패")
+                    }
                 }
 
                 override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
@@ -83,5 +80,8 @@ class ResisterActivity : AppCompatActivity() {
             })
         }
 
+    }
+    private fun showToast(message: String) {
+        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }
 }

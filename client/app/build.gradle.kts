@@ -46,7 +46,7 @@ dependencies {
     // Gson 변환기 라이브러리
     implementation("com.squareup.retrofit2:converter-gson:$retrofit_version")
     // Scalars 변환기 라이브러리
-    implementation ("com.squareup.retrofit2:converter-scalars:$retrofit_version")
+    //implementation ("com.squareup.retrofit2:converter-scalars:$retrofit_version")
 
     //네비게이션 바
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.5")

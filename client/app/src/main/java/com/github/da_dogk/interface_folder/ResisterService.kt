@@ -7,9 +7,8 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 
 interface ResisterService {
-
     @FormUrlEncoded
-    @POST("api/singup")
+    @POST("singup")
     fun register(
         @Field("email") email: String,
         @Field("password") pw: String,

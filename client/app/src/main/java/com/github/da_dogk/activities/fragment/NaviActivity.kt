@@ -1,4 +1,4 @@
-package com.github.da_dogk.activities
+package com.github.da_dogk.activities.fragment
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
