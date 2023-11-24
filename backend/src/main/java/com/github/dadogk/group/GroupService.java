@@ -9,6 +9,7 @@ import com.github.dadogk.group.entity.GroupMember;
 import com.github.dadogk.group.entity.GroupMemberRepository;
 import com.github.dadogk.group.entity.GroupRepository;
 import com.github.dadogk.group.entity.GroupType;
+import com.github.dadogk.group.exception.HostWithdrawalException;
 import com.github.dadogk.group.exception.NotFoundGroupException;
 import com.github.dadogk.group.exception.NotFoundGroupMemberException;
 import com.github.dadogk.group.util.GroupUtil;
@@ -101,7 +102,12 @@ public class GroupService {
             throw new NotFoundGroupException("그룹이 없음");
         }
 
-        Optional<GroupMember> groupMember = groupMemberRepository.findByGroupAndUser(null, user);
+        if (group.get().getHostUser().equals(user)) {
+            log.warn("leaveGroup: Requested by host. userId={}, groupId={}", user.getId(), group.get().getId());
+            throw new HostWithdrawalException("호스트는 탈퇴할 수 없음.");
+        }
+
+        Optional<GroupMember> groupMember = groupMemberRepository.findByGroupAndUser(group.get(), user);
         if (groupMember.isEmpty()) {
             log.warn("leaveGroup: Not found group member. userId={}, groupId={}", user.getId(), groupId);
             throw new NotFoundGroupMemberException("해당 유저가 그룹 멤버가 아님");
