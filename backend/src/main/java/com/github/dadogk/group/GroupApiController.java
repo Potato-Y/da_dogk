@@ -31,6 +31,14 @@ public class GroupApiController {
                 .body(groupResponse);
     }
 
+    @DeleteMapping("/{groupId}")
+    public ResponseEntity<String> deleteGroup(@PathVariable Long groupId) {
+        groupService.deleteGroup(groupId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(null);
+    }
+
     @DeleteMapping("/{groupId}/members")
     public ResponseEntity<String> leaveGroup(@PathVariable Long groupId) {
         groupService.leaveGroup(groupId, securityUtil.getCurrentUser());

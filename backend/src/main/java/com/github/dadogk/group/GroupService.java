@@ -14,6 +14,7 @@ import com.github.dadogk.group.exception.NotFoundGroupException;
 import com.github.dadogk.group.exception.NotFoundGroupMemberException;
 import com.github.dadogk.group.util.GroupUtil;
 import com.github.dadogk.security.exception.PasswordIncorrectException;
+import com.github.dadogk.security.exception.PermissionException;
 import com.github.dadogk.security.util.PasswordUtil;
 import com.github.dadogk.security.util.SecurityUtil;
 import com.github.dadogk.user.entity.User;
@@ -115,5 +116,26 @@ public class GroupService {
 
         groupMemberRepository.delete(groupMember.get());
         log.info("leaveGroup: Leave group. userId={}, groupId={}", user.getId(), group.get().getId());
+    }
+
+    /**
+     * 그룹을 삭제한다.
+     * 
+     * @param groupId 삭제할 그룹 id
+     */
+    public void deleteGroup(Long groupId) {
+        User user = securityUtil.getCurrentUser();
+        Optional<Group> group = groupRepository.findById(groupId);
+        if (group.isEmpty()) {
+            log.warn("deleteGroup: Not found group. userId={}, groupId={}", user.getId(), groupId);
+            throw new NotFoundGroupException("그룹이 없음");
+        }
+
+        if (!group.get().getHostUser().equals(user)) { // host가 아니면 예외를 일으킨다.
+            log.warn("deleteGroup: Not host user. userId={}, groupId={}", user.getId(), groupId);
+            throw new PermissionException("호스트 유저가 아님");
+        }
+
+        groupRepository.delete(group.get()); // 그룹 삭제
     }
 }
