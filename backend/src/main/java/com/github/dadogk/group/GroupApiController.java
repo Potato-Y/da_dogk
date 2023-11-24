@@ -4,8 +4,11 @@ import com.github.dadogk.group.dto.SignupGroupRequest;
 import com.github.dadogk.group.dto.create.CreateGroupRequest;
 import com.github.dadogk.group.dto.create.GroupResponse;
 import com.github.dadogk.group.entity.Group;
+import com.github.dadogk.group.entity.GroupMember;
 import com.github.dadogk.group.util.GroupUtil;
 import com.github.dadogk.security.util.SecurityUtil;
+import com.github.dadogk.user.dto.UserResponse;
+import com.github.dadogk.user.util.UserUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,6 +34,7 @@ public class GroupApiController {
     private final GroupService groupService;
     private final SecurityUtil securityUtil;
     private final GroupUtil groupUtil;
+    private final UserUtil userUtil;
 
     @PostMapping("")
     public ResponseEntity<GroupResponse> createGroup(@Validated @RequestBody CreateGroupRequest request) {
@@ -87,5 +91,18 @@ public class GroupApiController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(groupResponses);
+    }
+
+    @GetMapping("/{groupId}/members")
+    public ResponseEntity<List<UserResponse>> getGroupMembers(@PathVariable Long groupId) {
+        List<GroupMember> groupMembers = groupService.getGroupMemberList(groupId); // 그룹원 가져오기
+
+        List<UserResponse> userResponses = new ArrayList<>();
+        for (GroupMember member : groupMembers) { // response로 변환
+            userResponses.add(userUtil.convertUserResponse(member.getUser()));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(userResponses);
     }
 }

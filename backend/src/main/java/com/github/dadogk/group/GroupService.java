@@ -176,4 +176,24 @@ public class GroupService {
 
         return groups;
     }
+
+    public List<GroupMember> getGroupMemberList(Long groupId) {
+        User user = securityUtil.getCurrentUser();
+        Optional<Group> group = groupRepository.findById(groupId);
+        if (group.isEmpty()) {
+            log.warn("getGroupMemberList: Not found group. userId={}, groupId={}", user.getId(), groupId);
+            throw new NotFoundGroupException("그룹이 없음");
+        }
+
+        // 유저가 해당 그룹원인지 확인
+        Optional<GroupMember> findGroupMember = groupMemberRepository.findByGroupAndUser(group.get(), user);
+        if (findGroupMember.isEmpty()) {
+            log.warn("getGroupMemberList: Not found group member. userId={}, groupId={}", user.getId(),
+                    group.get().getId());
+            throw new NotFoundGroupMemberException("그룹 멤버가 아님");
+        }
+
+        List<GroupMember> groupMembers = groupMemberRepository.findAllByGroup(group.get());
+        return groupMembers;
+    }
 }
