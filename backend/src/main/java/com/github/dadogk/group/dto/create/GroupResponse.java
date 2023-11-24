@@ -17,4 +17,5 @@ public class GroupResponse {
     private GroupType groupType;
     private boolean privacyState;
     private LocalDateTime createAt;
+    private int memberNumber;
 }

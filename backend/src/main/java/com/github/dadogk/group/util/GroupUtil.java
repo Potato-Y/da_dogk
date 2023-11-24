@@ -19,7 +19,8 @@ public class GroupUtil {
                 group.getState(),
                 group.getType(),
                 group.isPrivacyState(),
-                group.getCreatedAt()
+                group.getCreatedAt(),
+                group.getGroupMembers().size()
         );
     }
 }
