@@ -3,13 +3,20 @@ package com.github.dadogk.group;
 import com.github.dadogk.group.dto.SignupGroupRequest;
 import com.github.dadogk.group.dto.create.CreateGroupRequest;
 import com.github.dadogk.group.dto.create.GroupResponse;
+import com.github.dadogk.group.entity.Group;
+import com.github.dadogk.group.util.GroupUtil;
 import com.github.dadogk.security.util.SecurityUtil;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class GroupApiController {
     private final GroupService groupService;
     private final SecurityUtil securityUtil;
+    private final GroupUtil groupUtil;
 
     @PostMapping("")
     public ResponseEntity<GroupResponse> createGroup(@Validated @RequestBody CreateGroupRequest request) {
@@ -52,5 +60,18 @@ public class GroupApiController {
                                               @Validated @RequestBody SignupGroupRequest request) {
         groupService.signupGroup(groupId, request);
         return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    @GetMapping("")
+    public ResponseEntity<List<GroupResponse>> getGroupList() {
+        List<Group> inGroups = groupService.getGroupList(); // 들어있는 그룹 목록 요청
+
+        List<GroupResponse> responses = new ArrayList<>(); // 응답할 수 있도록 가공
+        for (Group group : inGroups) {
+            responses.add(groupUtil.convertGroup(group));
+        }
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(responses);
     }
 }

@@ -19,6 +19,9 @@ import com.github.dadogk.security.util.PasswordUtil;
 import com.github.dadogk.security.util.SecurityUtil;
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.exception.DuplicateGroupMemberException;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -137,5 +140,24 @@ public class GroupService {
         }
 
         groupRepository.delete(group.get()); // 그룹 삭제
+    }
+
+    /**
+     * 사용자가 가입한 그룹의 목록을 가져온다.
+     * 
+     * @return List<Group> 접속한 그룹 리스트
+     */
+    public List<Group> getGroupList() {
+        User user = securityUtil.getCurrentUser();
+        List<GroupMember> inGroupMembers = groupMemberRepository.findAllByUser(user); // 가입한 그룹 조회
+
+        List<Group> inGroups = new ArrayList<>(); // Group으로 반환
+        for (GroupMember groupMember : inGroupMembers) {
+            inGroups.add(groupMember.getGroup());
+        }
+
+        log.info("getGroupList: userId={}", user.getId());
+
+        return inGroups;
     }
 }
