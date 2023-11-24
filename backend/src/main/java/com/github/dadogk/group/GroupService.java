@@ -160,4 +160,20 @@ public class GroupService {
 
         return inGroups;
     }
+
+    /**
+     * 그룹 이름을 통해 검색
+     * 
+     * @param groupName 검색할 그룹 이름
+     * @return List<Group> 검색된 그룹
+     */
+    public List<Group> getSearchGroups(String groupName) {
+        User user = securityUtil.getCurrentUser();
+        List<Group> groups = groupRepository.findByGroupNameContaining(groupName);
+
+        log.info("getSearchGroups: userId={}, searchGroupName={}, resultCount={}", user.getId(), groupName,
+                groups.size());
+
+        return groups;
+    }
 }
