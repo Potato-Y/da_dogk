@@ -18,7 +18,6 @@ import com.github.dadogk.studytracker.entity.StudyRecord;
 import com.github.dadogk.studytracker.entity.StudySubject;
 import com.github.dadogk.studytracker.model.ClientInfo;
 import com.github.dadogk.studytracker.model.RequestType;
-import com.github.dadogk.user.UserService;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,7 +37,6 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
     private static final Map<String, ClientInfo> CLIENTS = Collections.synchronizedMap(new HashMap<>());
     private static final MultiValueMap<Long, String> GROUP_MEMBERS = new LinkedMultiValueMap<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final UserService userService;
     private final StudyService studyService;
     private final TokenProvider tokenProvider;
 

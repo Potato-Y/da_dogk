@@ -1,6 +1,5 @@
 package com.github.dadogk.user;
 
-import com.github.dadogk.config.jwt.JwtProperties;
 import com.github.dadogk.security.util.SecurityUtil;
 import com.github.dadogk.user.dto.AddUserRequest;
 import com.github.dadogk.user.dto.AddUserResponse;
