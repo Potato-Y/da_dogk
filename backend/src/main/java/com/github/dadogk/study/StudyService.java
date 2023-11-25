@@ -1,5 +1,6 @@
 package com.github.dadogk.study;
 
+import com.github.dadogk.exceptions.PermissionException;
 import com.github.dadogk.security.util.SecurityUtil;
 import com.github.dadogk.study.dto.api.SubjectTitleResponse;
 import com.github.dadogk.study.dto.api.create.CreateSubjectRequest;
@@ -126,7 +127,7 @@ public class StudyService {
 
         if (!subject.get().getUser().equals(user)) { // 주인이 아닌 경우 예외 발생
             log.warn("deleteSubject: The users are not the same. userId={}, subjectId={}", user.getId(), subjectId);
-            throw new RuntimeException("유저가 같지 않음");
+            throw new PermissionException("유저가 같지 않음");
         }
 
         subjectRepository.delete(subject.get()); // 검증이 끝난 다음에 삭제
