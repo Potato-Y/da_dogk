@@ -1,4 +1,4 @@
-package com.github.dadogk.studytracker.model;
+package com.github.dadogk.study.model;
 
 public enum RequestType {
     OPEN,

@@ -1,4 +1,4 @@
-package com.github.dadogk.studytracker.dto.api;
+package com.github.dadogk.study.dto.api;
 
 import com.github.dadogk.user.dto.UserResponse;
 import lombok.AllArgsConstructor;

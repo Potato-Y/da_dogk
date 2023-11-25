@@ -1,4 +1,4 @@
-package com.github.dadogk.studytracker.model;
+package com.github.dadogk.study.model;
 
 public class ResponseType {
     public static final String OK = "OK";

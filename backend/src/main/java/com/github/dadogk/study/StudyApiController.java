@@ -1,9 +1,4 @@
-package com.github.dadogk.studytracker;
-
-import com.github.dadogk.studytracker.dto.api.SubjectTitleResponse;
-import com.github.dadogk.studytracker.dto.api.create.CreateSubjectRequest;
-import com.github.dadogk.studytracker.entity.StudySubject;
-import com.github.dadogk.studytracker.util.StudyUtil;
+package com.github.dadogk.study;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +12,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.github.dadogk.study.dto.api.SubjectTitleResponse;
+import com.github.dadogk.study.dto.api.create.CreateSubjectRequest;
+import com.github.dadogk.study.entity.StudySubject;
+import com.github.dadogk.study.util.StudyUtil;
 
 @RequiredArgsConstructor
 @RestController

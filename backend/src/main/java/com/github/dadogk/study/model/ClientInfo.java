@@ -1,8 +1,9 @@
-package com.github.dadogk.studytracker.model;
+package com.github.dadogk.study.model;
 
-import com.github.dadogk.studytracker.entity.StudyRecord;
 import lombok.Getter;
 import org.springframework.web.socket.WebSocketSession;
+
+import com.github.dadogk.study.entity.StudyRecord;
 
 @Getter
 public class ClientInfo {

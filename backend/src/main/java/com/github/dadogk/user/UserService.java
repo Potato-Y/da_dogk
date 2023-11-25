@@ -1,6 +1,6 @@
 package com.github.dadogk.user;
 
-import com.github.dadogk.studytracker.StudyService;
+import com.github.dadogk.study.StudyService;
 import com.github.dadogk.user.dto.AddUserRequest;
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.entity.UserRepository;

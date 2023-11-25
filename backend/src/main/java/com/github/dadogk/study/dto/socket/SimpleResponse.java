@@ -1,4 +1,4 @@
-package com.github.dadogk.studytracker.dto.socket;
+package com.github.dadogk.study.dto.socket;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

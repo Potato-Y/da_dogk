@@ -1,4 +1,4 @@
-package com.github.dadogk.studytracker.entity;
+package com.github.dadogk.study.entity;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,13 +1,13 @@
-package com.github.dadogk.studytracker;
+package com.github.dadogk.study;
 
 import com.github.dadogk.security.util.SecurityUtil;
-import com.github.dadogk.studytracker.dto.api.SubjectTitleResponse;
-import com.github.dadogk.studytracker.dto.api.create.CreateSubjectRequest;
-import com.github.dadogk.studytracker.entity.StudyRecord;
-import com.github.dadogk.studytracker.entity.StudyRecordRepository;
-import com.github.dadogk.studytracker.entity.StudySubject;
-import com.github.dadogk.studytracker.entity.StudySubjectRepository;
-import com.github.dadogk.studytracker.exception.NotFoundStudyException;
+import com.github.dadogk.study.dto.api.SubjectTitleResponse;
+import com.github.dadogk.study.dto.api.create.CreateSubjectRequest;
+import com.github.dadogk.study.entity.StudyRecord;
+import com.github.dadogk.study.entity.StudyRecordRepository;
+import com.github.dadogk.study.entity.StudySubject;
+import com.github.dadogk.study.entity.StudySubjectRepository;
+import com.github.dadogk.study.exception.NotFoundStudyException;
 import com.github.dadogk.user.util.UserUtil;
 import com.github.dadogk.user.dto.UserResponse;
 import com.github.dadogk.user.entity.User;

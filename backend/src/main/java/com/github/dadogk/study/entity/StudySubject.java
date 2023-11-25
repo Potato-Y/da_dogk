@@ -1,4 +1,4 @@
-package com.github.dadogk.studytracker.entity;
+package com.github.dadogk.study.entity;
 
 import com.github.dadogk.user.entity.User;
 import jakarta.persistence.CascadeType;

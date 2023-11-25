@@ -1,4 +1,4 @@
-package com.github.dadogk.studytracker.dto.api.create;
+package com.github.dadogk.study.dto.api.create;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

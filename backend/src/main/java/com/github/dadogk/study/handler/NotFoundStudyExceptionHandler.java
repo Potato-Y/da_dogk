@@ -1,4 +1,4 @@
-package com.github.dadogk.studytracker.handler;
+package com.github.dadogk.study.handler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.github.dadogk.error.dto.ErrorResponse;
 import com.github.dadogk.error.handler.AbstractExceptionHandler;
-import com.github.dadogk.studytracker.exception.NotFoundStudyException;
+import com.github.dadogk.study.exception.NotFoundStudyException;
 
 @RestControllerAdvice
 public class NotFoundStudyExceptionHandler extends AbstractExceptionHandler<NotFoundStudyException> {

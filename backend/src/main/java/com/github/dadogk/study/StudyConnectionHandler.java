@@ -1,23 +1,24 @@
-package com.github.dadogk.studytracker;
-
-import static com.github.dadogk.studytracker.model.ResponseMessage.ALREADY_PROCESSED;
-import static com.github.dadogk.studytracker.model.ResponseMessage.SUBJECT_ID_ERROR;
-import static com.github.dadogk.studytracker.model.ResponseMessage.SUCCESS_PROCESSED;
-import static com.github.dadogk.studytracker.model.ResponseMessage.TOKEN_ERROR;
-import static com.github.dadogk.studytracker.model.ResponseType.FAIL;
-import static com.github.dadogk.studytracker.model.ResponseType.FORBIDDEN;
-import static com.github.dadogk.studytracker.model.ResponseType.NOT_FOUND;
-import static com.github.dadogk.studytracker.model.ResponseType.OK;
+package com.github.dadogk.study;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dadogk.config.jwt.TokenProvider;
-import com.github.dadogk.studytracker.dto.StudyStartRequest;
-import com.github.dadogk.studytracker.dto.socket.SimpleResponse;
-import com.github.dadogk.studytracker.entity.StudyRecord;
-import com.github.dadogk.studytracker.entity.StudySubject;
-import com.github.dadogk.studytracker.model.ClientInfo;
-import com.github.dadogk.studytracker.model.RequestType;
+import com.github.dadogk.study.dto.StudyStartRequest;
+import com.github.dadogk.study.dto.socket.SimpleResponse;
+import com.github.dadogk.study.entity.StudyRecord;
+import com.github.dadogk.study.entity.StudySubject;
+import com.github.dadogk.study.model.ClientInfo;
+import com.github.dadogk.study.model.RequestType;
+
+import static com.github.dadogk.study.model.ResponseMessage.ALREADY_PROCESSED;
+import static com.github.dadogk.study.model.ResponseMessage.SUBJECT_ID_ERROR;
+import static com.github.dadogk.study.model.ResponseMessage.SUCCESS_PROCESSED;
+import static com.github.dadogk.study.model.ResponseMessage.TOKEN_ERROR;
+import static com.github.dadogk.study.model.ResponseType.FAIL;
+import static com.github.dadogk.study.model.ResponseType.FORBIDDEN;
+import static com.github.dadogk.study.model.ResponseType.NOT_FOUND;
+import static com.github.dadogk.study.model.ResponseType.OK;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;

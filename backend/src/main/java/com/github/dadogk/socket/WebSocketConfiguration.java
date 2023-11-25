@@ -1,8 +1,9 @@
 package com.github.dadogk.socket;
 
 import com.github.dadogk.config.jwt.TokenProvider;
-import com.github.dadogk.studytracker.StudyConnectionHandler;
-import com.github.dadogk.studytracker.StudyService;
+import com.github.dadogk.study.StudyConnectionHandler;
+import com.github.dadogk.study.StudyService;
+
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
