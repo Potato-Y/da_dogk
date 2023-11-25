@@ -1,6 +1,5 @@
 package com.github.da_dogk.activities
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -8,24 +7,14 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import com.github.da_dogk.R
-import com.github.da_dogk.interface_folder.ResisterService
-import com.github.da_dogk.response.LoginResponse
+import com.github.da_dogk.server.interface_folder.ResisterInterface
+import com.github.da_dogk.server.request.RegisterRequest
+import com.github.da_dogk.server.response.LoginResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-
-/*
-import com.github.da_dogk.interface_folder.ResisterService
-import com.github.da_dogk.response.LoginResponse
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-*/
-
 class ResisterActivity : AppCompatActivity() {
 
     lateinit var email: EditText
@@ -51,7 +40,7 @@ class ResisterActivity : AppCompatActivity() {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        val service = retrofit.create(ResisterService::class.java)
+        val service = retrofit.create(ResisterInterface::class.java)
 
         //버튼 클릭시 회원가입
         button.setOnClickListener {
@@ -59,8 +48,9 @@ class ResisterActivity : AppCompatActivity() {
             val nameStr = nickname.text.toString()
             val emailStr = email.text.toString()
 
-            service.register(emailStr, pwStr, nameStr).enqueue(object :
-                Callback<LoginResponse> {
+            val request = RegisterRequest(emailStr,pwStr,nameStr)
+
+            service.register(request).enqueue(object : Callback<LoginResponse> {
                 override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                     if (response.isSuccessful) {
                         // 회원가입 성공

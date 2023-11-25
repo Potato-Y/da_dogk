@@ -1,4 +1,4 @@
-package com.github.da_dogk.response
+package com.github.da_dogk.server.response
 
 import com.google.gson.annotations.SerializedName
 
@@ -10,12 +10,11 @@ data class LoginResponse(
     val password: String,
 
     @SerializedName("nickname")
-    val nickname: String
+    val nickname: String,
+    val userId: Int,
+    val timestamp: String,
+    val status: Int,
+    val trace: String,
+    val message: String,
+    val path: String
 )
-
-
-//성공시 success : true
-//실패시 {
-//          "success" : false
-//      }
-//이런식으로 넘김

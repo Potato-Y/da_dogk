@@ -1,7 +1,6 @@
-package com.github.da_dogk.interface_folder
+package com.github.da_dogk.server.interface_folder
 
-import com.github.da_dogk.response.GroupGenerateResponse
-import com.github.da_dogk.response.LoginResponse
+import com.github.da_dogk.server.response.GroupGenerateResponse
 import retrofit2.Call
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -14,5 +13,5 @@ interface GroupGenerateService {
         @Field("name") name: String,
         @Field("intro") intro: String,
         @Field("group_password") group_password: String
-    ): Call<GroupGenerateResponse> 
+    ): Call<GroupGenerateResponse>
 }
