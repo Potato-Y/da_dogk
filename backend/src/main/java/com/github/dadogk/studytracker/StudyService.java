@@ -90,8 +90,7 @@ public class StudyService {
         }
 
         UserResponse userResponse = new UserResponse(findUser.getId(), findUser.getEmail(), findUser.getNickname());
-        for (StudySubject subject : // 유저의 과목 목록을 dto 리스트에 담는다.
-                studySubjects) {
+        for (StudySubject subject : studySubjects) { // 유저의 과목 목록을 dto 리스트에 담는다.
             subjectTitleResponses.add(new SubjectTitleResponse(subject.getId(), userResponse, subject.getTitle()));
         }
 
