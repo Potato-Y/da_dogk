@@ -1,6 +1,8 @@
 package com.github.dadogk.group.exception;
 
-public class HostWithdrawalException extends RuntimeException {
+import com.github.dadogk.error.exception.BadRequestException;
+
+public class HostWithdrawalException extends BadRequestException {
     public HostWithdrawalException(String message) {
         super(message);
     }

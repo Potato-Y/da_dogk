@@ -1,6 +1,8 @@
 package com.github.dadogk.user.exception;
 
-public class NotFoundUserException extends RuntimeException {
+import com.github.dadogk.error.exception.NotFoundException;
+
+public class NotFoundUserException extends NotFoundException {
     public NotFoundUserException(String message) {
         super(message);
     }
