@@ -1,6 +1,8 @@
 package com.github.dadogk.studytracker;
 
+import com.github.dadogk.security.util.SecurityUtil;
 import com.github.dadogk.studytracker.dto.api.SubjectTitleResponse;
+import com.github.dadogk.studytracker.dto.api.create.CreateSubjectRequest;
 import com.github.dadogk.studytracker.entity.StudyRecord;
 import com.github.dadogk.studytracker.entity.StudyRecordRepository;
 import com.github.dadogk.studytracker.entity.StudySubject;
@@ -12,17 +14,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
+@Log4j2
 public class StudyService {
 
     private static final Logger logger = LoggerFactory.getLogger(StudyService.class);
     private final StudySubjectRepository subjectRepository;
     private final StudyRecordRepository studyRecordRepository;
+    private final SecurityUtil securityUtil;
     private final UserUtil userUtil;
 
     /**
@@ -95,5 +101,17 @@ public class StudyService {
         }
 
         return subjectTitleResponses;
+    }
+
+    public StudySubject createSubject(CreateSubjectRequest dto) {
+        User user = securityUtil.getCurrentUser();
+        StudySubject subject = subjectRepository.save(StudySubject.builder()
+                .title(dto.getTitle())
+                .user(user)
+                .build());
+
+        log.info("createSubject: userId={}, subjectId={}", user.getId(), subject.getId());
+
+        return subject;
     }
 }
