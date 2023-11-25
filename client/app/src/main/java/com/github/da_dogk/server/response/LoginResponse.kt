@@ -3,18 +3,14 @@ package com.github.da_dogk.server.response
 import com.google.gson.annotations.SerializedName
 
 data class LoginResponse(
-    @SerializedName("email")
-    val email: String,
-
-    @SerializedName("password")
-    val password: String,
-
-    @SerializedName("nickname")
-    val nickname: String,
-    val userId: Int,
-    val timestamp: String,
+    val accessToken: String,
+    val refreshToken: String,
     val status: Int,
-    val trace: String,
-    val message: String,
-    val path: String
+    val user: User
+)
+
+data class User(
+    val userId: Int,
+    val email: String,
+    val nickname: String
 )
