@@ -77,7 +77,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!--내 공부 시간 측정 -->
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/LL_myStudy"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -87,8 +87,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
+        <ImageButton
+            android:id="@+id/B_add_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/sharp_add_24"
+            android:layout_gravity="bottom|end"/>
 
-    </LinearLayout>
+    </FrameLayout>
 
     <!--그룹 공부 시간 측정 -->
     <LinearLayout

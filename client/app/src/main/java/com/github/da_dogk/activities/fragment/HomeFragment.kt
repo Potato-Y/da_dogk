@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import com.github.da_dogk.R
 import com.google.android.material.tabs.TabLayout
@@ -14,6 +15,7 @@ class HomeFragment : Fragment() {
     lateinit var tabLayout: TabLayout
     lateinit var layoutMyStudy: LinearLayout
     lateinit var layoutGroupStudy: LinearLayout
+    lateinit var buttonAddCategory: ImageButton
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,6 +34,8 @@ class HomeFragment : Fragment() {
         tabLayout = view.findViewById(R.id.tab_layout_home)
         layoutMyStudy = view.findViewById(R.id.LL_myStudy)
         layoutGroupStudy = view.findViewById(R.id.LL_groupStudy)
+        buttonAddCategory = view.findViewById(R.id.B_add_category)
+
 
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {

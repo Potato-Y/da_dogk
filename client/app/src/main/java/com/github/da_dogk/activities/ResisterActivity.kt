@@ -10,6 +10,7 @@ import com.github.da_dogk.R
 import com.github.da_dogk.server.interface_folder.ResisterInterface
 import com.github.da_dogk.server.request.RegisterRequest
 import com.github.da_dogk.server.response.LoginResponse
+import com.github.da_dogk.server.response.RegisterResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -50,8 +51,8 @@ class ResisterActivity : AppCompatActivity() {
 
             val request = RegisterRequest(emailStr,pwStr,nameStr)
 
-            service.register(request).enqueue(object : Callback<LoginResponse> {
-                override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+            service.register(request).enqueue(object : Callback<RegisterResponse> {
+                override fun onResponse(call: Call<RegisterResponse>, response: Response<RegisterResponse>) {
                     if (response.isSuccessful) {
                         // 회원가입 성공
                         val result = response.body()
@@ -64,7 +65,7 @@ class ResisterActivity : AppCompatActivity() {
                     }
                 }
 
-                override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
                     Log.e("회원가입", "${t.localizedMessage}")
                 }
             })
