@@ -1,4 +1,4 @@
-package com.github.da_dogk.response
+package com.github.da_dogk.server.response
 
 import com.google.gson.annotations.SerializedName
 

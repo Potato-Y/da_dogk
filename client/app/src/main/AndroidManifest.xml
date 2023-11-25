@@ -13,6 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DaDogk"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
             android:name=".activities.ProfileEditActivity"
@@ -21,7 +22,7 @@
             android:name=".activities.GroupGenerateActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.NaviActivity"
+            android:name=".activities.fragment.NaviActivity"
             android:exported="false" />
         <activity
             android:name=".activities.ResisterActivity"

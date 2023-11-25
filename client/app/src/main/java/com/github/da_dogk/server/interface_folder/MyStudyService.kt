@@ -1,6 +1,6 @@
-package com.github.da_dogk.interface_folder
+package com.github.da_dogk.server.interface_folder
 
-import com.github.da_dogk.response.MyStudyResponse
+import com.github.da_dogk.server.response.MyStudyResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
