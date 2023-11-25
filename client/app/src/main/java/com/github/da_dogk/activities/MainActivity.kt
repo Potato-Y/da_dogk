@@ -72,6 +72,10 @@ class MainActivity : AppCompatActivity() { //LoginActivity
                         val result = response.body()
                         Log.d("로그인", "${result}")
                         showToast("로그인 성공")
+
+                        result?.accessToken?.let { token ->
+                            navigateToNaviActivity(token)
+                        }
                     } else {
                         // 로그인 실패
                         Log.e("로그인", "실패: ${response.code()}")
@@ -83,6 +87,13 @@ class MainActivity : AppCompatActivity() { //LoginActivity
                     Log.e("로그인", "${t.localizedMessage}")
                 }
             })
+        }
+    }
+    private fun navigateToNaviActivity(token: String) {
+        Intent(this, NaviActivity::class.java).apply {
+            putExtra("Token", token)
+            startActivity(this)
+            finish() // Optional: Finish the current activity if you don't want to come back to it
         }
     }
 
