@@ -1,4 +1,4 @@
-package com.github.dadogk.security.exception;
+package com.github.dadogk.exceptions;
 
 import com.github.dadogk.error.exception.ForbiddenException;
 

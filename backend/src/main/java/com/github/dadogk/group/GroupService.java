@@ -14,7 +14,7 @@ import com.github.dadogk.group.exception.NotFoundGroupException;
 import com.github.dadogk.group.exception.NotFoundGroupMemberException;
 import com.github.dadogk.group.util.GroupUtil;
 import com.github.dadogk.security.exception.PasswordIncorrectException;
-import com.github.dadogk.security.exception.PermissionException;
+import com.github.dadogk.exceptions.PermissionException;
 import com.github.dadogk.security.util.PasswordUtil;
 import com.github.dadogk.security.util.SecurityUtil;
 import com.github.dadogk.user.entity.User;
