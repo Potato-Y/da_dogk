@@ -7,6 +7,7 @@ import com.github.dadogk.studytracker.entity.StudyRecord;
 import com.github.dadogk.studytracker.entity.StudyRecordRepository;
 import com.github.dadogk.studytracker.entity.StudySubject;
 import com.github.dadogk.studytracker.entity.StudySubjectRepository;
+import com.github.dadogk.studytracker.exception.NotFoundStudyException;
 import com.github.dadogk.user.util.UserUtil;
 import com.github.dadogk.user.dto.UserResponse;
 import com.github.dadogk.user.entity.User;
@@ -113,5 +114,21 @@ public class StudyService {
         log.info("createSubject: userId={}, subjectId={}", user.getId(), subject.getId());
 
         return subject;
+    }
+
+    public void deleteSubject(Long subjectId) {
+        User user = securityUtil.getCurrentUser();
+        Optional<StudySubject> subject = subjectRepository.findById(subjectId);
+        if (subject.isEmpty()) {
+            log.warn("deleteSubject: Not Found Subject. userId={}, subjectId={}", user.getId(), subjectId);
+            throw new NotFoundStudyException("과목을 찾을 수 없음");
+        }
+
+        if (!subject.get().getUser().equals(user)) { // 주인이 아닌 경우 예외 발생
+            log.warn("deleteSubject: The users are not the same. userId={}, subjectId={}", user.getId(), subjectId);
+            throw new RuntimeException("유저가 같지 않음");
+        }
+
+        subjectRepository.delete(subject.get()); // 검증이 끝난 다음에 삭제
     }
 }
