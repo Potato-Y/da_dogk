@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class StudyApiController {
     private final StudyService studyService;
 
-    @GetMapping("/subject_list/{userId}") // 특정 사용자의 과목 리스트를 요청한다.
+    @GetMapping("/subjects/{userId}") // 특정 사용자의 과목 리스트를 요청한다.
     public ResponseEntity<List<SubjectTitleResponse>> getSubjectList(@PathVariable Long userId) {
         List<SubjectTitleResponse> responses = studyService.getUserStudySubjectList(userId);
 
