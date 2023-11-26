@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,6 +43,15 @@ public class UserApiController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new UserResponse(user.getId(), user.getEmail(), user.getNickname()));
+    }
+
+    @DeleteMapping("/user")
+    public ResponseEntity<String> deleteUser() {
+        userService.deleteUser();
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(null);
+
     }
 
     // TODO: 특정 유저 조회
