@@ -1,5 +1,6 @@
 package com.github.dadogk.study;
 
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.github.dadogk.study.dto.api.SubjectTitleResponse;
 import com.github.dadogk.study.dto.api.create.CreateSubjectRequest;
+import com.github.dadogk.study.dto.api.recode.GetUserRecodesRequest;
+import com.github.dadogk.study.dto.api.recode.RecodeResponse;
+import com.github.dadogk.study.entity.StudyRecord;
 import com.github.dadogk.study.entity.StudySubject;
 import com.github.dadogk.study.util.StudyUtil;
 
@@ -48,5 +52,17 @@ public class StudyApiController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(null);
+    }
+
+    @GetMapping("/recodes/{userId}")
+    public ResponseEntity<List<RecodeResponse>> getUserRecodes(GetUserRecodesRequest request) {
+        List<StudyRecord> records = studyService.getUserRecodes(request);
+        List<RecodeResponse> recodeResponses = new ArrayList<>();
+        for (StudyRecord record : records) {
+            recodeResponses.add(studyUtil.convertRecodeResponse(record));
+
+        }
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(recodeResponses);
     }
 }

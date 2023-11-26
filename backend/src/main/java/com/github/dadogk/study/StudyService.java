@@ -11,8 +11,12 @@ import com.github.dadogk.study.entity.StudySubject;
 import com.github.dadogk.study.entity.StudySubjectRepository;
 import com.github.dadogk.study.exception.NotFoundStudyException;
 import com.github.dadogk.user.util.UserUtil;
+import com.github.dadogk.utils.DateTimeUtil;
 import com.github.dadogk.user.dto.UserResponse;
 import com.github.dadogk.user.entity.User;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -135,7 +139,21 @@ public class StudyService {
         subjectRepository.delete(subject.get()); // 검증이 끝난 다음에 삭제
     }
 
-    public void getUserRecodes(GetUserRecodesRequest request) {
+    /**
+     * 특정 달의 기록 가져오기
+     * 
+     * @param dto
+     * @return List<StudyRecord>
+     */
+    public List<StudyRecord> getUserRecodes(GetUserRecodesRequest dto) {
+        User user = securityUtil.getCurrentUser();
+        LocalDate startDate = LocalDate.of(dto.getYear(), dto.getMonth(), 1);
+        LocalDate endDate = DateTimeUtil.getLastDayOfMonth(dto.getYear(), dto.getMonth());
 
+        LocalDateTime startDateTime = startDate.atStartOfDay();
+        LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
+        List<StudyRecord> records = studyRecordRepository.findByUserAndStartAtBetween(user, startDateTime, endDateTime);
+
+        return records;
     }
 }
