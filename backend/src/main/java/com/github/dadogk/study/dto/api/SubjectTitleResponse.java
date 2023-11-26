@@ -8,6 +8,6 @@ import lombok.Getter;
 @Getter
 public class SubjectTitleResponse {
     private Long id;
-    private UserResponse userResponse;
+    private UserResponse user;
     private String title;
 }
