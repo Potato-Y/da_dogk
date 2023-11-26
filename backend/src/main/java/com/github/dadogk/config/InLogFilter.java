@@ -20,7 +20,11 @@ public class InLogFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain) throws IOException, ServletException {
-        String ip = request.getRemoteAddr();
+        String ip = ((HttpServletRequest) request).getHeader("X-Real-IP");
+        if (ip == null) {
+            ip = request.getRemoteAddr();
+        }
+
         String requestType = ((HttpServletRequest) request).getMethod();
         String contentType = ((HttpServletRequest) request).getContentType();
         String url = ((HttpServletRequest) request).getRequestURL().toString();
