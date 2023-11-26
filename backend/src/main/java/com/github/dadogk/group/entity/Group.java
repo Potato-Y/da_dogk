@@ -64,12 +64,12 @@ public class Group {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "group", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
     private List<GroupMember> groupMembers = new ArrayList<>();
 
     @Builder
     public Group(String groupName, User hostUser, State state, GroupType type, boolean privacyState,
-                 String password) {
+            String password) {
         this.groupName = groupName;
         this.hostUser = hostUser;
         this.state = state;

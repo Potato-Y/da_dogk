@@ -36,7 +36,7 @@ public class StudySubject {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @OneToMany(mappedBy = "subject", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL)
     private List<StudyRecord> records = new ArrayList<>();
 
     @Builder
