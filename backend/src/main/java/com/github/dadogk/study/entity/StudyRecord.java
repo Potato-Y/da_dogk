@@ -17,6 +17,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.github.dadogk.user.entity.User;
+
 @Table(name = "study_records")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -30,6 +32,10 @@ public class StudyRecord {
     private Long id; // 자동 생성 고유 ID
 
     @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne
     @JoinColumn(name = "study_subject_id")
     private StudySubject subject;
 
@@ -41,7 +47,8 @@ public class StudyRecord {
     private LocalDateTime endAt;
 
     @Builder
-    public StudyRecord(StudySubject subject) {
+    public StudyRecord(User user, StudySubject subject) {
+        this.user = user;
         this.subject = subject;
     }
 

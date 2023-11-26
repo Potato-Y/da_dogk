@@ -3,12 +3,15 @@ package com.github.dadogk.study;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dadogk.config.jwt.TokenProvider;
+import com.github.dadogk.error.exception.NotFoundException;
 import com.github.dadogk.study.dto.StudyStartRequest;
 import com.github.dadogk.study.dto.socket.SimpleResponse;
 import com.github.dadogk.study.entity.StudyRecord;
 import com.github.dadogk.study.entity.StudySubject;
 import com.github.dadogk.study.model.ClientInfo;
 import com.github.dadogk.study.model.RequestType;
+import com.github.dadogk.user.entity.User;
+import com.github.dadogk.user.util.UserUtil;
 
 import static com.github.dadogk.study.model.ResponseMessage.ALREADY_PROCESSED;
 import static com.github.dadogk.study.model.ResponseMessage.SUBJECT_ID_ERROR;
@@ -40,6 +43,7 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final StudyService studyService;
     private final TokenProvider tokenProvider;
+    private final UserUtil userUtil;
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
@@ -80,13 +84,19 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
 
         Long userId = tokenProvider.getUserId(dto.getAccessToken());
         try {
+            User user = userUtil.findById(userId);
             StudySubject subject = studyService.getSubject(dto.getSubjectId(), userId);
-            StudyRecord studyRecord = studyService.startStudy(subject);
+            StudyRecord studyRecord = studyService.startStudy(user, subject);
 
             CLIENTS.put(session.getId(), new ClientInfo(session, userId, studyRecord));
             sendSimpleMessage(session, new SimpleResponse(OK, SUCCESS_PROCESSED));
             log.info("studyStart. Start Study. sessionId={}", session.getId());
-        } catch (IllegalArgumentException e) {
+        } catch (NotFoundException e) {
+            sendSimpleMessage(session, new SimpleResponse(NOT_FOUND, e.getMessage()));
+            session.close();
+        }
+
+        catch (IllegalArgumentException e) {
             sendSimpleMessage(session, new SimpleResponse(NOT_FOUND, SUBJECT_ID_ERROR));
             session.close();
         }

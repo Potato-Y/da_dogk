@@ -4,6 +4,7 @@ import com.github.dadogk.exceptions.PermissionException;
 import com.github.dadogk.security.util.SecurityUtil;
 import com.github.dadogk.study.dto.api.SubjectTitleResponse;
 import com.github.dadogk.study.dto.api.create.CreateSubjectRequest;
+import com.github.dadogk.study.dto.api.recode.GetUserRecodesRequest;
 import com.github.dadogk.study.entity.StudyRecord;
 import com.github.dadogk.study.entity.StudyRecordRepository;
 import com.github.dadogk.study.entity.StudySubject;
@@ -70,8 +71,9 @@ public class StudyService {
         throw new IllegalArgumentException("User와 Subject user가 맞지 않음");
     }
 
-    public StudyRecord startStudy(StudySubject subject) {
+    public StudyRecord startStudy(User user, StudySubject subject) {
         StudyRecord record = studyRecordRepository.save(StudyRecord.builder()
+                .user(user)
                 .subject(subject)
                 .build());
 
@@ -131,5 +133,9 @@ public class StudyService {
         }
 
         subjectRepository.delete(subject.get()); // 검증이 끝난 다음에 삭제
+    }
+
+    public void getUserRecodes(GetUserRecodesRequest request) {
+
     }
 }
