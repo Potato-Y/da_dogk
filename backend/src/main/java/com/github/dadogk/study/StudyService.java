@@ -145,7 +145,7 @@ public class StudyService {
      * @param dto
      * @return List<StudyRecord>
      */
-    public List<StudyRecord> getUserRecodes(GetUserRecodesRequest dto) {
+    public List<StudyRecord> getCurrentUserRecodes(GetUserRecodesRequest dto) {
         User user = securityUtil.getCurrentUser();
         LocalDate startDate = LocalDate.of(dto.getYear(), dto.getMonth(), 1);
         LocalDate endDate = DateTimeUtil.getLastDayOfMonth(dto.getYear(), dto.getMonth());

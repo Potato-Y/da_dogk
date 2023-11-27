@@ -56,7 +56,7 @@ public class StudyApiController {
 
     @GetMapping("/recodes/{userId}")
     public ResponseEntity<List<RecodeResponse>> getUserRecodes(GetUserRecodesRequest request) {
-        List<StudyRecord> records = studyService.getUserRecodes(request);
+        List<StudyRecord> records = studyService.getCurrentUserRecodes(request);
         List<RecodeResponse> recodeResponses = new ArrayList<>();
         for (StudyRecord record : records) {
             recodeResponses.add(studyUtil.convertRecodeResponse(record));
