@@ -32,8 +32,7 @@ public class WebSecurityConfig {
     @Bean
     public WebSecurityCustomizer configure() {
         return web -> web.ignoring()
-                .requestMatchers(toH2Console())
-                .requestMatchers("/chatt");
+                .requestMatchers(toH2Console());
     }
 
     @Bean
@@ -78,4 +77,3 @@ public class WebSecurityConfig {
         return new TokenAuthenticationFilter(tokenProvider);
     }
 }
-

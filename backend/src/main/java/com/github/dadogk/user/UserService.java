@@ -1,6 +1,7 @@
 package com.github.dadogk.user;
 
-import com.github.dadogk.studytracker.StudyService;
+import com.github.dadogk.security.util.SecurityUtil;
+import com.github.dadogk.study.StudyService;
 import com.github.dadogk.user.dto.AddUserRequest;
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.entity.UserRepository;
@@ -17,6 +18,7 @@ public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
     private final StudyService studyService;
+    private final SecurityUtil securityUtil;
 
     public User save(AddUserRequest dto) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -34,13 +36,8 @@ public class UserService {
         return user;
     }
 
-    public User findById(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Unexpected user"));
-    }
-
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Unexpected user"));
+    public void deleteUser() {
+        User user = securityUtil.getCurrentUser();
+        userRepository.delete(user);
     }
 }

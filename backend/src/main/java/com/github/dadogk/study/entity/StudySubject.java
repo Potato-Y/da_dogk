@@ -1,4 +1,4 @@
-package com.github.dadogk.studytracker.entity;
+package com.github.dadogk.study.entity;
 
 import com.github.dadogk.user.entity.User;
 import jakarta.persistence.CascadeType;
@@ -36,7 +36,7 @@ public class StudySubject {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @OneToMany(mappedBy = "subject", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL)
     private List<StudyRecord> records = new ArrayList<>();
 
     @Builder

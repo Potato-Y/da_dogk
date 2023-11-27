@@ -1,4 +1,4 @@
-package com.github.dadogk.studytracker.dto;
+package com.github.dadogk.study.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
