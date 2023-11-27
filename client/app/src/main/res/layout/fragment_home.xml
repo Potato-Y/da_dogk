@@ -78,7 +78,7 @@
 
     <!--내 공부 시간 측정 -->
     <FrameLayout
-        android:id="@+id/LL_myStudy"
+        android:id="@+id/FL_myStudy"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="8">

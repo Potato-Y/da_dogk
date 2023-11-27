@@ -1,6 +1,7 @@
 package com.github.da_dogk.activities.fragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -14,10 +15,24 @@ import com.github.da_dogk.activities.fragment.MyProfileFragment
 import com.github.da_dogk.databinding.ActivityNaviBinding
 
 class NaviActivity : AppCompatActivity() {
+    companion object {
+        const val EXTRA_ACCESS_TOKEN = "extra_access_token"
+        //const val EXTRA_USER = "extra_user"
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         var binding = ActivityNaviBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // MainActivity에서 토큰이 전달되었는지 확인
+        if (intent.hasExtra(EXTRA_ACCESS_TOKEN)) {
+            val accessToken = intent.getStringExtra(EXTRA_ACCESS_TOKEN)
+            Log.d("토큰 전달 확인", "MainActivity에서 토큰이 전달 성공")
+            // 이제 accessToken을 사용하여 NaviActivity에서 필요한 대로 사용할 수 있습니다.
+        } else {
+            // MainActivity에서 토큰이 전달되지 않은 경우 처리
+            Log.e("토큰 전달 확인", "MainActivity에서 토큰이 전달되지 않았습니다.")
+        }
 
 
         setFragment(TAG_HOME, HomeFragment())

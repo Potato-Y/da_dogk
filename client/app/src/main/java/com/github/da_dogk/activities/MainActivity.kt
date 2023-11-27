@@ -1,6 +1,7 @@
 package com.github.da_dogk.activities
 
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -31,6 +32,7 @@ class MainActivity : AppCompatActivity() { //LoginActivity
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
         email = findViewById(R.id.editTextEmail_Login)
         password = findViewById(R.id.editTextPassword_Login)
         button = findViewById(R.id.button_login)
@@ -44,12 +46,20 @@ class MainActivity : AppCompatActivity() { //LoginActivity
                 startActivity(this)
             }
         }
-        //로그인 텍스트 클릭시 홈 화면으로 이동 \
+        //로그인 텍스트 클릭시 홈 화면으로 이동
         textView.setOnClickListener {
             Intent(this, NaviActivity::class.java).run {
                 startActivity(this)
             }
         }
+
+        // 이미 로그인된 사용자라면 NaviActivity로 이동 ( 굳이 지금 쓸 필요는 없다 )
+//        if (isUserLoggedIn()) {
+//            Intent(this, NaviActivity::class.java).run {
+//                startActivity(this)
+//                finish() // 현재 액티비티를 종료하여 뒤로 가기 시 로그인 화면으로 돌아가지 않도록 함
+//            }
+//        }
 
         //레트로핏 설정
         val retrofit = Retrofit.Builder()
@@ -68,14 +78,31 @@ class MainActivity : AppCompatActivity() { //LoginActivity
             service.login(request).enqueue(object : Callback<LoginResponse> {
                 override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                     if (response.isSuccessful) {
-                        // 로그인 성공
                         val result = response.body()
-                        Log.d("로그인", "${result}")
-                        showToast("로그인 성공")
 
-//                        result?.accessToken?.let { token ->
-//                            navigateToNaviActivity(token)
-//                        }
+                        if (result != null) {
+                            val accessToken = result.accessToken
+
+                            if (accessToken.isNullOrBlank()) {
+                                Log.e("로그인", "AccessToken이 null이거나 blank입니다.")
+                            } else {
+                                // Save the token, change token to accessToken
+                                saveToken(accessToken)
+                                Log.d("로그인", "AccessToken: $accessToken")
+                                showToast("로그인 성공")
+
+                                val user = result.user
+                                // 토큰과 함께 NaviActivity로 이동
+                                Intent(this@MainActivity, NaviActivity::class.java).apply {
+                                    putExtra(NaviActivity.EXTRA_ACCESS_TOKEN, accessToken)
+                                    //putExtra(NaviActivity.EXTRA_USER, user)
+                                    startActivity(this)
+                                    finish()
+                                }
+                            }
+                        } else {
+                            Log.e("로그인", "Response body is null")
+                        }
                     } else {
                         // 로그인 실패
                         Log.e("로그인", "실패: ${response.code()}")
@@ -89,15 +116,22 @@ class MainActivity : AppCompatActivity() { //LoginActivity
             })
         }
     }
-//    private fun navigateToNaviActivity(token: String) {
-//        Intent(this, NaviActivity::class.java).apply {
-//            putExtra("Token", token)
-//            startActivity(this)
-//            finish() // Optional: Finish the current activity if you don't want to come back to it
-//        }
-//    }
 
     private fun showToast(message: String) {
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+    }
+
+    //로그인 정보 저장
+    private fun isUserLoggedIn(): Boolean {
+        val sharedPreferences: SharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val jwtToken: String? = sharedPreferences.getString("accessToken", "")
+        return !jwtToken.isNullOrBlank()
+    }
+
+    private fun saveToken(token: String?) {
+        if (!token.isNullOrBlank()) {
+            val sharedPreferences: SharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
+            sharedPreferences.edit().putString("accessToken", token).apply()
+        }
     }
 }
