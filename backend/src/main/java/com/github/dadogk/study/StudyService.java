@@ -156,4 +156,23 @@ public class StudyService {
 
         return records;
     }
+
+    /**
+     * 유저의 특정 월의 기록을 조회한다.
+     *
+     * @param findUser 검색할 유저
+     * @param dto 검색할 월
+     * @return List<StudyRecord>
+     */
+    public List<StudyRecord> getUserRecodes(User findUser, GetUserRecodesRequest dto) {
+        LocalDate startDate = LocalDate.of(dto.getYear(), dto.getMonth(), 1);
+        LocalDate endDate = DateTimeUtil.getLastDayOfMonth(dto.getYear(), dto.getMonth());
+
+        LocalDateTime startDateTime = startDate.atStartOfDay();
+        LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
+
+        List<StudyRecord> records = studyRecordRepository.findByUserAndStartAtBetween(findUser, startDateTime,
+                endDateTime);
+        return records;
+    }
 }

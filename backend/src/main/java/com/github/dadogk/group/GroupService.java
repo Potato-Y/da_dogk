@@ -1,6 +1,7 @@
 package com.github.dadogk.group;
 
 import com.github.dadogk.enums.State;
+import com.github.dadogk.group.dto.average.GetGroupAverageRequest;
 import com.github.dadogk.group.dto.SignupGroupRequest;
 import com.github.dadogk.group.dto.create.CreateGroupRequest;
 import com.github.dadogk.group.dto.create.GroupResponse;
@@ -17,9 +18,13 @@ import com.github.dadogk.security.exception.PasswordIncorrectException;
 import com.github.dadogk.exceptions.PermissionException;
 import com.github.dadogk.security.util.PasswordUtil;
 import com.github.dadogk.security.util.SecurityUtil;
+import com.github.dadogk.study.StudyService;
+import com.github.dadogk.study.dto.api.recode.GetUserRecodesRequest;
+import com.github.dadogk.study.entity.StudyRecord;
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.exception.DuplicateGroupMemberException;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +36,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Log4j2
 public class GroupService {
+    private final StudyService studyService;
     private final GroupRepository groupRepository;
     private final GroupMemberRepository groupMemberRepository;
     private final GroupUtil groupUtil;
@@ -195,5 +201,37 @@ public class GroupService {
 
         List<GroupMember> groupMembers = groupMemberRepository.findAllByGroup(group.get());
         return groupMembers;
+    }
+
+    /**
+     * 초 단위로 그룹의 평균 시간 구하기
+     *
+     * @param groupId 해당 그룹 id
+     * @param dto     검색 월
+     * @return int 형 평균 공부 시간 (초)
+     */
+    public Long getGroupAverage(Long groupId, GetGroupAverageRequest dto) {
+        User user = securityUtil.getCurrentUser();
+        Optional<Group> group = groupRepository.findById(groupId);
+        if (group.isEmpty()) {
+            log.warn("getGroupAverage: Not found group. userId={}, groupId={}", user.getId(), groupId);
+            throw new NotFoundGroupException("그룹이 없음");
+        }
+
+        long totalStudyTime = 0L;
+        int count = 0;
+
+        List<GroupMember> members = groupMemberRepository.findAllByGroup(group.get());
+        for (GroupMember member : members) { // 그룹원 별로 계산
+            List<StudyRecord> records = studyService
+                    .getUserRecodes(member.getUser(), new GetUserRecodesRequest(dto.getYear(), dto.getMonth()));
+            for (StudyRecord record : records) { // 공부 시간 초 단위로 계산
+                Duration duration = Duration.between(record.getStartAt(), record.getEndAt());
+                totalStudyTime += (int) duration.getSeconds();
+            }
+            count += records.size(); // 기록 수 추가
+        }
+
+        return totalStudyTime / count; // 평균으로 반환
     }
 }
