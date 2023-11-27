@@ -1,6 +1,8 @@
 package com.github.dadogk.group;
 
+import com.github.dadogk.group.dto.average.GetGroupAverageRequest;
 import com.github.dadogk.group.dto.SignupGroupRequest;
+import com.github.dadogk.group.dto.average.GetGroupAverageResponse;
 import com.github.dadogk.group.dto.create.CreateGroupRequest;
 import com.github.dadogk.group.dto.create.GroupResponse;
 import com.github.dadogk.group.entity.Group;
@@ -104,5 +106,15 @@ public class GroupApiController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(userResponses);
+    }
+
+    @GetMapping("/{groupId}/study/average") // 특정 그룹의 평균 공부 측정 시간 (초)
+    public ResponseEntity<GetGroupAverageResponse> getGroupAverage(@PathVariable Long groupId, GetGroupAverageRequest request) {
+        Long result = groupService.getGroupAverage(groupId, request);
+        GetGroupAverageResponse response = new GetGroupAverageResponse(groupId, request.getYear(), request.getMonth(),
+                result);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(response);
     }
 }
