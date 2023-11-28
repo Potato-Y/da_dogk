@@ -1,4 +1,4 @@
-package com.github.da_dogk.activities
+package com.github.da_dogk.activities.login
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -9,15 +9,14 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import com.github.da_dogk.R
+import com.github.da_dogk.server.RetrofitClient
 import com.github.da_dogk.server.interface_folder.ResisterInterface
 import com.github.da_dogk.server.request.RegisterRequest
-import com.github.da_dogk.server.response.LoginResponse
 import com.github.da_dogk.server.response.RegisterResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+
 class ResisterActivity : AppCompatActivity() {
 
     lateinit var email: EditText
@@ -44,14 +43,8 @@ class ResisterActivity : AppCompatActivity() {
             }
         }
 
-
         //레트로핏 설정
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://dadogk.duckdns.org/api/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        val service = retrofit.create(ResisterInterface::class.java)
+        val service = RetrofitClient.createService(ResisterInterface::class.java)
 
         //버튼 클릭시 회원가입
         button.setOnClickListener {

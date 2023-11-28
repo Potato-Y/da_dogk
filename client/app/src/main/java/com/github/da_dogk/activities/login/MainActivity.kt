@@ -1,4 +1,4 @@
-package com.github.da_dogk.activities
+package com.github.da_dogk.activities.login
 
 import android.content.Intent
 import android.content.SharedPreferences
@@ -11,14 +11,13 @@ import android.widget.TextView
 import android.widget.Toast
 import com.github.da_dogk.R
 import com.github.da_dogk.activities.fragment.NaviActivity
+import com.github.da_dogk.server.RetrofitClient
 import com.github.da_dogk.server.interface_folder.LoginInterface
 import com.github.da_dogk.server.request.LoginRequest
 import com.github.da_dogk.server.response.LoginResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() { //LoginActivity
 
@@ -31,7 +30,6 @@ class MainActivity : AppCompatActivity() { //LoginActivity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
 
         email = findViewById(R.id.editTextEmail_Login)
         password = findViewById(R.id.editTextPassword_Login)
@@ -53,7 +51,7 @@ class MainActivity : AppCompatActivity() { //LoginActivity
             }
         }
 
-        // 이미 로그인된 사용자라면 NaviActivity로 이동 ( 굳이 지금 쓸 필요는 없다 )
+        // 이미 로그인된 사용자라면 NaviActivity로 이동 (굳이 지금 쓸 필요는 없다)
 //        if (isUserLoggedIn()) {
 //            Intent(this, NaviActivity::class.java).run {
 //                startActivity(this)
@@ -62,12 +60,7 @@ class MainActivity : AppCompatActivity() { //LoginActivity
 //        }
 
         //레트로핏 설정
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://dadogk.duckdns.org/api/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        val service = retrofit.create(LoginInterface::class.java)
+        val service = RetrofitClient.createService(LoginInterface::class.java)
 
         //버튼 클릭시 로그인
         button.setOnClickListener {
@@ -91,13 +84,14 @@ class MainActivity : AppCompatActivity() { //LoginActivity
                                 Log.d("로그인", "AccessToken: $accessToken")
                                 showToast("로그인 성공")
 
-                                val user = result.user
+//                                val user = result.user
+
                                 // 토큰과 함께 NaviActivity로 이동
                                 Intent(this@MainActivity, NaviActivity::class.java).apply {
                                     putExtra(NaviActivity.EXTRA_ACCESS_TOKEN, accessToken)
-                                    //putExtra(NaviActivity.EXTRA_USER, user)
+//                                    putExtra(NaviActivity.EXTRA_USER, user)
                                     startActivity(this)
-                                    finish()
+                                    finish() //해야하나?
                                 }
                             }
                         } else {

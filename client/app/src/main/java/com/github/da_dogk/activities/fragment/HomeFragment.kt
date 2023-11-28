@@ -53,7 +53,6 @@ class HomeFragment : Fragment() {
         arguments?.let {
 
         }
-
     }
 
     override fun onCreateView(
@@ -89,9 +88,7 @@ class HomeFragment : Fragment() {
             // LayoutInflater를 사용하여 dialog.xml을 inflate
             val inflater = LayoutInflater.from(requireContext())
             val dialogView = inflater.inflate(R.layout.dialog1, null)
-
             editTextInputTitle = dialogView.findViewById(R.id.ET_input_title)
-
 
             // AlertDialog.Builder를 사용하여 다이얼로그 생성
             val builder = AlertDialog.Builder(requireContext())

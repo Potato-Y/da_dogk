@@ -15,10 +15,6 @@ import com.github.da_dogk.activities.fragment.MyProfileFragment
 import com.github.da_dogk.databinding.ActivityNaviBinding
 
 class NaviActivity : AppCompatActivity() {
-    companion object {
-        const val EXTRA_ACCESS_TOKEN = "extra_access_token"
-        //const val EXTRA_USER = "extra_user"
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         var binding = ActivityNaviBinding.inflate(layoutInflater)
@@ -89,5 +85,10 @@ class NaviActivity : AppCompatActivity() {
         }
 
         fragTransaction.commitAllowingStateLoss()
+    }
+
+    companion object {
+        const val EXTRA_ACCESS_TOKEN = "extra_access_token"
+        //const val EXTRA_USER = "extra_user"
     }
 }
