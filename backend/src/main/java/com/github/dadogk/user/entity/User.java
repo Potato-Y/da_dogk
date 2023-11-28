@@ -1,5 +1,7 @@
 package com.github.dadogk.user.entity;
 
+import com.github.dadogk.group.entity.GroupMember;
+import jakarta.persistence.FetchType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -46,6 +48,9 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "hostUser", cascade = CascadeType.ALL)
     private List<Group> groups = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<GroupMember> groupMembers = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<StudySubject> studySubjects = new ArrayList<>();
