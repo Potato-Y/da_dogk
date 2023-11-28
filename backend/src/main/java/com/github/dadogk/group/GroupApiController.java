@@ -1,5 +1,6 @@
 package com.github.dadogk.group;
 
+import com.github.dadogk.group.dto.GroupNameRequest;
 import com.github.dadogk.group.dto.average.GetGroupAverageRequest;
 import com.github.dadogk.group.dto.SignupGroupRequest;
 import com.github.dadogk.group.dto.average.GetGroupAverageResponse;
@@ -26,7 +27,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -70,21 +70,20 @@ public class GroupApiController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<GroupResponse>> getGroupList() {
-        List<Group> inGroups = groupService.getGroupList(); // 들어있는 그룹 목록 요청
+    public ResponseEntity<List<GroupResponse>> getGroupList(GroupNameRequest request) {
+        if (request.getGroupName() == null) {
+            List<Group> inGroups = groupService.getGroupList(); // 들어있는 그룹 목록 요청
 
-        List<GroupResponse> responses = new ArrayList<>(); // 응답할 수 있도록 가공
-        for (Group group : inGroups) {
-            responses.add(groupUtil.convertGroup(group));
+            List<GroupResponse> responses = new ArrayList<>(); // 응답할 수 있도록 가공
+            for (Group group : inGroups) {
+                responses.add(groupUtil.convertGroup(group));
+            }
+
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(responses);
         }
 
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(responses);
-    }
-
-    @GetMapping("/search") // 그룹 이름을 통해 검색
-    public ResponseEntity<List<GroupResponse>> getSearchGroups(@RequestParam String groupName) {
-        List<Group> groups = groupService.getSearchGroups(groupName);
+        List<Group> groups = groupService.getSearchGroups(request.getGroupName());
 
         List<GroupResponse> groupResponses = new ArrayList<>(); // response로 가공
         for (Group group : groups) {
