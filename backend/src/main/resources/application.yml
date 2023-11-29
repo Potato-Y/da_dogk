@@ -1,9 +1,4 @@
 spring:
-  devtools:
-    livereload:
-      enabled: true # 프론트 코드 변경시 자동 적용
-    restart:
-      enabled: true # 코드 변경시 자동 재시작
   jpa:
     # 전송 쿼리 확인
     show-sql: false
@@ -19,6 +14,8 @@ spring:
     console:
       enabled: true
       path: /h2-console
+      settings:
+        web-allow-others: true
 
 jwt:
   issuer: admin@email.com

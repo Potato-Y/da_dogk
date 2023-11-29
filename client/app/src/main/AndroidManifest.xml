@@ -25,7 +25,7 @@
             android:name=".activities.fragment.NaviActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.ResisterActivity"
+            android:name=".activities.login.ResisterActivity"
             android:exported="false" />
         <activity
             android:name=".activities.SplashActivity"
@@ -37,7 +37,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".activities.login.MainActivity"
             android:exported="true" />
     </application>
 

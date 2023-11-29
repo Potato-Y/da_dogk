@@ -3,6 +3,7 @@ package com.github.da_dogk.server.response
 import com.google.gson.annotations.SerializedName
 
 data class MyStudyResponse(
-    @SerializedName("category")
-    val category: String
+    val id: Int,
+    val user: User,
+    val title: String
 )

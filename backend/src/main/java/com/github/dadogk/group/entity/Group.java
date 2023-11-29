@@ -2,6 +2,8 @@ package com.github.dadogk.group.entity;
 
 import com.github.dadogk.enums.State;
 import com.github.dadogk.user.entity.User;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -12,8 +14,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,9 +38,6 @@ public class Group {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false)
     private Long id; // 자동 생성 고유 ID
-
-    @Column(name = "group_uri", nullable = false, unique = true, updatable = false)
-    private String groupUri; // 외부에 사용될 고유 id
 
     @Column(name = "group_name", nullable = false)
     private String groupName; // 그룹 이름
@@ -61,10 +64,12 @@ public class Group {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
+    private List<GroupMember> groupMembers = new ArrayList<>();
+
     @Builder
-    public Group(String groupUri, String groupName, User hostUser, State state, GroupType type, boolean privacyState,
-                 String password) {
-        this.groupUri = groupUri;
+    public Group(String groupName, User hostUser, State state, GroupType type, boolean privacyState,
+            String password) {
         this.groupName = groupName;
         this.hostUser = hostUser;
         this.state = state;
@@ -87,6 +92,12 @@ public class Group {
 
     public Group updatePrivacyState(boolean privacyState) {
         this.privacyState = privacyState;
+
+        return this;
+    }
+
+    public Group updatePassword(String password) {
+        this.password = password;
 
         return this;
     }
