@@ -9,9 +9,3 @@ data class LoginResponse(
     val status: Int,
     val user: User
 )
-
-data class User(
-    val userId: Int,
-    val email: String,
-    val nickname: String
-) : Serializable

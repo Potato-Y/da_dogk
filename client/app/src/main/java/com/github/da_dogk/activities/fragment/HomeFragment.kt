@@ -20,9 +20,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.da_dogk.R
 import com.github.da_dogk.adapter.Data
 import com.github.da_dogk.adapter.MyStudyAdapter
+import com.github.da_dogk.server.interface_folder.GetMyStudyInterface
 import com.github.da_dogk.server.interface_folder.LoginInterface
 import com.github.da_dogk.server.interface_folder.MyStudyInterface
 import com.github.da_dogk.server.request.MyStudyRequest
+import com.github.da_dogk.server.response.GetMyStudyResponse
 import com.github.da_dogk.server.response.MyStudyResponse
 import com.google.android.material.tabs.TabLayout
 import okhttp3.OkHttpClient
@@ -91,12 +93,31 @@ class HomeFragment : Fragment() {
             .build()
 
         val service = retrofit.create(MyStudyInterface::class.java)
+        val serviceGet = retrofit.create(GetMyStudyInterface::class.java)
 
-        // SharedPreferences에서 저장된 카테고리 이름 가져오기
-        val savedCategoryName = sharedPreferences.getString("savedCategoryName", "")
+        serviceGet.getCategories("Bearer $jwtToken").enqueue(object : Callback<List<GetMyStudyResponse>> {
+            override fun onResponse(call: Call<List<GetMyStudyResponse>>, response: Response<List<GetMyStudyResponse>>) {
+                if (response.isSuccessful) {
+                    val categories = response.body()
+                    // categories를 사용하여 원하는 작업을 수행
+                    // 예를 들어, RecyclerView에 데이터를 설정하는 등의 작업을 수행
+                    if (categories != null && categories.isNotEmpty()) {
+                        categoryName.text = categories[0].title
+                    }
 
-        // TextView에 저장된 카테고리 이름 설정
-        categoryName.text = savedCategoryName
+
+                    Log.d("글 불러오기", "성공 : $categories")
+                } else {
+                    Log.e("글 불러오기", "실패: ${response.code()}")
+                    Toast.makeText(requireContext(), "글 불러오기 실패", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<GetMyStudyResponse>>, t: Throwable) {
+                Log.e("글 불러오기", "${t.localizedMessage}")
+                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
+            }
+        })
 
         buttonAddCategory.setOnClickListener {
             // LayoutInflater를 사용하여 dialog.xml을 inflate
