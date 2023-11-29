@@ -129,7 +129,7 @@ public class GroupService {
 
     /**
      * 그룹을 삭제한다.
-     * 
+     *
      * @param groupId 삭제할 그룹 id
      */
     public void deleteGroup(Long groupId) {
@@ -232,6 +232,9 @@ public class GroupService {
             count += records.size(); // 기록 수 추가
         }
 
+        if (count == 0) { // 0인 경우 나눌 수 없다. 그대로 리턴한다.
+            return totalStudyTime;
+        }
         return totalStudyTime / count; // 평균으로 반환
     }
 }
