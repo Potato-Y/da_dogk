@@ -6,15 +6,19 @@ import com.github.dadogk.config.jwt.TokenProvider;
 import com.github.dadogk.error.exception.NotFoundException;
 import com.github.dadogk.group.entity.GroupMember;
 import com.github.dadogk.study.dto.StudyStartRequest;
+import com.github.dadogk.study.dto.socket.ConnectingGroupMembersResponse;
+import com.github.dadogk.study.dto.socket.GroupMembersResponse;
 import com.github.dadogk.study.dto.socket.SimpleResponse;
 import com.github.dadogk.study.entity.StudyRecord;
 import com.github.dadogk.study.entity.StudySubject;
 import com.github.dadogk.study.model.ClientInfo;
 import com.github.dadogk.study.model.RequestType;
+import com.github.dadogk.user.dto.UserResponse;
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.util.UserUtil;
 
 import static com.github.dadogk.study.model.ResponseMessage.ALREADY_PROCESSED;
+import static com.github.dadogk.study.model.ResponseMessage.NOT_FOUND_SESSION;
 import static com.github.dadogk.study.model.ResponseMessage.SUBJECT_ID_ERROR;
 import static com.github.dadogk.study.model.ResponseMessage.SUCCESS_PROCESSED;
 import static com.github.dadogk.study.model.ResponseMessage.TOKEN_ERROR;
@@ -58,6 +62,7 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
                 return;
             }
             if (requestType == RequestType.GET_GROUP_INFO) {
+                getConnectingGroupMember(session);
             }
         } catch (IllegalArgumentException e) {
             log.warn("handleTextMessage. NotFound MessageType session={}, message={}", session, message.getPayload());
@@ -106,6 +111,33 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
             sendSimpleMessage(session, new SimpleResponse(NOT_FOUND, SUBJECT_ID_ERROR));
             session.close();
         }
+    }
+
+    private void getConnectingGroupMember(WebSocketSession session) throws IOException {
+        ClientInfo clientInfo = CLIENTS.get(session.getId());
+        if (clientInfo == null) { // 클라이언트 정보가 없다면 정상 진입이 아닌 것으로 판단
+            sendSimpleMessage(session, new SimpleResponse(NOT_FOUND, NOT_FOUND_SESSION));
+        }
+
+        ConnectingGroupMembersResponse responseDto = new ConnectingGroupMembersResponse();
+
+        List<Long> groupIds = clientInfo.getGroups(); // 클라이언트 정보에서 가입한 그룹을 가져온다.
+        for (Long groupId : groupIds) {
+            if (!GROUP_MEMBERS.containsKey(groupId)) { // 만약 연결한 그룹원이 아무도 없을 경우 건너뛴다.
+                continue;
+            }
+
+            List<UserResponse> userResponses = new ArrayList<>();
+            List<String> groupMemberSessionIds = GROUP_MEMBERS.get(groupId); // 그룹 id로 그룹원 세션 id를 가져온다.
+            for (String memberSessionId : groupMemberSessionIds) {
+                ClientInfo info = CLIENTS.get(memberSessionId); // 해당 클라이언트의 정보를 가져온다.
+                User user = userUtil.findById(info.getUserId()); // 유저 객체를 가져온다.
+                userResponses.add(userUtil.convertUserResponse(user));
+            }
+            responseDto.addGroupMembers(new GroupMembersResponse(groupId, userResponses));
+        }
+
+        session.sendMessage(new TextMessage(objectMapper.writeValueAsString(responseDto)));
     }
 
     /**
