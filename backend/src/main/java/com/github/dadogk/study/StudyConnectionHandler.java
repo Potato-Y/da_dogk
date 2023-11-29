@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dadogk.config.jwt.TokenProvider;
 import com.github.dadogk.error.exception.NotFoundException;
+import com.github.dadogk.group.entity.GroupMember;
 import com.github.dadogk.study.dto.StudyStartRequest;
 import com.github.dadogk.study.dto.socket.SimpleResponse;
 import com.github.dadogk.study.entity.StudyRecord;
@@ -23,13 +24,14 @@ import static com.github.dadogk.study.model.ResponseType.NOT_FOUND;
 import static com.github.dadogk.study.model.ResponseType.OK;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
+import org.springframework.util.ConcurrentReferenceHashMap;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -39,7 +41,7 @@ import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 @Log4j2
 public class StudyConnectionHandler extends AbstractWebSocketHandler {
     private static final Map<String, ClientInfo> CLIENTS = Collections.synchronizedMap(new HashMap<>());
-    private static final MultiValueMap<Long, String> GROUP_MEMBERS = new LinkedMultiValueMap<>();
+    private static final Map<Long, List<String>> GROUP_MEMBERS = new ConcurrentReferenceHashMap<>();
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final StudyService studyService;
     private final TokenProvider tokenProvider;
@@ -88,15 +90,19 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
             StudySubject subject = studyService.getSubject(dto.getSubjectId(), userId);
             StudyRecord studyRecord = studyService.startStudy(user, subject);
 
-            CLIENTS.put(session.getId(), new ClientInfo(session, userId, studyRecord));
+            CLIENTS.put(session.getId(), new ClientInfo(session, userId, studyRecord, user.getGroupMembers()));
+            List<GroupMember> groupMembers = user.getGroupMembers();
+            for (GroupMember groupMember : groupMembers) {
+                GROUP_MEMBERS.computeIfAbsent(groupMember.getGroup().getId(),
+                        k -> Collections.synchronizedList(new ArrayList<>())).add(session.getId());
+            }
+
             sendSimpleMessage(session, new SimpleResponse(OK, SUCCESS_PROCESSED));
             log.info("studyStart. Start Study. sessionId={}", session.getId());
         } catch (NotFoundException e) {
             sendSimpleMessage(session, new SimpleResponse(NOT_FOUND, e.getMessage()));
             session.close();
-        }
-
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             sendSimpleMessage(session, new SimpleResponse(NOT_FOUND, SUBJECT_ID_ERROR));
             session.close();
         }
@@ -119,6 +125,12 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
         studyService.endStudy(clientInfo.getStudyRecord());
 
         CLIENTS.remove(session.getId());
+        // 세션 ID로 찾아서 모든 리스트에서 삭제
+        for (Map.Entry<Long, List<String>> entry : GROUP_MEMBERS.entrySet()) {
+            List<String> sessionsList = entry.getValue();
+            sessionsList.removeIf(valueSession -> valueSession.equals(session.getId()));
+        }
+
         log.info("afterConnectionClosed. Close session. sessionId={}", session.getId());
     }
 
