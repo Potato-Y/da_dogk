@@ -93,19 +93,19 @@ class MainActivity : AppCompatActivity() { //LoginActivity
                                 Intent(this@MainActivity, NaviActivity::class.java).apply {
                                     putExtra(NaviActivity.EXTRA_ACCESS_TOKEN, accessToken)
 //                                    putExtra(NaviActivity.EXTRA_USER, user)
-                                    startActivity(this)
-                                    finish() //해야하나?
-                                }
-                            }
-                        } else {
-                            Log.e("로그인", "Response body is null")
-                        }
-                    } else {
+startActivity(this)
+finish() //해야하나?
+}
+}
+} else {
+Log.e("로그인", "Response body is null")
+}
+} else {
 // 로그인 실패
-                        Log.e("로그인", "실패: ${response.code()}")
-                        showToast("로그인 실패")
-                    }
-                }
+Log.e("로그인", "실패: ${response.code()}")
+showToast("로그인 실패")
+}
+}
 
                 override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                     Log.e("로그인", "${t.localizedMessage}")

@@ -74,7 +74,7 @@ class HomeFragment : Fragment() {
 
 
         val sharedPreferences = requireActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-        val jwtToken = sharedPreferences.getString("accessToken", "")
+val jwtToken = sharedPreferences.getString("accessToken", "")
 
         val retrofit = Retrofit.Builder()
             .baseUrl("https://dadogk.duckdns.org/api/")
