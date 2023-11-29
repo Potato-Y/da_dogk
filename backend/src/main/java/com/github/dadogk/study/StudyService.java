@@ -15,6 +15,7 @@ import com.github.dadogk.utils.DateTimeUtil;
 import com.github.dadogk.user.dto.UserResponse;
 import com.github.dadogk.user.entity.User;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -103,7 +104,7 @@ public class StudyService {
             return subjectTitleResponses;
         }
 
-        UserResponse userResponse = new UserResponse(findUser.getId(), findUser.getEmail(), findUser.getNickname());
+        UserResponse userResponse = userUtil.convertUserResponse(findUser);
         for (StudySubject subject : studySubjects) { // 유저의 과목 목록을 dto 리스트에 담는다.
             subjectTitleResponses.add(new SubjectTitleResponse(subject.getId(), userResponse, subject.getTitle()));
         }
@@ -141,7 +142,7 @@ public class StudyService {
 
     /**
      * 특정 달의 기록 가져오기
-     * 
+     *
      * @param dto
      * @return List<StudyRecord>
      */
@@ -174,5 +175,26 @@ public class StudyService {
         List<StudyRecord> records = studyRecordRepository.findByUserAndStartAtBetween(findUser, startDateTime,
                 endDateTime);
         return records;
+    }
+
+
+    public Long getUserTodayStudyRecoders(User findUser) {
+        LocalDate nowDate = LocalDate.now();
+        LocalDateTime startTime = nowDate.atStartOfDay();
+        LocalDateTime endTime = nowDate.atTime(23, 59, 59);
+
+        List<StudyRecord> records = studyRecordRepository.findByUserAndStartAtBetween(findUser, startTime, endTime);
+        Long todayStudyTime = 0L;
+        for (StudyRecord record : records) {
+            LocalDateTime startAt = record.getStartAt();
+            LocalDateTime endAt = record.getEndAt();
+            if (endAt == null) { // 만약 아직 공부가 끝나지 않았다면 현재 시간으로
+                endAt = LocalDateTime.now();
+            }
+
+            todayStudyTime += Duration.between(startAt, endAt).getSeconds();
+        }
+
+        return todayStudyTime;
     }
 }

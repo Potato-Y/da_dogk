@@ -5,6 +5,7 @@ import com.github.dadogk.user.dto.AddUserRequest;
 import com.github.dadogk.user.dto.AddUserResponse;
 import com.github.dadogk.user.dto.UserResponse;
 import com.github.dadogk.user.entity.User;
+import com.github.dadogk.user.util.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,7 @@ public class UserApiController {
     private static final Logger logger = LoggerFactory.getLogger(UserApiController.class);
     private final UserService userService;
     private final SecurityUtil securityUtil;
+    private final UserUtil userUtil;
 
     @PostMapping("/signup")
     public ResponseEntity<AddUserResponse> signup(@Validated @RequestBody AddUserRequest request) {
@@ -42,7 +44,7 @@ public class UserApiController {
         logger.info("user. userId={}", user.getId());
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new UserResponse(user.getId(), user.getEmail(), user.getNickname()));
+                .body(userUtil.convertUserResponse(user));
     }
 
     @DeleteMapping("/user")
