@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 //import com.github.da_dogk.ARG_PARAM1
 //import com.github.da_dogk.ARG_PARAM2
@@ -22,6 +23,7 @@ class MyProfileFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     lateinit var buttonEdit : Button
+    lateinit var profileName : TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +41,9 @@ class MyProfileFragment : Fragment() {
         var view = inflater.inflate(R.layout.fragment_my_profile, container, false)
 
         buttonEdit = view.findViewById(R.id.B_profile_edit)
+        profileName = view.findViewById(R.id.T_profile_name)
+
+
         buttonEdit.setOnClickListener {
             activity?.let{
                 val intent = Intent(context, ProfileEditActivity::class.java)

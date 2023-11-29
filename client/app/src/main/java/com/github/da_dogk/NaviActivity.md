@@ -15,10 +15,10 @@ import com.github.da_dogk.activities.fragment.MyProfileFragment
 import com.github.da_dogk.databinding.ActivityNaviBinding
 
 class NaviActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        var binding = ActivityNaviBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+override fun onCreate(savedInstanceState: Bundle?) {
+super.onCreate(savedInstanceState)
+var binding = ActivityNaviBinding.inflate(layoutInflater)
+setContentView(binding.root)
 
         // MainActivity에서 토큰이 전달되었는지 확인
         if (intent.hasExtra(EXTRA_ACCESS_TOKEN)) {

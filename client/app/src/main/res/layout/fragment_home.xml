@@ -78,7 +78,7 @@
 
     <!--내 공부 시간 측정 -->
     <FrameLayout
-        android:id="@+id/LL_myStudy"
+        android:id="@+id/FL_myStudy"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="8">
@@ -87,12 +87,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
-        <ImageButton
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/B_add_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/sharp_add_24"
-            android:layout_gravity="bottom|end"/>
+
+            android:layout_margin="20dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/sharp_add_24" />
 
     </FrameLayout>
 
