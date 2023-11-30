@@ -41,7 +41,7 @@ class HomeFragment : Fragment() {
     lateinit var layoutGroupStudy: LinearLayout
     lateinit var buttonAddCategory: ImageButton
     lateinit var editTextInputTitle: EditText
-    lateinit var recycleMyStudy: RecyclerView
+//    lateinit var recycleMyStudy: RecyclerView
 
     lateinit var studyTime: TextView
     lateinit var categoryName: TextView
@@ -73,11 +73,13 @@ class HomeFragment : Fragment() {
         buttonAddCategory = view.findViewById(R.id.B_add_category)
         studyTime = view.findViewById(R.id.tv_study_time)
         categoryName = view.findViewById(R.id.tv_category_name)
-        //recycleMyStudy = view.findViewById(R.id.RV_myStudy)
+//        recycleMyStudy = view.findViewById(R.id.RV_myStudy)
 
         //내공부 리사이클러뷰 설정
 //        recycleMyStudy.layoutManager = LinearLayoutManager(requireContext())
-//        recycleMyStudy.adapter = MyStudyAdapter(DataList)
+//        myStudyAdapter = MyStudyAdapter(ArrayList()) // 빈 데이터로 초기화
+//        recycleMyStudy.adapter = myStudyAdapter
+
 
 
 
@@ -100,9 +102,16 @@ class HomeFragment : Fragment() {
                 if (response.isSuccessful) {
                     val categories = response.body()
                     // categories를 사용하여 원하는 작업을 수행
-                    // 예를 들어, RecyclerView에 데이터를 설정하는 등의 작업을 수행
                     if (categories != null && categories.isNotEmpty()) {
                         categoryName.text = categories[0].title
+
+                        // 예를 들어, RecyclerView에 데이터를 설정하는 등의 작업을 수행
+//                        categoryName.text = categories[0].title
+//
+//                        // RecyclerView에 데이터 설정
+//                        myStudyAdapter.setData(categories)
+//                        myStudyAdapter.notifyDataSetChanged()
+
                     }
 
 
