@@ -6,6 +6,7 @@ import com.github.dadogk.config.jwt.TokenProvider;
 import com.github.dadogk.error.exception.NotFoundException;
 import com.github.dadogk.group.entity.GroupMember;
 import com.github.dadogk.study.dto.StudyStartRequest;
+import com.github.dadogk.study.dto.socket.CloseGroupMemberResponse;
 import com.github.dadogk.study.dto.socket.ConnectingGroupMembersResponse;
 import com.github.dadogk.study.dto.socket.GroupMembersResponse;
 import com.github.dadogk.study.dto.socket.SimpleResponse;
@@ -156,6 +157,8 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
         ClientInfo clientInfo = CLIENTS.get(session.getId());
         studyService.endStudy(clientInfo.getStudyRecord());
 
+        broadcastClosedUserForGroup(session);
+
         CLIENTS.remove(session.getId());
         // 세션 ID로 찾아서 모든 리스트에서 삭제
         for (Map.Entry<Long, List<String>> entry : GROUP_MEMBERS.entrySet()) {
@@ -164,6 +167,25 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
         }
 
         log.info("afterConnectionClosed. Close session. sessionId={}", session.getId());
+    }
+
+    private void broadcastClosedUserForGroup(WebSocketSession session) throws IOException {
+        ClientInfo clientInfo = CLIENTS.get(session.getId());
+        User closeUser = userUtil.findById(clientInfo.getUserId());
+        List<Long> groupIds = clientInfo.getGroups();
+        for (Long groupId : groupIds) {
+            List<String> groupMemberSessionIds = GROUP_MEMBERS.get(groupId);
+            for (String sessionId : groupMemberSessionIds) {
+                if (session.getId() == sessionId) { // 본인은 건너뛴다.
+                    continue;
+                }
+
+                WebSocketSession memberSession = CLIENTS.get(sessionId).getSession();
+                CloseGroupMemberResponse dto = new CloseGroupMemberResponse(groupId,
+                        userUtil.convertUserResponse(closeUser));
+                memberSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(dto)));
+            }
+        }
     }
 
     private void sendSimpleMessage(WebSocketSession session, SimpleResponse dto) throws IOException {
