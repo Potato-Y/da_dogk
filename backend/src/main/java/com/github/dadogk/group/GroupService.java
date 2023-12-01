@@ -256,10 +256,10 @@ public class GroupService {
 
         Group updateGroup = group.get();
 
-        if (!dto.getGroupName().isEmpty()) { // 그룹 이름 업데이트
+        if (dto.getGroupName() != null) { // 그룹 이름 업데이트
             updateGroup.updateGroupName(dto.getGroupName());
         }
-        if (!dto.getGroupIntro().isEmpty()) { // 그룹 설명 업데이트
+        if (dto.getGroupIntro() != null) { // 그룹 설명 업데이트
             updateGroup.updateIntro(dto.getGroupIntro());
         }
         if (dto.getPassword() != null) { // 그룹 암호 업데이트
