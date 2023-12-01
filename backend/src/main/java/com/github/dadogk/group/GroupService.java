@@ -1,6 +1,8 @@
 package com.github.dadogk.group;
 
 import com.github.dadogk.enums.State;
+import com.github.dadogk.group.dto.UpdateGroupRequest;
+import com.github.dadogk.group.dto.UpdateGroupPasswordRequest;
 import com.github.dadogk.group.dto.average.GetGroupAverageRequest;
 import com.github.dadogk.group.dto.SignupGroupRequest;
 import com.github.dadogk.group.dto.create.CreateGroupRequest;
@@ -102,7 +104,7 @@ public class GroupService {
 
     /**
      * 그룹을 탈퇴한다.
-     * 
+     *
      * @param groupId 탈퇴할 그룹 id
      * @param user    탈퇴할 유저
      */
@@ -151,7 +153,7 @@ public class GroupService {
 
     /**
      * 사용자가 가입한 그룹의 목록을 가져온다.
-     * 
+     *
      * @return List<Group> 접속한 그룹 리스트
      */
     public List<Group> getGroupList() {
@@ -170,7 +172,7 @@ public class GroupService {
 
     /**
      * 그룹 이름을 통해 검색
-     * 
+     *
      * @param groupName 검색할 그룹 이름
      * @return List<Group> 검색된 그룹
      */
@@ -237,5 +239,40 @@ public class GroupService {
             return totalStudyTime;
         }
         return totalStudyTime / count; // 평균으로 반환
+    }
+
+    public Group updateGroup(Long groupId, UpdateGroupRequest dto) {
+        User user = securityUtil.getCurrentUser();
+        Optional<Group> group = groupRepository.findById(groupId);
+
+        if (group.isEmpty()) {
+            log.warn("updateGroupIntro: Not found group. userId={}, groupId={}", user.getId(), groupId);
+            throw new NotFoundGroupException("그룹이 없음");
+        }
+        if (!group.get().getHostUser().equals(user)) { // host가 아니면 예외를 일으킨다.
+            log.warn("deleteGroup: Not host user. userId={}, groupId={}", user.getId(), groupId);
+            throw new PermissionException("호스트 유저가 아님");
+        }
+
+        Group updateGroup = group.get();
+
+        if (!dto.getGroupName().isEmpty()) { // 그룹 이름 업데이트
+            updateGroup.updateGroupName(dto.getGroupName());
+        }
+        if (!dto.getGroupIntro().isEmpty()) { // 그룹 설명 업데이트
+            updateGroup.updateIntro(dto.getGroupIntro());
+        }
+        if (dto.getPassword() != null) { // 그룹 암호 업데이트
+            if (dto.getPassword().isEmpty()) { // 비밀번호 삭제 후 공개
+                updateGroup.updatePrivacyState(false);
+                updateGroup.updatePassword(null);
+            }
+            if (!dto.getPassword().isBlank()) {
+                updateGroup.updatePrivacyState(true);
+                updateGroup.updatePassword(passwordUtil.convertPassword(dto.getPassword()));
+            }
+        }
+
+        return groupRepository.save(updateGroup);
     }
 }

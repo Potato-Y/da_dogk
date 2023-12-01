@@ -39,10 +39,10 @@ public class Group {
     @Column(name = "id", updatable = false)
     private Long id; // 자동 생성 고유 ID
 
-    @Column(name = "group_name", nullable = false)
+    @Column(name = "group_name")
     private String groupName; // 그룹 이름
 
-    @Column(name="group_intro")
+    @Column(name = "group_intro")
     private String groupIntro;
 
     @ManyToOne
@@ -82,6 +82,12 @@ public class Group {
         this.password = password;
     }
 
+    public Group updateGroupName(String groupName) {
+        this.groupName = groupName;
+
+        return this;
+    }
+
     /**
      * group state 변경
      *
@@ -100,8 +106,8 @@ public class Group {
         return this;
     }
 
-    public Group updateIntro(String groupIntro){
-        this.groupIntro=groupIntro;
+    public Group updateIntro(String groupIntro) {
+        this.groupIntro = groupIntro;
 
         return this;
     }
