@@ -72,9 +72,9 @@ public class Group {
 
     @Builder
     public Group(String groupName, String groupIntro, User hostUser, State state, GroupType type, boolean privacyState,
-            String password) {
+                 String password) {
         this.groupName = groupName;
-        this.groupIntro=groupIntro;
+        this.groupIntro = groupIntro;
         this.hostUser = hostUser;
         this.state = state;
         this.type = type;
