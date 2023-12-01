@@ -11,6 +11,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <TextView
+            android:id="@+id/tv_timer_in_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20sp"
+            android:text="00:00:00"
+            android:textColor="#fff"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout_group"
             android:layout_width="match_parent"
@@ -30,15 +49,16 @@
                 android:text="대학교" />
 
         </com.google.android.material.tabs.TabLayout>
-
+dp
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <LinearLayout
-        android:id="@+id/LL_group"
+    <FrameLayout
+        android:id="@+id/FL_group"
         android:layout_width="match_parent"
         android:layout_height="579dp"
         android:layout_weight="20"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -51,8 +71,9 @@
             android:id="@+id/B_write_post1"
             android:layout_width="66dp"
             android:layout_height="66dp"
-            android:background="@drawable/btn_writing" />
-    </LinearLayout>
+            android:background="@drawable/btn_writing"
+            android:layout_gravity="end"/>
+    </FrameLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/CL_school"

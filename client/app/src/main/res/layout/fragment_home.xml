@@ -108,8 +108,8 @@
             android:id="@+id/B_add_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_margin="20dp"
+            android:layout_gravity="right|bottom"
+            android:layout_marginBottom="40dp"
             android:clickable="true"
             android:focusable="true"
             android:src="@drawable/sharp_add_24" />

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -26,7 +27,7 @@ class GroupFragment : Fragment() {
     private var param2: String? = null
 
     lateinit var tabLayout: TabLayout
-    lateinit var layoutGroup: LinearLayout
+    lateinit var layoutGroup: FrameLayout
     lateinit var layoutSchool: ConstraintLayout
     lateinit var buttonWritePost : ImageButton
 
@@ -45,7 +46,7 @@ class GroupFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_group, container, false)
 
         tabLayout = view.findViewById(R.id.tab_layout_group)
-        layoutGroup = view.findViewById(R.id.LL_group)
+        layoutGroup = view.findViewById(R.id.FL_group)
         layoutSchool = view.findViewById(R.id.CL_school)
 
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
