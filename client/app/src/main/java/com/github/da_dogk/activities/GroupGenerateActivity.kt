@@ -33,6 +33,7 @@ class GroupGenerateActivity : AppCompatActivity() {
         groupName = findViewById(R.id.ET_group_name)
         groupIntro = findViewById(R.id.ET_group_intro)
         groupPassword = findViewById(R.id.ET_group_password)
+
         groupGenerateButton = findViewById(R.id.B_group_generate)
 
         //activity에서는 requireActivity()호출 할 필요 없음

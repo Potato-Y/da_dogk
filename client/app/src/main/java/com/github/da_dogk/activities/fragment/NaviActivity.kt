@@ -6,9 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.github.da_dogk.R
-import com.github.da_dogk.TAG_GROUP
-import com.github.da_dogk.TAG_HOME
-import com.github.da_dogk.TAG_MY_PROFILE
 import com.github.da_dogk.activities.fragment.GroupFragment
 import com.github.da_dogk.activities.fragment.HomeFragment
 import com.github.da_dogk.activities.fragment.MyProfileFragment
@@ -89,6 +86,9 @@ class NaviActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_ACCESS_TOKEN = "extra_access_token"
+        const val TAG_HOME = "home_fragment"
+        const val TAG_GROUP = "group_fragment"
+        const val TAG_MY_PROFILE = "my_profile_fragment"
         //const val EXTRA_USER = "extra_user"
     }
 }
