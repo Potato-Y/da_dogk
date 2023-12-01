@@ -9,10 +9,8 @@ import android.widget.EditText
 import android.widget.Toast
 import com.github.da_dogk.R
 import com.github.da_dogk.server.interface_folder.GroupGenerateInterface
-import com.github.da_dogk.server.interface_folder.MyStudyInterface
 import com.github.da_dogk.server.request.GroupGenerateRequest
 import com.github.da_dogk.server.response.GroupGenerateResponse
-import com.github.da_dogk.server.response.MyStudyResponse
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -52,7 +50,11 @@ class GroupGenerateActivity : AppCompatActivity() {
             val name = groupName.text.toString()
             val intro = groupIntro.text.toString()
             val password = groupPassword.text.toString()
-            val request = GroupGenerateRequest(name,password)
+            val request = if (password.isBlank()) {
+                GroupGenerateRequest(name,intro,null)
+            } else {
+                GroupGenerateRequest(name,intro,password)
+            }
 
             service.addGroup("Bearer $jwtToken",request).enqueue(object : Callback<GroupGenerateResponse> {
                 override fun onResponse(call: Call<GroupGenerateResponse>, response: Response<GroupGenerateResponse>) {

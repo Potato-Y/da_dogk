@@ -6,9 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.github.da_dogk.R
-import com.github.da_dogk.activities.fragment.GroupFragment
-import com.github.da_dogk.activities.fragment.HomeFragment
-import com.github.da_dogk.activities.fragment.MyProfileFragment
 import com.github.da_dogk.databinding.ActivityNaviBinding
 
 class NaviActivity : AppCompatActivity() {

@@ -3,6 +3,7 @@ package com.github.da_dogk.server.response
 data class GroupGenerateResponse(
     val id: Int,
     val groupName: String,
+    val groupIntro: String,
     val hostUser: User,
     val state: String,
     val groupType: String,
