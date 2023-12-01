@@ -49,6 +49,7 @@ public class GroupService {
         // 그룹을 생성한다.
         Group group = Group.builder()
                 .groupName(dto.getGroupName())
+                .groupIntro(dto.getGroupIntro())
                 .hostUser(hostUser)
                 .state(State.ACTIVE)
                 .type(GroupType.COMMON)

@@ -15,6 +15,7 @@ public class GroupUtil {
         return new GroupResponse(
                 group.getId(),
                 group.getGroupName(),
+                group.getGroupIntro(),
                 userUtil.convertUserResponse(group.getHostUser()),
                 group.getState(),
                 group.getType(),

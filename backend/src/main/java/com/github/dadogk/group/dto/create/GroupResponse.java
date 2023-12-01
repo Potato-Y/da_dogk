@@ -12,6 +12,7 @@ import lombok.Getter;
 public class GroupResponse {
     private Long id;
     private String groupName;
+    private String groupIntro;
     private UserResponse hostUser;
     private State state;
     private GroupType groupType;
