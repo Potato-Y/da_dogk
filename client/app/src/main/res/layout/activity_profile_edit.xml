@@ -5,10 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
-    tools:context=".activities.ProfileEditActivity">
+    tools:context=".activities.profile.ProfileEditActivity">
 
     <ImageButton
-        android:id="@+id/btn_GoBackProfile_fromProfileEdit"
+        android:id="@+id/b_go_back"
         android:layout_width="28dp"
         android:layout_height="24dp"
         android:layout_marginStart="43dp"

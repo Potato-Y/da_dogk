@@ -1,8 +1,7 @@
-package com.github.da_dogk.activities.fragment
+package com.github.da_dogk.activities.home
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -15,13 +14,8 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.github.da_dogk.R
-import com.github.da_dogk.adapter.Data
-import com.github.da_dogk.adapter.MyStudyAdapter
 import com.github.da_dogk.server.interface_folder.GetMyStudyInterface
-import com.github.da_dogk.server.interface_folder.LoginInterface
 import com.github.da_dogk.server.interface_folder.MyStudyInterface
 import com.github.da_dogk.server.request.MyStudyRequest
 import com.github.da_dogk.server.response.GetMyStudyResponse

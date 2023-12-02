@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/black"
     android:orientation="vertical"
-    tools:context=".activities.fragment.GroupFragment">
+    tools:context=".activities.group.GroupFragment">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -49,10 +49,10 @@
                 android:text="대학교" />
 
         </com.google.android.material.tabs.TabLayout>
-dp
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/FL_group"
         android:layout_width="match_parent"
         android:layout_height="579dp"
@@ -61,11 +61,26 @@ dp
         android:layout_marginTop="20dp">
 
         <TextView
+            android:id="@+id/tv_group_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="그룹소개 리사이클러뷰"
+            android:text="그룹 이름"
             android:textColor="#ffffff"
             android:textSize="30dp" />
+
+        <TextView
+            android:id="@+id/tv_group_intro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="그룹 소개"
+            android:textColor="#fff" />
+        <ImageView
+            android:id="@+id/ib_lock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_lock_24"/>
+
+
 
         <ImageButton
             android:id="@+id/B_write_post1"
@@ -73,7 +88,7 @@ dp
             android:layout_height="66dp"
             android:background="@drawable/btn_writing"
             android:layout_gravity="end"/>
-    </FrameLayout>
+    </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/CL_school"
