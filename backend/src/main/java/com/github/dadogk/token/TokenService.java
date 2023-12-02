@@ -74,7 +74,7 @@ public class TokenService {
         // access token 생성
         String accessToken = tokenProvider.generateToken(user, ACCESS_TOKEN_DURATION);
 
-        UserResponse userResponse = new UserResponse(user.getId(), user.getEmail(), user.getNickname());
+        UserResponse userResponse = userUtil.convertUserResponse(user);
 
         logger.info("createNewTokenSet. 새로운 token set이 생성됨. userId={}", user.getId());
 

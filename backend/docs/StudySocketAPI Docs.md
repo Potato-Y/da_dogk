@@ -57,6 +57,54 @@ server 연결 시 url: `wss://domain/study/connect`
 }
 ```
 
+### 접속 중인 그룹원 목록 요청
+
+- **요청**
+
+```json
+{
+  "type": "GET_GROUP_INFO"
+}
+```
+
+- **정상 응답**
+
+```json
+{
+  "result": "CONNECTING_GROUP_MEMBER",
+  "groupMemberResponses": [
+    {
+      "groupId": 1,
+      "user": [
+        {
+          "userId": 1,
+          "email": "test@mail.com",
+          "nickname": "test user",
+          "todayStudyTime": 32
+        },
+        {
+          "userId": 2,
+          "email": "test2@mail.com",
+          "nickname": "test user",
+          "todayStudyTime": 6
+        }
+      ]
+    },
+    {
+      "groupId": 2,
+      "user": [
+        {
+          "userId": 1,
+          "email": "test@mail.com",
+          "nickname": "test user",
+          "todayStudyTime": 32
+        }
+      ]
+    }
+  ]
+}
+```
+
 ### 공부 종료
 
 - 공부 시간 측정을 종료하려는 경우 Socket 연결을 끊는다.

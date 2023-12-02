@@ -39,8 +39,11 @@ public class Group {
     @Column(name = "id", updatable = false)
     private Long id; // 자동 생성 고유 ID
 
-    @Column(name = "group_name", nullable = false)
+    @Column(name = "group_name")
     private String groupName; // 그룹 이름
+
+    @Column(name = "group_intro")
+    private String groupIntro;
 
     @ManyToOne
     @JoinColumn(name = "host_id", nullable = false)
@@ -68,14 +71,21 @@ public class Group {
     private List<GroupMember> groupMembers = new ArrayList<>();
 
     @Builder
-    public Group(String groupName, User hostUser, State state, GroupType type, boolean privacyState,
-            String password) {
+    public Group(String groupName, String groupIntro, User hostUser, State state, GroupType type, boolean privacyState,
+                 String password) {
         this.groupName = groupName;
+        this.groupIntro = groupIntro;
         this.hostUser = hostUser;
         this.state = state;
         this.type = type;
         this.privacyState = privacyState;
         this.password = password;
+    }
+
+    public Group updateGroupName(String groupName) {
+        this.groupName = groupName;
+
+        return this;
     }
 
     /**
@@ -92,6 +102,12 @@ public class Group {
 
     public Group updatePrivacyState(boolean privacyState) {
         this.privacyState = privacyState;
+
+        return this;
+    }
+
+    public Group updateIntro(String groupIntro) {
+        this.groupIntro = groupIntro;
 
         return this;
     }

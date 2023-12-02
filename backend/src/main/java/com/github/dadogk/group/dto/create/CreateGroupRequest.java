@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 public class CreateGroupRequest {
     @NotBlank
     private String groupName;
+    private String groupIntro;
     private String password;
 }
