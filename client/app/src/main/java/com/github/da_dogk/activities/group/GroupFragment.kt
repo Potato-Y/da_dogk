@@ -9,18 +9,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 //import com.github.da_dogk.ARG_PARAM1
 //import com.github.da_dogk.ARG_PARAM2
 import com.github.da_dogk.R
+import com.github.da_dogk.adapter.GroupAdapter
 import com.github.da_dogk.server.interface_folder.GetGroupGenerateInterface
-import com.github.da_dogk.server.interface_folder.MyStudyInterface
-import com.github.da_dogk.server.response.GetMyStudyResponse
 import com.github.da_dogk.server.response.GroupGenerateResponse
 import com.google.android.material.tabs.TabLayout
 import okhttp3.OkHttpClient
@@ -41,13 +39,12 @@ class GroupFragment : Fragment() {
     private var param2: String? = null
 
     lateinit var tabLayout: TabLayout
-    lateinit var layoutGroup: LinearLayout
+    lateinit var layoutGroup: FrameLayout
     lateinit var layoutSchool: ConstraintLayout
     lateinit var buttonWritePost : ImageButton
 
-    lateinit var groupName: TextView
-    lateinit var groupIntro: TextView
-    lateinit var lockImage: ImageView
+    lateinit var recyclerView : RecyclerView
+    lateinit var groupAdapter: GroupAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,10 +64,13 @@ class GroupFragment : Fragment() {
         layoutGroup = view.findViewById(R.id.FL_group)
         layoutSchool = view.findViewById(R.id.CL_school)
 
+        recyclerView = view.findViewById(R.id.rv_group)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        groupAdapter = GroupAdapter() // Create this adapter class
+        recyclerView.adapter = groupAdapter
 
-        groupName = view.findViewById(R.id.tv_group_name)
-        groupIntro = view.findViewById(R.id.tv_group_intro)
-        lockImage = view.findViewById(R.id.ib_lock)
+
+
 
         val sharedPreferences = requireActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         val jwtToken = sharedPreferences.getString("accessToken", "")
@@ -83,14 +83,14 @@ class GroupFragment : Fragment() {
 
         val service = retrofit.create(GetGroupGenerateInterface::class.java)
 
+
         service.getGroup("Bearer $jwtToken").enqueue(object : Callback<List<GroupGenerateResponse>> {
             override fun onResponse(call: Call<List<GroupGenerateResponse>>, response: Response<List<GroupGenerateResponse>>) {
                 if (response.isSuccessful) {
                     val group = response.body()
                     // categories를 사용하여 원하는 작업을 수행
                     if (group != null && group.isNotEmpty()) {
-                        groupName.text = group[0].groupName
-                        groupIntro.text = group[0].groupIntro
+                        groupAdapter.setGroups(group)
 
 
                         // 예를 들어, RecyclerView에 데이터를 설정하는 등의 작업을 수행
@@ -115,7 +115,6 @@ class GroupFragment : Fragment() {
                 Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
             }
         })
-
 
 
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
