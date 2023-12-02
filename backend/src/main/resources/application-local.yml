@@ -1,9 +1,0 @@
-server:
-    port: 8081
-
-spring:
-  devtools:
-    livereload:
-      enabled: true # 프론트 코드 변경시 자동 적용
-    restart:
-      enabled: true # 코드 변경시 자동 재시작
