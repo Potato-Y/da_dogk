@@ -28,7 +28,7 @@ public class MailAuthCode {
     private String mail;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", unique = true)
     private User user;
 
     @ManyToOne
@@ -43,9 +43,10 @@ public class MailAuthCode {
         this.school = school;
     }
 
-    public MailAuthCode updateNewAuth(String code, School school) {
+    public MailAuthCode updateNewAuth(String code, School school,String mail) {
         this.code = code;
         this.school = school;
+        this.mail=mail;
 
         return this;
     }
