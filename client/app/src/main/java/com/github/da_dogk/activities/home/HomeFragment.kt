@@ -14,11 +14,13 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.github.da_dogk.R
+import com.github.da_dogk.adapter.StudyAdapter
 import com.github.da_dogk.server.interface_folder.GetMyStudyInterface
 import com.github.da_dogk.server.interface_folder.MyStudyInterface
 import com.github.da_dogk.server.request.MyStudyRequest
-import com.github.da_dogk.server.response.GetMyStudyResponse
 import com.github.da_dogk.server.response.MyStudyResponse
 import com.google.android.material.tabs.TabLayout
 import okhttp3.OkHttpClient
@@ -27,6 +29,9 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class HomeFragment : Fragment() {
 
@@ -35,17 +40,10 @@ class HomeFragment : Fragment() {
     lateinit var layoutGroupStudy: LinearLayout
     lateinit var buttonAddCategory: ImageButton
     lateinit var editTextInputTitle: EditText
-//    lateinit var recycleMyStudy: RecyclerView
+    lateinit var date: TextView
 
-    lateinit var studyTime: TextView
-    lateinit var categoryName: TextView
-
-//    //이걸 MyStudyAdapter에 넣어도 됨
-//    val DataList = arrayListOf(
-//        Data(R.drawable.arrow_left, "0번"),
-//        Data(R.drawable.arrow_left, "1번"),
-//        Data(R.drawable.arrow_left, "2번"),
-//    )
+    lateinit var recyclerView : RecyclerView
+    lateinit var studyAdapter: StudyAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,22 +63,20 @@ class HomeFragment : Fragment() {
         layoutMyStudy = view.findViewById(R.id.FL_myStudy)
         layoutGroupStudy = view.findViewById(R.id.LL_groupStudy)
         buttonAddCategory = view.findViewById(R.id.B_add_category)
-        studyTime = view.findViewById(R.id.tv_study_time)
-        categoryName = view.findViewById(R.id.tv_category_name)
-//        recycleMyStudy = view.findViewById(R.id.RV_myStudy)
+        date = view.findViewById(R.id.TV_currentDate)
 
-        //내공부 리사이클러뷰 설정
-//        recycleMyStudy.layoutManager = LinearLayoutManager(requireContext())
-//        myStudyAdapter = MyStudyAdapter(ArrayList()) // 빈 데이터로 초기화
-//        recycleMyStudy.adapter = myStudyAdapter
+        recyclerView = view.findViewById(R.id.rv_my)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        studyAdapter = StudyAdapter()
+        recyclerView.adapter = studyAdapter
 
+
+        date.text = getCurrentFormattedDate()
 
 
 
         val sharedPreferences = requireActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         val jwtToken = sharedPreferences.getString("accessToken", "")
-
-
 
         val retrofit = Retrofit.Builder()
             .baseUrl("https://dadogk.duckdns.org/api/")
@@ -91,36 +87,8 @@ class HomeFragment : Fragment() {
         val service = retrofit.create(MyStudyInterface::class.java)
         val serviceGet = retrofit.create(GetMyStudyInterface::class.java)
 
-        serviceGet.getCategories("Bearer $jwtToken").enqueue(object : Callback<List<GetMyStudyResponse>> {
-            override fun onResponse(call: Call<List<GetMyStudyResponse>>, response: Response<List<GetMyStudyResponse>>) {
-                if (response.isSuccessful) {
-                    val categories = response.body()
-                    // categories를 사용하여 원하는 작업을 수행
-                    if (categories != null && categories.isNotEmpty()) {
-                        categoryName.text = categories[0].title
+        showCategory(serviceGet, jwtToken!!)
 
-                        // 예를 들어, RecyclerView에 데이터를 설정하는 등의 작업을 수행
-//                        categoryName.text = categories[0].title
-//
-//                        // RecyclerView에 데이터 설정
-//                        myStudyAdapter.setData(categories)
-//                        myStudyAdapter.notifyDataSetChanged()
-
-                    }
-
-
-                    Log.d("글 불러오기", "성공 : $categories")
-                } else {
-                    Log.e("글 불러오기", "실패: ${response.code()}")
-                    Toast.makeText(requireContext(), "글 불러오기 실패", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            override fun onFailure(call: Call<List<GetMyStudyResponse>>, t: Throwable) {
-                Log.e("글 불러오기", "${t.localizedMessage}")
-                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
-            }
-        })
 
         buttonAddCategory.setOnClickListener {
             // LayoutInflater를 사용하여 dialog.xml을 inflate
@@ -144,6 +112,9 @@ class HomeFragment : Fragment() {
                                 val result = response.body()
                                 Log.d("카테고리 만들기", "${result}")
                                 Toast.makeText(requireContext(), "카테고리가 만들어 졌습니다.", Toast.LENGTH_SHORT).show()
+
+                                showCategory(serviceGet, jwtToken!!)
+
                             } else {
                                 Log.e("카테고리 만들기", "실패: ${response.code()}")
                                 Toast.makeText(requireContext(), "error", Toast.LENGTH_SHORT).show()
@@ -218,6 +189,37 @@ class HomeFragment : Fragment() {
         }
 
         return httpClient.build()
+    }
+    private fun getCurrentFormattedDate(): String {
+        val calendar = Calendar.getInstance()
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd (E)", Locale.KOREA)
+        return dateFormat.format(calendar.time)
+    }
+
+    private fun showCategory(serviceGet: GetMyStudyInterface, jwtToken: String) {
+        serviceGet.getCategories("Bearer $jwtToken").enqueue(object : Callback<List<MyStudyResponse>> {
+            override fun onResponse(call: Call<List<MyStudyResponse>>, response: Response<List<MyStudyResponse>>) {
+                if (response.isSuccessful) {
+                    val categories = response.body()
+                    // categories를 사용하여 원하는 작업을 수행
+                    if (categories != null && categories.isNotEmpty()) {
+                        studyAdapter.setStudy(categories)
+                        studyAdapter.notifyDataSetChanged() // RecyclerView 갱신
+                    }
+
+
+                    Log.d("카테고리 불러오기", "성공 : $categories")
+                } else {
+                    Log.e("카테고리 불러오기", "실패: ${response.code()}")
+                    Toast.makeText(requireContext(), "카테고리 불러오기 실패", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<MyStudyResponse>>, t: Throwable) {
+                Log.e("카테고리 불러오기", "${t.localizedMessage}")
+                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
 

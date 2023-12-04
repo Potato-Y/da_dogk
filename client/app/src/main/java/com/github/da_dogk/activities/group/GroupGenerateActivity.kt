@@ -57,6 +57,8 @@ class GroupGenerateActivity : AppCompatActivity() {
             val name = groupName.text.toString()
             val intro = groupIntro.text.toString()
             val password = groupPassword.text.toString()
+
+            //null을 넣어줘야함
             val request = if (password.isBlank()) {
                 GroupGenerateRequest(name, intro, null)
             } else {

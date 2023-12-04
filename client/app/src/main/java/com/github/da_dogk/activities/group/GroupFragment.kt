@@ -66,7 +66,7 @@ class GroupFragment : Fragment() {
 
         recyclerView = view.findViewById(R.id.rv_group)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        groupAdapter = GroupAdapter() // Create this adapter class
+        groupAdapter = GroupAdapter()
         recyclerView.adapter = groupAdapter
 
 
@@ -91,18 +91,7 @@ class GroupFragment : Fragment() {
                     // categories를 사용하여 원하는 작업을 수행
                     if (group != null && group.isNotEmpty()) {
                         groupAdapter.setGroups(group)
-
-
-                        // 예를 들어, RecyclerView에 데이터를 설정하는 등의 작업을 수행
-//                        categoryName.text = categories[0].title
-//
-//                        // RecyclerView에 데이터 설정
-//                        myStudyAdapter.setData(categories)
-//                        myStudyAdapter.notifyDataSetChanged()
-
                     }
-
-
                     Log.d("글 불러오기", "성공 : $group")
                 } else {
                     Log.e("글 불러오기", "실패: ${response.code()}")

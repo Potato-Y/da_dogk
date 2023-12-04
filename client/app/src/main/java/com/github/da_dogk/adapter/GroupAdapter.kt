@@ -3,6 +3,7 @@ package com.github.da_dogk.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.github.da_dogk.R
@@ -39,11 +40,18 @@ class GroupAdapter : RecyclerView.Adapter<GroupAdapter.GroupViewHolder>() {
     class GroupViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val groupName: TextView = itemView.findViewById(R.id.tv_group_name)
         private val groupIntro: TextView = itemView.findViewById(R.id.tv_group_intro)
+        private val groupLock: ImageView = itemView.findViewById(R.id.iv_lock)
 
         // 뷰 홀더에 데이터를 바인딩하는 함수
         fun bind(group: GroupGenerateResponse) {
             groupName.text = group.groupName
             groupIntro.text = group.groupIntro
+
+            if (group.privacyState) {
+                groupLock.visibility = View.VISIBLE
+            } else {
+                groupLock.visibility = View.GONE
+            }
         }
     }
 }

@@ -10,8 +10,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:layout_height="30dp">
 
         <TextView
             android:id="@+id/TV_currentDate"
@@ -28,9 +27,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="5"
-        android:background="#787878">
+        android:layout_height="200dp"
+        android:background="#515050">
 
         <TextView
             android:id="@+id/TV_timer"
@@ -80,36 +78,22 @@
     <FrameLayout
         android:id="@+id/FL_myStudy"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="8">
-        <!--
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/RV_myStudy"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
-            -->
-        <TextView
-            android:id="@+id/tv_category_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="카테고리 생성"
-            android:textColor="#fff"/>
+        android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/tv_study_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="00:00:00"
-            android:textColor="#fff"
-            android:layout_marginLeft="200dp"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_my"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/my_study_item"
+            />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/B_add_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right|bottom"
-            android:layout_marginBottom="40dp"
+            android:layout_marginBottom="130dp"
             android:clickable="true"
             android:focusable="true"
             android:src="@drawable/sharp_add_24" />
@@ -121,7 +105,6 @@
         android:id="@+id/LL_groupStudy"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="8"
         android:visibility="gone">
         <TextView
             android:layout_width="wrap_content"

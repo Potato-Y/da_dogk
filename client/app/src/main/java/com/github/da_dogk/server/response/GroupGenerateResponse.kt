@@ -11,3 +11,17 @@ data class GroupGenerateResponse(
     val createAt: String,
     val memberNumber: Int
 )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
