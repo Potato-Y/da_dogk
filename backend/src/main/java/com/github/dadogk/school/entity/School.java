@@ -23,7 +23,7 @@ public class School {
     @Column(name = "id", updatable = false)
     private Long id;
 
-    @Column(name = "doamin", nullable = false)
+    @Column(name = "domain", nullable = false)
     private String domain;
 
     @Column(name = "name", nullable = false)
