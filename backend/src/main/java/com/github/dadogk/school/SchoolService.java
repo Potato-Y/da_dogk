@@ -3,6 +3,7 @@ package com.github.dadogk.school;
 import com.github.dadogk.error.exception.NotFoundException;
 import com.github.dadogk.exceptions.DuplicatedException;
 import com.github.dadogk.school.dto.AuthMailRequest;
+import com.github.dadogk.school.dto.VerifyEmailRequest;
 import com.github.dadogk.school.entity.MailAuthCode;
 import com.github.dadogk.school.entity.MailAuthCodeRepository;
 import com.github.dadogk.school.entity.School;
@@ -115,5 +116,30 @@ public class SchoolService {
         }
 
         return school.get();
+    }
+
+    public void verifyEmail(VerifyEmailRequest dto) {
+        User user = securityUtil.getCurrentUser();
+        Optional<MailAuthCode> mailAuthCode = mailAuthCodeRepository.findByUser(user);
+
+        if (mailAuthCode.isEmpty()) {
+            log.warn("verifyEmail: Not Found mail auth info. user={}", user.getId());
+            throw new RuntimeException("요청한 인증 정보가 없음");
+        }
+
+        boolean result = passwordUtil.matches(dto.getCode(), mailAuthCode.get().getCode());
+        if (!result) {
+            log.warn("verifyEmail: Not match code. user={}, school={}", user.getId(),
+                    mailAuthCode.get().getSchool().getDomain());
+            mailAuthCodeRepository.delete(mailAuthCode.get()); // 인증 정보 삭제
+            throw new RuntimeException("인증 코드가 동일하지 않음");
+        }
+
+        schoolMemberRepostiory.save(SchoolMember.builder()
+                .school(mailAuthCode.get().getSchool())
+                .user(user)
+                .mail(mailAuthCode.get().getMail())
+                .build());
+        mailAuthCodeRepository.delete(mailAuthCode.get()); // 인증 정보 삭제
     }
 }

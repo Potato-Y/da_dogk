@@ -1,6 +1,8 @@
 package com.github.dadogk.school;
 
 import com.github.dadogk.school.dto.AuthMailRequest;
+import com.github.dadogk.school.dto.VerifyEmailRequest;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,5 +24,13 @@ public class SchoolApiController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body("");
+    }
+
+    @PostMapping("/auth/verify")
+    public ResponseEntity<String> verifyEmail(@Validated @RequestBody VerifyEmailRequest request){
+        schoolService.verifyEmail(request);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(request.getCode());
     }
 }
