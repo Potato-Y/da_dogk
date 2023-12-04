@@ -87,8 +87,8 @@ class HomeFragment : Fragment() {
         val service = retrofit.create(MyStudyInterface::class.java)
         val serviceGet = retrofit.create(GetMyStudyInterface::class.java)
 
-        showCategory(serviceGet, jwtToken!!)
 
+        showCategory(serviceGet, jwtToken!!)
 
         buttonAddCategory.setOnClickListener {
             // LayoutInflater를 사용하여 dialog.xml을 inflate
@@ -197,6 +197,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun showCategory(serviceGet: GetMyStudyInterface, jwtToken: String) {
+
         serviceGet.getCategories("Bearer $jwtToken").enqueue(object : Callback<List<MyStudyResponse>> {
             override fun onResponse(call: Call<List<MyStudyResponse>>, response: Response<List<MyStudyResponse>>) {
                 if (response.isSuccessful) {
