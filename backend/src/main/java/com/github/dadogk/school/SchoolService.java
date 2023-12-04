@@ -11,6 +11,7 @@ import com.github.dadogk.school.entity.SchoolMember;
 import com.github.dadogk.school.entity.SchoolMemberRepository;
 import com.github.dadogk.school.entity.SchoolRepository;
 import com.github.dadogk.school.exception.SchoolMailDuplicatedException;
+import com.github.dadogk.security.exception.PasswordIncorrectException;
 import com.github.dadogk.security.util.CodeMaker;
 import com.github.dadogk.security.util.PasswordUtil;
 import com.github.dadogk.security.util.SecurityUtil;
@@ -130,7 +131,7 @@ public class SchoolService {
 
         if (mailAuthCode.isEmpty()) {
             log.warn("verifyEmail: Not Found mail auth info. user={}", user.getId());
-            throw new RuntimeException("요청한 인증 정보가 없음");
+            throw new NotFoundException("요청한 인증 정보가 없음");
         }
 
         boolean result = passwordUtil.matches(dto.getCode(), mailAuthCode.get().getCode());
@@ -138,7 +139,7 @@ public class SchoolService {
             log.warn("verifyEmail: Not match code. user={}, school={}", user.getId(),
                     mailAuthCode.get().getSchool().getDomain());
             mailAuthInfoRepository.delete(mailAuthCode.get()); // 인증 정보 삭제
-            throw new RuntimeException("인증 코드가 동일하지 않음");
+            throw new PasswordIncorrectException("인증 코드가 동일하지 않음");
         }
 
         schoolMemberRepository.save(SchoolMember.builder()

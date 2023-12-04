@@ -31,6 +31,6 @@ public class SchoolApiController {
         schoolService.verifyEmail(request);
 
         return ResponseEntity.status(HttpStatus.OK)
-                .body(request.getCode());
+                .body("");
     }
 }
