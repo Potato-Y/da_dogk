@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SchoolApiController {
     private final SchoolService schoolService;
 
-    @PostMapping("/auth/request-mail")
+    @PostMapping("/auth/mail")
     public ResponseEntity<String> requestAuthEmail(@Validated @RequestBody AuthMailRequest request) {
         schoolService.sendAuthCodeMail(request);
 
