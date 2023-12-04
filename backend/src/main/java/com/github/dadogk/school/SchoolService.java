@@ -40,6 +40,12 @@ public class SchoolService {
     public void sendAuthCodeMail(AuthMailRequest dto) {
         User user = securityUtil.getCurrentUser();
 
+        Optional<SchoolMember> schoolMember = schoolMemberRepository.findByUser(user);
+        if (schoolMember.isPresent()) {
+            log.warn("sendAuthCodeMail: 이미 가입된 그룹이 있습니다. userId={}, mail={}", user.getId(), dto.getEmail());
+            throw new DuplicatedException("중복 가입 요청");
+        }
+
         try {
             // 학교 정보 가져오기, 코드 저장
             School school = findSchool(dto.getEmail());
