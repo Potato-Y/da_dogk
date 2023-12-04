@@ -97,7 +97,7 @@ public class SchoolService {
         }
 
         // 이미 있으면 정보 업데이트
-        mailAuthCodeRepository.save(mailAuthCode.get().updateNewAuth(passwordUtil.convertPassword(code), school, mail));
+        mailAuthCodeRepository.save(mailAuthCode.get().updateNewAuth(school, mail, passwordUtil.convertPassword(code)));
     }
 
     /**

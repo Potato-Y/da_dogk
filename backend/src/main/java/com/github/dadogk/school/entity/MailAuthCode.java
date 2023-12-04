@@ -21,12 +21,6 @@ public class MailAuthCode {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "code", nullable = false)
-    private String code;
-
-    @Column(name = "mail", nullable = false)
-    private String mail;
-
     @ManyToOne
     @JoinColumn(name = "user_id", unique = true)
     private User user;
@@ -35,18 +29,24 @@ public class MailAuthCode {
     @JoinColumn(name = "school_domain", nullable = false)
     private School school;
 
+    @Column(name = "code", nullable = false)
+    private String code;
+
+    @Column(name = "mail", nullable = false)
+    private String mail;
+
     @Builder
-    public MailAuthCode(String code, String mail, User user, School school) {
-        this.code = code;
-        this.mail = mail;
+    public MailAuthCode(User user,School school, String mail,String code ) {
         this.user = user;
         this.school = school;
+        this.mail = mail;
+        this.code = code;
     }
 
-    public MailAuthCode updateNewAuth(String code, School school,String mail) {
-        this.code = code;
+    public MailAuthCode updateNewAuth( School school, String mail,String code) {
         this.school = school;
-        this.mail=mail;
+        this.mail = mail;
+        this.code = code;
 
         return this;
     }
