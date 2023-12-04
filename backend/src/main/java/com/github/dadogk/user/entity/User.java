@@ -1,7 +1,7 @@
 package com.github.dadogk.user.entity;
 
 import com.github.dadogk.group.entity.GroupMember;
-import com.github.dadogk.school.entity.MailAuthCode;
+import com.github.dadogk.school.entity.MailAuthInfo;
 import com.github.dadogk.school.entity.SchoolMember;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -65,7 +65,7 @@ public class User implements UserDetails {
 
     @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
     @JoinColumn(name="mail_auth")
-    private MailAuthCode mailAuthCode;
+    private MailAuthInfo mailAuthInfo;
 
     @Builder
     public User(String email, String password, String nickname) {

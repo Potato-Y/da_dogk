@@ -4,11 +4,11 @@ import com.github.dadogk.error.exception.NotFoundException;
 import com.github.dadogk.exceptions.DuplicatedException;
 import com.github.dadogk.school.dto.AuthMailRequest;
 import com.github.dadogk.school.dto.VerifyEmailRequest;
-import com.github.dadogk.school.entity.MailAuthCode;
-import com.github.dadogk.school.entity.MailAuthCodeRepository;
+import com.github.dadogk.school.entity.MailAuthInfo;
+import com.github.dadogk.school.entity.MailAuthInfoRepository;
 import com.github.dadogk.school.entity.School;
 import com.github.dadogk.school.entity.SchoolMember;
-import com.github.dadogk.school.entity.SchoolMemberRepostiory;
+import com.github.dadogk.school.entity.SchoolMemberRepository;
 import com.github.dadogk.school.entity.SchoolRepository;
 import com.github.dadogk.school.exception.SchoolMailDuplicatedException;
 import com.github.dadogk.security.util.CodeMaker;
@@ -32,8 +32,8 @@ import org.springframework.stereotype.Service;
 public class SchoolService {
     private final JavaMailSender javaMailSender;
     private final SchoolRepository schoolRepository;
-    private final SchoolMemberRepostiory schoolMemberRepostiory;
-    private final MailAuthCodeRepository mailAuthCodeRepository;
+    private final SchoolMemberRepository schoolMemberRepository;
+    private final MailAuthInfoRepository mailAuthInfoRepository;
     private final PasswordUtil passwordUtil;
     private final SecurityUtil securityUtil;
 
@@ -70,7 +70,7 @@ public class SchoolService {
     }
 
     private void validateMailDuplicated(String mail) {
-        Optional<SchoolMember> member = schoolMemberRepostiory.findByMail(mail);
+        Optional<SchoolMember> member = schoolMemberRepository.findByMail(mail);
 
         if (member.isPresent()) {
             throw new SchoolMailDuplicatedException("이미 인증된 메일입니다.");
@@ -85,9 +85,9 @@ public class SchoolService {
      * @param code
      */
     private void saveAuthInfo(User user, School school, String mail, String code) {
-        Optional<MailAuthCode> mailAuthCode = mailAuthCodeRepository.findByUser(user);
+        Optional<MailAuthInfo> mailAuthCode = mailAuthInfoRepository.findByUser(user);
         if (mailAuthCode.isEmpty()) {
-            mailAuthCodeRepository.save(MailAuthCode.builder()
+            mailAuthInfoRepository.save(MailAuthInfo.builder()
                     .user(user)
                     .school(school)
                     .mail(mail)
@@ -98,7 +98,7 @@ public class SchoolService {
         }
 
         // 이미 있으면 정보 업데이트
-        mailAuthCodeRepository.save(mailAuthCode.get().updateNewAuth(school, mail, passwordUtil.convertPassword(code)));
+        mailAuthInfoRepository.save(mailAuthCode.get().updateNewAuth(school, mail, passwordUtil.convertPassword(code)));
     }
 
     /**
@@ -120,7 +120,7 @@ public class SchoolService {
 
     public void verifyEmail(VerifyEmailRequest dto) {
         User user = securityUtil.getCurrentUser();
-        Optional<MailAuthCode> mailAuthCode = mailAuthCodeRepository.findByUser(user);
+        Optional<MailAuthInfo> mailAuthCode = mailAuthInfoRepository.findByUser(user);
 
         if (mailAuthCode.isEmpty()) {
             log.warn("verifyEmail: Not Found mail auth info. user={}", user.getId());
@@ -131,15 +131,15 @@ public class SchoolService {
         if (!result) {
             log.warn("verifyEmail: Not match code. user={}, school={}", user.getId(),
                     mailAuthCode.get().getSchool().getDomain());
-            mailAuthCodeRepository.delete(mailAuthCode.get()); // 인증 정보 삭제
+            mailAuthInfoRepository.delete(mailAuthCode.get()); // 인증 정보 삭제
             throw new RuntimeException("인증 코드가 동일하지 않음");
         }
 
-        schoolMemberRepostiory.save(SchoolMember.builder()
+        schoolMemberRepository.save(SchoolMember.builder()
                 .school(mailAuthCode.get().getSchool())
                 .user(user)
                 .mail(mailAuthCode.get().getMail())
                 .build());
-        mailAuthCodeRepository.delete(mailAuthCode.get()); // 인증 정보 삭제
+        mailAuthInfoRepository.delete(mailAuthCode.get()); // 인증 정보 삭제
     }
 }

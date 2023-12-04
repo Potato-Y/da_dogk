@@ -8,17 +8,18 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "mail_auth_info")
 @Getter
 @Entity
-public class MailAuthCode {
+public class MailAuthInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,14 +39,14 @@ public class MailAuthCode {
     private String mail;
 
     @Builder
-    public MailAuthCode(User user,School school, String mail,String code ) {
+    public MailAuthInfo(User user, School school, String mail, String code ) {
         this.user = user;
         this.school = school;
         this.mail = mail;
         this.code = code;
     }
 
-    public MailAuthCode updateNewAuth( School school, String mail,String code) {
+    public MailAuthInfo updateNewAuth(School school, String mail, String code) {
         this.school = school;
         this.mail = mail;
         this.code = code;
