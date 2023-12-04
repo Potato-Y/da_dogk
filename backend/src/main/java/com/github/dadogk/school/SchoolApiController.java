@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,8 +28,16 @@ public class SchoolApiController {
     }
 
     @PostMapping("/auth/verify")
-    public ResponseEntity<String> verifyEmail(@Validated @RequestBody VerifyEmailRequest request){
+    public ResponseEntity<String> verifyEmail(@Validated @RequestBody VerifyEmailRequest request) {
         schoolService.verifyEmail(request);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("");
+    }
+
+    @DeleteMapping("") // school 인증 삭제
+    public ResponseEntity<String> leaveSchool() {
+        schoolService.leaveSchool();
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body("");

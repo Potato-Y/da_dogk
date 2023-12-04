@@ -149,4 +149,16 @@ public class SchoolService {
                 .build());
         mailAuthInfoRepository.delete(mailAuthCode.get()); // 인증 정보 삭제
     }
+
+    public void leaveSchool() {
+        User user = securityUtil.getCurrentUser();
+
+        Optional<SchoolMember> schoolMember = schoolMemberRepository.findByUser(user);
+        if (schoolMember.isEmpty()) {
+            log.warn("leaveSchool: Not found school member. userId={}", user.getId());
+            throw new NotFoundException("인증한 학교가 없음");
+        }
+
+        schoolMemberRepository.delete(schoolMember.get());
+    }
 }
