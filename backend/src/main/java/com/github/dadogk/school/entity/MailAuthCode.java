@@ -24,6 +24,9 @@ public class MailAuthCode {
     @Column(name = "code", nullable = false)
     private String code;
 
+    @Column(name = "mail", nullable = false)
+    private String mail;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -33,8 +36,9 @@ public class MailAuthCode {
     private School school;
 
     @Builder
-    public MailAuthCode(String code, User user, School school) {
+    public MailAuthCode(String code, String mail, User user, School school) {
         this.code = code;
+        this.mail = mail;
         this.user = user;
         this.school = school;
     }

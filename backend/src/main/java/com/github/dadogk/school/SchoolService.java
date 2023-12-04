@@ -5,7 +5,10 @@ import com.github.dadogk.school.dto.AuthMailRequest;
 import com.github.dadogk.school.entity.MailAuthCode;
 import com.github.dadogk.school.entity.MailAuthCodeRepository;
 import com.github.dadogk.school.entity.School;
+import com.github.dadogk.school.entity.SchoolMember;
+import com.github.dadogk.school.entity.SchoolMemberRepostiory;
 import com.github.dadogk.school.entity.SchoolRepository;
+import com.github.dadogk.school.exception.SchoolMailDuplicatedException;
 import com.github.dadogk.security.util.CodeMaker;
 import com.github.dadogk.security.util.PasswordUtil;
 import com.github.dadogk.security.util.SecurityUtil;
@@ -26,6 +29,7 @@ import org.springframework.stereotype.Service;
 public class SchoolService {
     private final JavaMailSender javaMailSender;
     private final SchoolRepository schoolRepository;
+    private final SchoolMemberRepostiory schoolMemberRepostiory;
     private final MailAuthCodeRepository mailAuthCodeRepository;
     private final PasswordUtil passwordUtil;
     private final SecurityUtil securityUtil;
@@ -36,8 +40,9 @@ public class SchoolService {
         try {
             // 학교 정보 가져오기, 코드 저장
             School school = findSchool(dto.getEmail());
+            validateMailDuplicated(dto.getEmail());
             String code = CodeMaker.createCode();
-            saveAuthInfo(user, school, code);
+            saveAuthInfo(user, school, dto.getEmail(), code);
 
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, false, "UTF-8");
@@ -46,12 +51,23 @@ public class SchoolService {
             mimeMessageHelper.setSubject("다독: 대학생 이메일 인증 코드입니다.");
             mimeMessageHelper.setText("인증 코드: " + code + "\n본 메일 주소는 발송용입니다.");
             javaMailSender.send(mimeMessage);
+        } catch (SchoolMailDuplicatedException e) {
+            log.warn("sendMail: Duplicated mail. userId={}, email={}", user.getId(), dto.getEmail());
+            throw new SchoolMailDuplicatedException(e.getMessage());
         } catch (NotFoundException e) {
             log.warn("findSchool: Not found mail. userId={}, email={}", user.getId(), dto.getEmail());
             throw new NotFoundException(e.getMessage());
         } catch (MessagingException e) {
             log.warn("sendMail: Failed send mail. userId={}, email={}", user.getId(), dto.getEmail());
             throw new MailSendException("이메일 전송 실패");
+        }
+    }
+
+    private void validateMailDuplicated(String mail) {
+        Optional<SchoolMember> member = schoolMemberRepostiory.findByMail(mail);
+
+        if (member.isPresent()) {
+            throw new SchoolMailDuplicatedException("이미 인증된 메일입니다.");
         }
     }
 
@@ -62,10 +78,11 @@ public class SchoolService {
      * @param school
      * @param code
      */
-    private void saveAuthInfo(User user, School school, String code) {
+    private void saveAuthInfo(User user, School school, String mail, String code) {
         mailAuthCodeRepository.save(MailAuthCode.builder()
                 .user(user)
                 .school(school)
+                .mail(mail)
                 .code(passwordUtil.convertPassword(code))
                 .build());
     }

@@ -1,6 +1,7 @@
 package com.github.dadogk.school.entity;
 
 import com.github.dadogk.user.entity.User;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,9 +29,13 @@ public class SchoolMember {
     @JoinColumn(name = "school_id", nullable = false)
     private School school;
 
+    @Column(name = "mail", unique = true)
+    private String mail;
+
     @Builder
-    public SchoolMember(User user, School school) {
+    public SchoolMember(User user, School school, String mail) {
         this.user = user;
         this.school = school;
+        this.mail = mail;
     }
 }
