@@ -25,7 +25,7 @@ public class SchoolMember {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "school_domain", nullable = false)
+    @JoinColumn(name = "school_id", nullable = false)
     private School school;
 
     @Builder
