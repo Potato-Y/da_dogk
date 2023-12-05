@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView
 //import com.github.da_dogk.ARG_PARAM2
 import com.github.da_dogk.R
 import com.github.da_dogk.adapter.GroupAdapter
+import com.github.da_dogk.server.RetrofitClient
 import com.github.da_dogk.server.interface_folder.GroupGenerateInterface
 import com.github.da_dogk.server.interface_folder.SchoolEmailInterface
 import com.github.da_dogk.server.request.MyStudyRequest
@@ -31,11 +32,14 @@ import com.github.da_dogk.server.response.MyStudyResponse
 import com.github.da_dogk.server.response.SchoolEmailResponse
 import com.google.android.material.tabs.TabLayout
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.Converter
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.reflect.Type
 
 /**
  * A simple [Fragment] subclass.
@@ -86,18 +90,15 @@ class GroupFragment : Fragment() {
         groupAdapter = GroupAdapter()
         recyclerView.adapter = groupAdapter
 
-        //학교 인증 부분 설정
+        //학교 인증 버튼
         buttonCertify = view.findViewById(R.id.b_certify)
 
 
         val sharedPreferences = requireActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         val jwtToken = sharedPreferences.getString("accessToken", "")
 
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://dadogk2.duckdns.org/api/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(createOkHttpClient(jwtToken))
-            .build()
+
+        val retrofit = RetrofitClient.createRetrofitInstance(jwtToken)
 
         val service = retrofit.create(GroupGenerateInterface::class.java)
         val serviceSchool = retrofit.create(SchoolEmailInterface::class.java)
@@ -235,9 +236,6 @@ class GroupFragment : Fragment() {
         }
 
 
-
-
-
         return view
     }
 
@@ -260,21 +258,5 @@ class GroupFragment : Fragment() {
                 }
             }
     }
-    private fun createOkHttpClient(jwtToken: String?): OkHttpClient {
-        val httpClient = OkHttpClient.Builder()
 
-        if (!jwtToken.isNullOrBlank()) {
-            httpClient.addInterceptor { chain ->
-                val original = chain.request()
-                val requestBuilder = original.newBuilder()
-                    .header("Authorization", "Bearer $jwtToken")
-                    .method(original.method(), original.body())
-
-                val request = requestBuilder.build()
-                chain.proceed(request)
-            }
-        }
-
-        return httpClient.build()
-    }
 }

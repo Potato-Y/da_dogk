@@ -18,16 +18,19 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.da_dogk.R
 import com.github.da_dogk.adapter.StudyAdapter
+import com.github.da_dogk.server.RetrofitClient
 import com.github.da_dogk.server.interface_folder.MyStudyInterface
 import com.github.da_dogk.server.request.MyStudyRequest
 import com.github.da_dogk.server.response.MyStudyResponse
 import com.google.android.material.tabs.TabLayout
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.Converter
 import retrofit2.Response
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.reflect.Type
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -77,12 +80,8 @@ class HomeFragment : Fragment() {
         val sharedPreferences = requireActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         val jwtToken = sharedPreferences.getString("accessToken", "")
 
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://dadogk2.duckdns.org/api/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(createOkHttpClient(jwtToken))
-            .build()
-
+        //레트로핏 설정
+        val retrofit = RetrofitClient.createRetrofitInstance(jwtToken)
         val service = retrofit.create(MyStudyInterface::class.java)
 
         service.showCategories("Bearer $jwtToken").enqueue(object : Callback<List<MyStudyResponse>> {
@@ -189,31 +188,11 @@ class HomeFragment : Fragment() {
 
         return view
     }
-    private fun createOkHttpClient(jwtToken: String?): OkHttpClient {
-        val httpClient = OkHttpClient.Builder()
-
-        if (!jwtToken.isNullOrBlank()) {
-            httpClient.addInterceptor { chain ->
-                val original = chain.request()
-                val requestBuilder = original.newBuilder()
-                    .header("Authorization", "Bearer $jwtToken")
-                    .method(original.method(), original.body())
-
-                val request = requestBuilder.build()
-                chain.proceed(request)
-            }
-        }
-
-        return httpClient.build()
-    }
     private fun getCurrentFormattedDate(): String {
         val calendar = Calendar.getInstance()
         val dateFormat = SimpleDateFormat("yyyy-MM-dd (E)", Locale.KOREA)
         return dateFormat.format(calendar.time)
     }
-
-
-
     companion object {
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
