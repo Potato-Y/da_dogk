@@ -85,18 +85,19 @@
         android:visibility="gone">
 
         <EditText
-            android:id="@+id/ET_school_email_certify"
+            android:id="@+id/ET_school_email"
             android:layout_width="300dp"
             android:layout_height="70dp"
             android:layout_marginStart="36dp"
             android:layout_marginTop="31dp"
             android:background="@drawable/edittext_rounded_corner_rectangle"
-            android:text="    xxxx@xxxxx"
+            android:hint="    xxxx@xxxxx"
+            android:textColorHint="#fff"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <android.widget.Button
-            android:id="@+id/button_next"
+            android:id="@+id/b_certify"
             android:layout_width="77dp"
             android:layout_height="0dp"
             android:layout_marginEnd="17dp"
@@ -104,8 +105,8 @@
             android:text="인증"
             android:textColor="#ffffff"
             android:textSize="15sp"
-            app:layout_constraintBaseline_toBaselineOf="@+id/ET_school_email_certify"
-            app:layout_constraintEnd_toEndOf="@+id/ET_school_email_certify" />
+            app:layout_constraintBaseline_toBaselineOf="@+id/ET_school_email"
+            app:layout_constraintEnd_toEndOf="@+id/ET_school_email" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
