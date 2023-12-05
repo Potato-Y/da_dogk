@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.da_dogk.R
 import com.github.da_dogk.adapter.StudyAdapter
-import com.github.da_dogk.server.interface_folder.GetMyStudyInterface
 import com.github.da_dogk.server.interface_folder.MyStudyInterface
 import com.github.da_dogk.server.request.MyStudyRequest
 import com.github.da_dogk.server.response.MyStudyResponse
@@ -79,16 +78,37 @@ class HomeFragment : Fragment() {
         val jwtToken = sharedPreferences.getString("accessToken", "")
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://dadogk.duckdns.org/api/")
+            .baseUrl("https://dadogk2.duckdns.org/api/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(createOkHttpClient(jwtToken))
             .build()
 
         val service = retrofit.create(MyStudyInterface::class.java)
-        val serviceGet = retrofit.create(GetMyStudyInterface::class.java)
+
+        service.showCategories("Bearer $jwtToken").enqueue(object : Callback<List<MyStudyResponse>> {
+            override fun onResponse(call: Call<List<MyStudyResponse>>, response: Response<List<MyStudyResponse>>) {
+                if (response.isSuccessful) {
+                    val categories = response.body()
+                    // categories를 사용하여 원하는 작업을 수행
+                    if (categories != null && categories.isNotEmpty()) {
+                        studyAdapter.setStudy(categories)
+                        studyAdapter.notifyDataSetChanged() // RecyclerView 갱신
+                    }
 
 
-        showCategory(serviceGet, jwtToken!!)
+                    Log.d("카테고리 불러오기", "성공 : $categories")
+                } else {
+                    Log.e("카테고리 불러오기", "실패: ${response.code()}")
+                    Toast.makeText(requireContext(), "카테고리 불러오기 실패", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<MyStudyResponse>>, t: Throwable) {
+                Log.e("카테고리 불러오기", "${t.localizedMessage}")
+                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
+            }
+        })
+
 
         buttonAddCategory.setOnClickListener {
             // LayoutInflater를 사용하여 dialog.xml을 inflate
@@ -113,8 +133,6 @@ class HomeFragment : Fragment() {
                                 Log.d("카테고리 만들기", "${result}")
                                 Toast.makeText(requireContext(), "카테고리가 만들어 졌습니다.", Toast.LENGTH_SHORT).show()
 
-                                showCategory(serviceGet, jwtToken!!)
-
                             } else {
                                 Log.e("카테고리 만들기", "실패: ${response.code()}")
                                 Toast.makeText(requireContext(), "error", Toast.LENGTH_SHORT).show()
@@ -128,8 +146,6 @@ class HomeFragment : Fragment() {
                 } else {
                     Toast.makeText(requireContext(), "카테고리 이름이 비었습니다.", Toast.LENGTH_SHORT).show()
                 }
-
-
             }
 
             // "Cancel" 버튼 추가
@@ -196,32 +212,6 @@ class HomeFragment : Fragment() {
         return dateFormat.format(calendar.time)
     }
 
-    private fun showCategory(serviceGet: GetMyStudyInterface, jwtToken: String) {
-
-        serviceGet.getCategories("Bearer $jwtToken").enqueue(object : Callback<List<MyStudyResponse>> {
-            override fun onResponse(call: Call<List<MyStudyResponse>>, response: Response<List<MyStudyResponse>>) {
-                if (response.isSuccessful) {
-                    val categories = response.body()
-                    // categories를 사용하여 원하는 작업을 수행
-                    if (categories != null && categories.isNotEmpty()) {
-                        studyAdapter.setStudy(categories)
-                        studyAdapter.notifyDataSetChanged() // RecyclerView 갱신
-                    }
-
-
-                    Log.d("카테고리 불러오기", "성공 : $categories")
-                } else {
-                    Log.e("카테고리 불러오기", "실패: ${response.code()}")
-                    Toast.makeText(requireContext(), "카테고리 불러오기 실패", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            override fun onFailure(call: Call<List<MyStudyResponse>>, t: Throwable) {
-                Log.e("카테고리 불러오기", "${t.localizedMessage}")
-                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
 
 
     companion object {

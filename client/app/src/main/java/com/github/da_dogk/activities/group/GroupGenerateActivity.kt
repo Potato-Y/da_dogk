@@ -46,7 +46,7 @@ class GroupGenerateActivity : AppCompatActivity() {
         val jwtToken = sharedPreferences.getString("accessToken", "")
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://dadogk.duckdns.org/api/")
+            .baseUrl("https://dadogk2.duckdns.org/api/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(createOkHttpClient(jwtToken))
             .build()
