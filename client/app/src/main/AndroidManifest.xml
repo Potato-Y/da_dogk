@@ -16,10 +16,13 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".activities.ProfileEditActivity"
+            android:name=".activities.group.GroupIntroActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.GroupGenerateActivity"
+            android:name=".activities.profile.ProfileEditActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.group.GroupGenerateActivity"
             android:exported="false" />
         <activity
             android:name=".activities.fragment.NaviActivity"

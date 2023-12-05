@@ -5,7 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
-    tools:context=".activities.GroupGenerateActivity">
+    tools:context=".activities.group.GroupGenerateActivity">
+
+    <ImageButton
+        android:id="@+id/b_go_back"
+        android:layout_width="28dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="43dp"
+        android:layout_marginTop="53dp"
+        android:background="#00000000"
+        android:src="@drawable/arrow_left"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textView2"
@@ -68,7 +79,8 @@
         android:background="@drawable/edittext_rounded_corner_rectangle"
         android:ems="10"
         android:inputType="text"
-        android:text="그룹 이름을 입력해 주세요."
+        android:hint="그룹 이름을 입력해 주세요."
+        android:textColorHint="#000"
         android:textColor="#000000" />
 
     <EditText
@@ -84,7 +96,8 @@
         android:background="@drawable/edittext_rounded_corner_rectangle"
         android:ems="10"
         android:inputType="textMultiLine"
-        android:text="그룹 소개를 해주세요"
+        android:hint="그룹 소개를 해주세요"
+        android:textColorHint="#000"
         android:textColor="#000000"
         android:gravity="top"/>
 
@@ -110,8 +123,8 @@
         android:layout_marginTop="284dp"
         android:layout_marginLeft="55dp"
         android:lineSpacingExtra="8sp"
-        android:text="그룹 소개"
-
+        android:hint="그룹 소개"
+        android:textColorHint="#000"
         android:includeFontPadding="false"
         android:textColor="#ffffff"
         android:textSize="16sp" />
@@ -151,7 +164,8 @@
         android:background="@drawable/edittext_rounded_corner_rectangle"
         android:ems="10"
         android:inputType="text"
-        android:text="그룹 암호는 선택사항 입니다."
+        android:hint="그룹 암호는 선택사항 입니다."
+        android:textColorHint="#000"
         android:textColor="#000000" />
 
 </RelativeLayout>

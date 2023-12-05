@@ -6,12 +6,11 @@
     android:layout_height="match_parent"
     android:background="#000000"
     android:orientation="vertical"
-    tools:context=".activities.fragment.HomeFragment">
+    tools:context=".activities.home.HomeFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:layout_height="30dp">
 
         <TextView
             android:id="@+id/TV_currentDate"
@@ -28,9 +27,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="5"
-        android:background="#787878">
+        android:layout_height="200dp"
+        android:background="#515050">
 
         <TextView
             android:id="@+id/TV_timer"
@@ -80,20 +78,22 @@
     <FrameLayout
         android:id="@+id/FL_myStudy"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="8">
+        android:layout_height="wrap_content">
+
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/RV_myStudy"
+            android:id="@+id/rv_my"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/my_study_item"
+            />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/B_add_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
-            android:layout_margin="20dp"
+            android:layout_gravity="right|bottom"
+            android:layout_marginBottom="130dp"
             android:clickable="true"
             android:focusable="true"
             android:src="@drawable/sharp_add_24" />
@@ -105,7 +105,6 @@
         android:id="@+id/LL_groupStudy"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="8"
         android:visibility="gone">
         <TextView
             android:layout_width="wrap_content"

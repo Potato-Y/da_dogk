@@ -1,4 +1,4 @@
-package com.github.da_dogk.activities.fragment
+package com.github.da_dogk.activities.profile
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,7 +10,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 //import com.github.da_dogk.ARG_PARAM1
 //import com.github.da_dogk.ARG_PARAM2
-import com.github.da_dogk.activities.ProfileEditActivity
 import com.github.da_dogk.R
 
 /**

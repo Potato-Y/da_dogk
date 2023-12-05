@@ -3,32 +3,38 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/black"
-    android:orientation="horizontal"
-    android:gravity="center"
     android:padding="10dp">
-
     <ImageButton
         android:id="@+id/IB_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/baseline_view_headline_24"/>
+        android:src="@drawable/round_play_arrow_24"
+        android:layout_marginLeft="20dp"
+        android:background="#000000"/>
 
     <TextView
         android:id="@+id/TV_category"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:text="카테고리 종류"
         android:textSize="18sp"
         android:textColor="#ffffff"/>
 
-    <TextView
-        android:id="@+id/TV_study_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:text="00:00:00"
-        android:textSize="18sp"
-        android:textColor="#ffffff"/>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/TV_study_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="30dp"
+            android:text="00:00:00"
+            android:textSize="18sp"
+            android:textColor="#ffffff"/>
+
+    </FrameLayout>
+
 
 </LinearLayout>

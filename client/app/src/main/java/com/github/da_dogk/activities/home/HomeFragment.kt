@@ -1,8 +1,7 @@
-package com.github.da_dogk.activities.fragment
+package com.github.da_dogk.activities.home
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -13,13 +12,13 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.da_dogk.R
-import com.github.da_dogk.adapter.Data
-import com.github.da_dogk.adapter.MyStudyAdapter
-import com.github.da_dogk.server.interface_folder.LoginInterface
+import com.github.da_dogk.adapter.StudyAdapter
+import com.github.da_dogk.server.interface_folder.GetMyStudyInterface
 import com.github.da_dogk.server.interface_folder.MyStudyInterface
 import com.github.da_dogk.server.request.MyStudyRequest
 import com.github.da_dogk.server.response.MyStudyResponse
@@ -30,6 +29,9 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class HomeFragment : Fragment() {
 
@@ -38,14 +40,10 @@ class HomeFragment : Fragment() {
     lateinit var layoutGroupStudy: LinearLayout
     lateinit var buttonAddCategory: ImageButton
     lateinit var editTextInputTitle: EditText
-    lateinit var recycleMyStudy: RecyclerView
+    lateinit var date: TextView
 
-//    //이걸 MyStudyAdapter에 넣어도 됨
-//    val DataList = arrayListOf(
-//        Data(R.drawable.arrow_left, "0번"),
-//        Data(R.drawable.arrow_left, "1번"),
-//        Data(R.drawable.arrow_left, "2번"),
-//    )
+    lateinit var recyclerView : RecyclerView
+    lateinit var studyAdapter: StudyAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,11 +63,15 @@ class HomeFragment : Fragment() {
         layoutMyStudy = view.findViewById(R.id.FL_myStudy)
         layoutGroupStudy = view.findViewById(R.id.LL_groupStudy)
         buttonAddCategory = view.findViewById(R.id.B_add_category)
-        recycleMyStudy = view.findViewById(R.id.RV_myStudy)
+        date = view.findViewById(R.id.TV_currentDate)
 
-        //내공부 리사이클러뷰 설정
-//        recycleMyStudy.layoutManager = LinearLayoutManager(requireContext())
-//        recycleMyStudy.adapter = MyStudyAdapter(DataList)
+        recyclerView = view.findViewById(R.id.rv_my)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        studyAdapter = StudyAdapter()
+        recyclerView.adapter = studyAdapter
+
+
+        date.text = getCurrentFormattedDate()
 
 
 
@@ -83,7 +85,10 @@ class HomeFragment : Fragment() {
             .build()
 
         val service = retrofit.create(MyStudyInterface::class.java)
+        val serviceGet = retrofit.create(GetMyStudyInterface::class.java)
 
+
+        showCategory(serviceGet, jwtToken!!)
 
         buttonAddCategory.setOnClickListener {
             // LayoutInflater를 사용하여 dialog.xml을 inflate
@@ -107,6 +112,9 @@ class HomeFragment : Fragment() {
                                 val result = response.body()
                                 Log.d("카테고리 만들기", "${result}")
                                 Toast.makeText(requireContext(), "카테고리가 만들어 졌습니다.", Toast.LENGTH_SHORT).show()
+
+                                showCategory(serviceGet, jwtToken!!)
+
                             } else {
                                 Log.e("카테고리 만들기", "실패: ${response.code()}")
                                 Toast.makeText(requireContext(), "error", Toast.LENGTH_SHORT).show()
@@ -181,6 +189,38 @@ class HomeFragment : Fragment() {
         }
 
         return httpClient.build()
+    }
+    private fun getCurrentFormattedDate(): String {
+        val calendar = Calendar.getInstance()
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd (E)", Locale.KOREA)
+        return dateFormat.format(calendar.time)
+    }
+
+    private fun showCategory(serviceGet: GetMyStudyInterface, jwtToken: String) {
+
+        serviceGet.getCategories("Bearer $jwtToken").enqueue(object : Callback<List<MyStudyResponse>> {
+            override fun onResponse(call: Call<List<MyStudyResponse>>, response: Response<List<MyStudyResponse>>) {
+                if (response.isSuccessful) {
+                    val categories = response.body()
+                    // categories를 사용하여 원하는 작업을 수행
+                    if (categories != null && categories.isNotEmpty()) {
+                        studyAdapter.setStudy(categories)
+                        studyAdapter.notifyDataSetChanged() // RecyclerView 갱신
+                    }
+
+
+                    Log.d("카테고리 불러오기", "성공 : $categories")
+                } else {
+                    Log.e("카테고리 불러오기", "실패: ${response.code()}")
+                    Toast.makeText(requireContext(), "카테고리 불러오기 실패", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<MyStudyResponse>>, t: Throwable) {
+                Log.e("카테고리 불러오기", "${t.localizedMessage}")
+                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
 

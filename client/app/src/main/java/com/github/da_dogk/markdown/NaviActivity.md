@@ -9,9 +9,9 @@ import com.github.da_dogk.R
 import com.github.da_dogk.TAG_GROUP
 import com.github.da_dogk.TAG_HOME
 import com.github.da_dogk.TAG_MY_PROFILE
-import com.github.da_dogk.activities.fragment.GroupFragment
-import com.github.da_dogk.activities.fragment.HomeFragment
-import com.github.da_dogk.activities.fragment.MyProfileFragment
+import com.github.da_dogk.activities.group.GroupFragment
+import com.github.da_dogk.activities.home.HomeFragment
+import com.github.da_dogk.activities.profile.MyProfileFragment
 import com.github.da_dogk.databinding.ActivityNaviBinding
 
 class NaviActivity : AppCompatActivity() {

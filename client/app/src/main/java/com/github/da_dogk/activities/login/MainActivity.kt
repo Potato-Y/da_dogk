@@ -84,15 +84,13 @@ class MainActivity : AppCompatActivity() { //LoginActivity
                             } else {
                                 // Save the token, change token to accessToken
                                 saveToken(accessToken)
-                                Log.d("로그인", "AccessToken: $accessToken")
+                                Log.d("로그인", "$result")
                                 showToast("로그인 성공")
 
-//                                val user = result.user
 
                                 // 토큰과 함께 NaviActivity로 이동
                                 Intent(this@MainActivity, NaviActivity::class.java).apply {
                                     putExtra(NaviActivity.EXTRA_ACCESS_TOKEN, accessToken)
-//                                    putExtra(NaviActivity.EXTRA_USER, user)
                                     startActivity(this)
                                     finish() //해야하나?
                                 }

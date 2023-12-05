@@ -9,7 +9,11 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import com.github.da_dogk.R
+
+import com.github.da_dogk.activities.fragment.NaviActivity
+
 import com.github.da_dogk.server.RetrofitClient
+
 import com.github.da_dogk.server.interface_folder.ResisterInterface
 import com.github.da_dogk.server.request.RegisterRequest
 import com.github.da_dogk.server.response.RegisterResponse
