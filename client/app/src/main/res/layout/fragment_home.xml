@@ -102,19 +102,20 @@
     </FrameLayout>
 
     <!--그룹 공부 시간 측정 -->
-    <LinearLayout
-        android:id="@+id/LL_groupStudy"
+    <FrameLayout
+        android:id="@+id/FL_groupStudy"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:visibility="gone">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="40dp"
-            android:text="그룹 공부 시간"
-            android:textColor="#ffffff"/>
 
-    </LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_group"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/my_group_item"
+            />
+    </FrameLayout>
 
 
 </LinearLayout>

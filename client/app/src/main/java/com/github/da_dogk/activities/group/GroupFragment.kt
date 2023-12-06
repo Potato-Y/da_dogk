@@ -150,7 +150,7 @@ class GroupFragment : Fragment() {
                         Toast.makeText(requireContext(), "인증번호를 보냈습니다.", Toast.LENGTH_SHORT).show()
 
                         val inflater = LayoutInflater.from(requireContext())
-                        val dialogView = inflater.inflate(R.layout.dialog1, null)
+                           val dialogView = inflater.inflate(R.layout.dialog1, null)
                         certifyNumber = dialogView.findViewById(R.id.ET_input_title)
 
                         val builder = AlertDialog.Builder(requireContext())

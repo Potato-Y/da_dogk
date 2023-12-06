@@ -33,9 +33,7 @@ interface GroupGenerateInterface {
         @Body request: GroupPasswordRequest
     ): Call<GroupGenerateResponse>
 
-    //그룹 비번 없을때
-    @POST("groups/{groupId}/members")
-    fun joinGroupFalse(
-        @Path("groupId") groupId: String
-    ): Call<GroupGenerateResponse>
+    //내가 가입한 그룹들
+    @GET("groups")
+    fun showMyGroup() : Call<List<GroupGenerateResponse>>
 }

@@ -1,6 +1,7 @@
 package com.github.da_dogk.activities.group
 
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -132,7 +133,7 @@ class GroupIntroActivity : AppCompatActivity() {
 
                                 //비밀번호 없을때
                             } else{
-                                service.joinGroupFalse("$groupId").enqueue(object : Callback<GroupGenerateResponse>{
+                                service.joinGroupTrue("$groupId",GroupPasswordRequest("")).enqueue(object : Callback<GroupGenerateResponse>{
                                     override fun onResponse(call: Call<GroupGenerateResponse>, response: Response<GroupGenerateResponse>) {
                                         if (response.isSuccessful) {
                                             val result = response.body()

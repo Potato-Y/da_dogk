@@ -17,11 +17,15 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.da_dogk.R
+import com.github.da_dogk.adapter.GroupAdapter
+import com.github.da_dogk.adapter.MyGroupAdapter
 import com.github.da_dogk.adapter.StudyAdapter
 import com.github.da_dogk.server.RetrofitClient
+import com.github.da_dogk.server.interface_folder.GroupGenerateInterface
 import com.github.da_dogk.server.interface_folder.MyInfoInterface
 import com.github.da_dogk.server.interface_folder.MyStudyInterface
 import com.github.da_dogk.server.request.MyStudyRequest
+import com.github.da_dogk.server.response.GroupGenerateResponse
 import com.github.da_dogk.server.response.MyStudyResponse
 import com.github.da_dogk.server.response.User
 import com.google.android.material.tabs.TabLayout
@@ -41,13 +45,16 @@ class HomeFragment : Fragment() {
 
     lateinit var tabLayout: TabLayout
     lateinit var layoutMyStudy: FrameLayout
-    lateinit var layoutGroupStudy: LinearLayout
+    lateinit var layoutGroupStudy: FrameLayout
     lateinit var buttonAddCategory: ImageButton
     lateinit var editTextInputTitle: EditText
     lateinit var date: TextView
 
     lateinit var recyclerView : RecyclerView
     lateinit var studyAdapter: StudyAdapter
+
+    lateinit var recyclerViewGroup : RecyclerView
+    lateinit var myGroupAdapter: MyGroupAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,30 +72,36 @@ class HomeFragment : Fragment() {
 
         tabLayout = view.findViewById(R.id.tab_layout_home)
         layoutMyStudy = view.findViewById(R.id.FL_myStudy)
-        layoutGroupStudy = view.findViewById(R.id.LL_groupStudy)
+        layoutGroupStudy = view.findViewById(R.id.FL_groupStudy)
         buttonAddCategory = view.findViewById(R.id.B_add_category)
         date = view.findViewById(R.id.TV_currentDate)
 
+        //내공부 리사이클러뷰 설정
         recyclerView = view.findViewById(R.id.rv_my)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         studyAdapter = StudyAdapter()
         recyclerView.adapter = studyAdapter
 
+        //내 그룹 리사이클러뷰 설정
+        recyclerViewGroup = view.findViewById(R.id.rv_group)
+        recyclerViewGroup.layoutManager = LinearLayoutManager(requireContext())
+        myGroupAdapter = MyGroupAdapter()
+        recyclerViewGroup.adapter = myGroupAdapter
+
 
         date.text = getCurrentFormattedDate()
 
-
-
         val sharedPreferences = requireActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         val jwtToken = sharedPreferences.getString("accessToken", "")
-        val userId = sharedPreferences.getInt("userId", -1).toString() //기본값은 -1
 
         //레트로핏 설정
         val retrofit = RetrofitClient.createRetrofitInstance(jwtToken)
 
         val service = retrofit.create(MyStudyInterface::class.java)
         val serviceMyInfo = retrofit.create(MyInfoInterface::class.java)
+        val serviceMyGroup = retrofit.create(GroupGenerateInterface::class.java)
 
+        //내 카테고리 표시하기
         serviceMyInfo.showMyInfo("Bearer $jwtToken").enqueue(object :
             Callback<User> {
             override fun onResponse(call: Call<User>, response: Response<User>) {
@@ -125,9 +138,7 @@ class HomeFragment : Fragment() {
             }
         })
 
-
-
-
+        //카테고리 생성 버튼
         buttonAddCategory.setOnClickListener {
             // LayoutInflater를 사용하여 dialog.xml을 inflate
             val inflater = LayoutInflater.from(requireContext())
@@ -176,6 +187,29 @@ class HomeFragment : Fragment() {
             val alertDialog = builder.create()
             alertDialog.show()
         }
+
+        //내 그룹 표시
+        serviceMyGroup.showMyGroup().enqueue(object : Callback<List<GroupGenerateResponse>> {
+            override fun onResponse(call: Call<List<GroupGenerateResponse>>, response: Response<List<GroupGenerateResponse>>) {
+                if (response.isSuccessful) {
+                    val myGroup = response.body()
+
+                    if (myGroup != null && myGroup.isNotEmpty()) {
+                        myGroupAdapter.setMyGroup(myGroup)
+                        myGroupAdapter.notifyDataSetChanged()
+                    }
+                    Log.d("내 그룹 불러오기", "성공 : $myGroup")
+                } else {
+                    Log.e("내 그룹 불러오기", "실패: ${response.code()}")
+                    Toast.makeText(requireContext(), "내 그룹 불러오기 실패", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<GroupGenerateResponse>>, t: Throwable) {
+                Log.e("내 그룹 불러오기", "${t.localizedMessage}")
+                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
+            }
+        })
 
 
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {

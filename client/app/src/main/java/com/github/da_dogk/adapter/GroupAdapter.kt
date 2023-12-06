@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.github.da_dogk.R
 import com.github.da_dogk.server.response.GroupGenerateResponse
-
+//
 // RecyclerView 어댑터 클래스 정의
 class GroupAdapter : RecyclerView.Adapter<GroupAdapter.GroupViewHolder>() {
 
