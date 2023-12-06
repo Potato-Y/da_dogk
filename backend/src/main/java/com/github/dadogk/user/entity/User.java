@@ -50,20 +50,20 @@ public class User implements UserDetails {
     @Column(name = "nickname", nullable = false)
     private String nickname;
 
-    @OneToMany(mappedBy = "hostUser", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "hostUser", cascade = CascadeType.REMOVE)
     private List<Group> groups = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     private List<GroupMember> groupMembers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<StudySubject> studySubjects = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user",cascade = CascadeType.REMOVE)
     @JoinColumn(name = "school")
     private SchoolMember schoolMember;
 
-    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user",cascade = CascadeType.REMOVE)
     @JoinColumn(name="mail_auth")
     private MailAuthInfo mailAuthInfo;
 
