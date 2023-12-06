@@ -1,6 +1,7 @@
 package com.github.dadogk.group;
 
 import com.github.dadogk.enums.State;
+import com.github.dadogk.error.exception.NotFoundException;
 import com.github.dadogk.group.dto.UpdateGroupRequest;
 import com.github.dadogk.group.dto.UpdateGroupPasswordRequest;
 import com.github.dadogk.group.dto.average.GetGroupAverageRequest;
@@ -274,5 +275,17 @@ public class GroupService {
         }
 
         return groupRepository.save(updateGroup);
+    }
+
+    public Group findGroup(Long groupId) {
+        User user = securityUtil.getCurrentUser();
+        Optional<Group> group = groupRepository.findById(groupId);
+
+        if (group.isEmpty()) {
+            log.warn("findGroup: Not found group. userId={}, groupId={}", user.getId(), groupId);
+            throw new NotFoundException("그룹을  찾을 수 없음.");
+        }
+
+        return group.get();
     }
 }
