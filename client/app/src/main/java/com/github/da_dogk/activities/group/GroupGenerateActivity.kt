@@ -62,7 +62,7 @@ class GroupGenerateActivity : AppCompatActivity() {
                 GroupGenerateRequest(name, intro, password)
             }
 
-            service.addGroup("Bearer $jwtToken", request)
+            service.addGroup(request)
                 .enqueue(object : Callback<GroupGenerateResponse> {
                     override fun onResponse(
                         call: Call<GroupGenerateResponse>,

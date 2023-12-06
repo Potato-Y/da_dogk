@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/black"
+    android:background="@drawable/rounded_border"
     android:padding="5dp">
 
     <ImageView
@@ -17,7 +17,7 @@
         android:orientation="vertical">
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:orientation="horizontal">
 
             <TextView
@@ -34,6 +34,12 @@
                 android:layout_height="20dp"
                 android:src="@drawable/baseline_lock_24"
                 android:layout_gravity="right"/>
+            <TextView
+                android:id="@+id/tv_group_host"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="host"
+                android:layout_gravity="right|bottom"/>
 
         </FrameLayout>
 

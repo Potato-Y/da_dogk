@@ -7,32 +7,26 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
+
 import androidx.fragment.app.Fragment
-//import com.github.da_dogk.ARG_PARAM1
-//import com.github.da_dogk.ARG_PARAM2
+
 import com.github.da_dogk.R
 import com.github.da_dogk.activities.login.MainActivity
 import com.github.da_dogk.server.RetrofitClient
 import com.github.da_dogk.server.interface_folder.MyInfoInterface
-import com.github.da_dogk.server.interface_folder.MyStudyInterface
-import com.github.da_dogk.server.interface_folder.ResisterInterface
-import com.github.da_dogk.server.response.GroupGenerateResponse
+
 import com.github.da_dogk.server.response.User
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.await
-import retrofit2.create
+
 
 /**
  * A simple [Fragment] subclass.
@@ -66,7 +60,8 @@ class MyProfileFragment : Fragment() {
         profileName = view.findViewById(R.id.T_profile_name)
         signout = view.findViewById(R.id.T_signout)
 
-        val sharedPreferences = requireActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        val sharedPreferences =
+            requireActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         val jwtToken = sharedPreferences.getString("accessToken", "")
 
         val retrofit = RetrofitClient.createRetrofitInstance(jwtToken)
@@ -119,6 +114,7 @@ class MyProfileFragment : Fragment() {
                 }
             }
     }
+
     private fun showLogoutDialog() {
         val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
         builder.setTitle("로그아웃")
@@ -145,7 +141,8 @@ class MyProfileFragment : Fragment() {
 
     private fun clearToken() {
         // 토큰 삭제
-        val sharedPreferences: SharedPreferences = requireActivity().getSharedPreferences("user_prefs", MODE_PRIVATE)
+        val sharedPreferences: SharedPreferences =
+            requireActivity().getSharedPreferences("user_prefs", MODE_PRIVATE)
         sharedPreferences.edit().remove("accessToken").apply()
     }
 }

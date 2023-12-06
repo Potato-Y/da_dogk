@@ -103,9 +103,17 @@ class GroupFragment : Fragment() {
         val service = retrofit.create(GroupGenerateInterface::class.java)
         val serviceSchool = retrofit.create(SchoolEmailInterface::class.java)
 
+        //그룹 상세페이지로 이동
+        groupAdapter.setOnGroupClickListener(object : GroupAdapter.OnGroupClickListener {
+            override fun onGroupClick(group: GroupGenerateResponse) {
+                // 그룹 클릭 시 상세 페이지로 이동하는 코드
+                navigateToGroupDetail(group.id.toString()) // 그룹의 고유 ID를 전달하거나 필요한 정보를 전달
+            }
+        })
+
 
         //생성된 그룹들 보여주기
-        service.showGroup("Bearer $jwtToken").enqueue(object : Callback<List<GroupGenerateResponse>> {
+        service.showGroup().enqueue(object : Callback<List<GroupGenerateResponse>> {
             override fun onResponse(call: Call<List<GroupGenerateResponse>>, response: Response<List<GroupGenerateResponse>>) {
                 if (response.isSuccessful) {
                     val group = response.body()
@@ -174,10 +182,7 @@ class GroupFragment : Fragment() {
                             } else {
                                 Toast.makeText(requireContext(), "코드를 입력하지 않았습니다.", Toast.LENGTH_SHORT).show()
                             }
-
-
                         }
-
                         // "Cancel" 버튼 추가
                         builder.setNegativeButton("취소") { dialog, _ ->
                             Toast.makeText(requireContext(), "취소했습니다.", Toast.LENGTH_SHORT).show()
@@ -236,8 +241,13 @@ class GroupFragment : Fragment() {
             }
         }
 
-
         return view
+    }
+    private fun navigateToGroupDetail(groupId: String) {
+        // GroupDetailActivity로 이동하는 코드 작성
+        val intent = Intent(requireContext(), GroupIntroActivity::class.java)
+        intent.putExtra("id", groupId)
+        startActivity(intent)
     }
 
     companion object {

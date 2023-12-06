@@ -13,7 +13,7 @@
 
         <!-- 뒤로가기 버튼 -->
         <ImageButton
-            android:id="@+id/promotion_detail_btn_back"
+            android:id="@+id/b_go_back3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="43dp"
@@ -22,7 +22,7 @@
 
         <!-- 신청하기 버튼 -->
         <android.widget.Button
-            android:id="@+id/promotion_apply_btn"
+            android:id="@+id/b_join"
             android:layout_width="77dp"
             android:layout_height="48dp"
             android:layout_marginLeft="309dp"
@@ -44,8 +44,14 @@
             android:background="@drawable/ic_launcher_foreground"
             android:scaleType="centerCrop" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#fff"
+            android:layout_marginTop="300dp"/>
+
         <TextView
-            android:id="@+id/tv_group_name"
+            android:id="@+id/tv_group_name2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="300dp"
@@ -72,7 +78,6 @@
             android:background="@drawable/promotion_detail_people" />
 
         <TextView
-            android:id="@+id/text_recruitment_period"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="99dp"
@@ -81,9 +86,9 @@
             android:textColor="#ffffff"
             android:textSize="18sp" />
 
-        <!-- 날짜 텍스트 -->
+
         <TextView
-            android:id="@+id/promotion_detail_text_date"
+            android:id="@+id/tv_avg_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="199dp"
@@ -92,11 +97,8 @@
             android:textColor="#ffffff"
             android:textSize="18sp" />
 
-        <!-- 여러 사람들 아이콘 -->
 
-        <!-- 모집인원 텍스트 -->
         <TextView
-            android:id="@+id/text_recruitment_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="99dp"
@@ -105,9 +107,8 @@
             android:textColor="#ffffff"
             android:textSize="18sp" />
 
-        <!-- 모집인원 수 -->
         <TextView
-            android:id="@+id/text_recruitment_count_amount"
+            android:id="@+id/tv_members"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="199dp"
@@ -117,7 +118,7 @@
             android:textSize="18sp" />
 
         <TextView
-            android:id="@+id/see"
+            android:id="@+id/tv_see_members"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="구성인원보기"
@@ -126,13 +127,14 @@
             android:textColor="#FFFFFF"
             />
         <TextView
-            android:id="@+id/sasd"
+            android:id="@+id/tv_group_intro"
             android:layout_width="300dp"
-            android:layout_height="wrap_content"
+            android:layout_height="200dp"
             android:text="그룹소개\n여기는 무엇을 하는곳\n주저리주저리"
             android:layout_marginLeft="60dp"
             android:layout_marginTop="450dp"
             android:textColor="#FFFFFF"
+            android:background="#222222"
             />
 
     </RelativeLayout>
