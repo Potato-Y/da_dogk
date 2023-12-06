@@ -2,6 +2,7 @@ package com.github.da_dogk.activities.home
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -11,13 +12,11 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageButton
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.da_dogk.R
-import com.github.da_dogk.adapter.GroupAdapter
 import com.github.da_dogk.adapter.MyGroupAdapter
 import com.github.da_dogk.adapter.StudyAdapter
 import com.github.da_dogk.server.RetrofitClient
@@ -29,8 +28,6 @@ import com.github.da_dogk.server.response.GroupGenerateResponse
 import com.github.da_dogk.server.response.MyStudyResponse
 import com.github.da_dogk.server.response.User
 import com.google.android.material.tabs.TabLayout
-import okhttp3.OkHttpClient
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Converter
@@ -48,6 +45,7 @@ class HomeFragment : Fragment() {
     lateinit var layoutGroupStudy: FrameLayout
     lateinit var buttonAddCategory: ImageButton
     lateinit var editTextInputTitle: EditText
+    lateinit var timer: TextView
     lateinit var date: TextView
 
     lateinit var recyclerView : RecyclerView
@@ -75,6 +73,7 @@ class HomeFragment : Fragment() {
         layoutGroupStudy = view.findViewById(R.id.FL_groupStudy)
         buttonAddCategory = view.findViewById(R.id.B_add_category)
         date = view.findViewById(R.id.TV_currentDate)
+        timer = view.findViewById(R.id.TV_timer)
 
         //내공부 리사이클러뷰 설정
         recyclerView = view.findViewById(R.id.rv_my)
@@ -88,7 +87,7 @@ class HomeFragment : Fragment() {
         myGroupAdapter = MyGroupAdapter()
         recyclerViewGroup.adapter = myGroupAdapter
 
-
+        //현재 날짜 표시
         date.text = getCurrentFormattedDate()
 
         val sharedPreferences = requireActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
@@ -100,6 +99,14 @@ class HomeFragment : Fragment() {
         val service = retrofit.create(MyStudyInterface::class.java)
         val serviceMyInfo = retrofit.create(MyInfoInterface::class.java)
         val serviceMyGroup = retrofit.create(GroupGenerateInterface::class.java)
+
+        //그룹 클릭시 멤버로 이동
+        myGroupAdapter.setOnGroupClickListener(object : MyGroupAdapter.OnGroupClickListener {
+            override fun onGroupClick(group: GroupGenerateResponse) {
+                // 그룹 클릭 시 상세 페이지로 이동하는 코드
+                navigateToGroupDetail(group.id.toString()) // 그룹의 고유 ID를 전달하거나 필요한 정보를 전달
+            }
+        })
 
         //내 카테고리 표시하기
         serviceMyInfo.showMyInfo("Bearer $jwtToken").enqueue(object :
@@ -211,7 +218,13 @@ class HomeFragment : Fragment() {
             }
         })
 
+        //타이머 클릭시
+        timer.setOnClickListener {
 
+        }
+
+
+        //탭 레이아웃 변경 (내공부, 속한 그룹)
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (tab != null) {
@@ -245,6 +258,13 @@ class HomeFragment : Fragment() {
         val calendar = Calendar.getInstance()
         val dateFormat = SimpleDateFormat("yyyy-MM-dd (E)", Locale.KOREA)
         return dateFormat.format(calendar.time)
+    }
+
+    private fun navigateToGroupDetail(groupId: String) {
+        // GroupDetailActivity로 이동하는 코드 작성
+        val intent = Intent(requireContext(), GroupMemberTimerActivity::class.java)
+        intent.putExtra("id", groupId)
+        startActivity(intent)
     }
     companion object {
         @JvmStatic

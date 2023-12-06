@@ -12,6 +12,8 @@ class MyGroupAdapter : RecyclerView.Adapter<MyGroupAdapter.MyGroupViewHolder>() 
 
     private var myGroups: List<GroupGenerateResponse> = emptyList()
 
+    private var groupClickListener: OnGroupClickListener? = null
+
     // 새로운 아이템 뷰 홀더를 생성
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyGroupViewHolder {
         val view =
@@ -23,6 +25,10 @@ class MyGroupAdapter : RecyclerView.Adapter<MyGroupAdapter.MyGroupViewHolder>() 
     override fun onBindViewHolder(holder: MyGroupViewHolder, position: Int) {
         val myGroup = myGroups[position]
         holder.bind(myGroup)
+
+        holder.itemView.setOnClickListener {
+            groupClickListener?.onGroupClick(myGroup)
+        }
     }
 
     // 데이터 세트의 크기 반환
@@ -32,6 +38,7 @@ class MyGroupAdapter : RecyclerView.Adapter<MyGroupAdapter.MyGroupViewHolder>() 
     fun setMyGroup(myGroups: List<GroupGenerateResponse>) {
         this.myGroups= myGroups
         notifyDataSetChanged()
+
     }
 
     // 각 아이템 뷰의 뷰 홀더 클래스 정의
@@ -57,5 +64,11 @@ class MyGroupAdapter : RecyclerView.Adapter<MyGroupAdapter.MyGroupViewHolder>() 
 
             return String.format("%02d:%02d:%02d", hours, minutes, remainingSeconds)
         }
+    }
+    interface OnGroupClickListener {
+        fun onGroupClick(group: GroupGenerateResponse)
+    }
+    fun setOnGroupClickListener(listener: OnGroupClickListener) {
+        groupClickListener = listener
     }
 }

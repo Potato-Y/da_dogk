@@ -3,6 +3,7 @@ package com.github.da_dogk.server.interface_folder
 import com.github.da_dogk.server.request.GroupGenerateRequest
 import com.github.da_dogk.server.request.GroupPasswordRequest
 import com.github.da_dogk.server.response.GroupGenerateResponse
+import com.github.da_dogk.server.response.User
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -36,4 +37,10 @@ interface GroupGenerateInterface {
     //내가 가입한 그룹들
     @GET("groups")
     fun showMyGroup() : Call<List<GroupGenerateResponse>>
+
+    //그룹가입 유저 가져오기
+    @GET("groups/{groupId}/members")
+    fun showMembers(
+        @Path("groupId") groupId: String,
+    ): Call<List<User>>
 }

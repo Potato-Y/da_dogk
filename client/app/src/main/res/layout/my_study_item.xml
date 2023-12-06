@@ -3,38 +3,46 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/black"
-    android:padding="10dp">
-    <ImageButton
-        android:id="@+id/IB_start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/round_play_arrow_24"
-        android:layout_marginLeft="20dp"
-        android:background="#000000"/>
-
-    <TextView
-        android:id="@+id/TV_category"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:text="카테고리 종류"
-        android:textSize="18sp"
-        android:textColor="#ffffff"/>
-
-    <FrameLayout
+    android:padding="10dp"
+    android:orientation="vertical">
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/TV_study_time"
+        <ImageButton
+            android:id="@+id/IB_start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_marginRight="30dp"
-            android:text="00:00:00"
+            android:src="@drawable/round_play_arrow_24"
+            android:layout_marginLeft="20dp"
+            android:background="#000000"/>
+
+        <TextView
+            android:id="@+id/TV_category"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="카테고리 종류"
             android:textSize="18sp"
             android:textColor="#ffffff"/>
 
-    </FrameLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/TV_study_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginRight="30dp"
+                android:text="00:00:00"
+                android:textSize="18sp"
+                android:textColor="#ffffff"/>
+        </FrameLayout>
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#838383"/>
 
 
 </LinearLayout>

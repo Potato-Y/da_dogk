@@ -83,6 +83,7 @@ class GroupIntroActivity : AppCompatActivity() {
 
                         }
 
+                        //그룹 가입하기 버튼
                         joinButton.setOnClickListener {
                             //비밀번호 있을때
                             if(password == true) {
@@ -118,7 +119,6 @@ class GroupIntroActivity : AppCompatActivity() {
                                     } else {
                                         // 비밀번호를 입력하지 않았을 때의 처리
                                         Toast.makeText(this@GroupIntroActivity, "비밀번호를 입력하세요.", Toast.LENGTH_SHORT).show()
-
                                     }
                                 }
                                 // "Cancel" 버튼 추가
