@@ -17,5 +17,4 @@ interface GroupGenerateInterface {
 
     @GET("groups")
     fun showGroup(@Header("Authorization") authorization: String): Call<List<GroupGenerateResponse>>
-
 }

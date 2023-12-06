@@ -109,9 +109,10 @@ class GroupFragment : Fragment() {
             override fun onResponse(call: Call<List<GroupGenerateResponse>>, response: Response<List<GroupGenerateResponse>>) {
                 if (response.isSuccessful) {
                     val group = response.body()
-                    // categories를 사용하여 원하는 작업을 수행
+
                     if (group != null && group.isNotEmpty()) {
                         groupAdapter.setGroups(group)
+                        groupAdapter.notifyDataSetChanged()
                     }
                     Log.d("글 불러오기", "성공 : $group")
                 } else {

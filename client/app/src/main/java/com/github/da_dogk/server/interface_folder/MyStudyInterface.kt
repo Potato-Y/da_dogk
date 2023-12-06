@@ -16,6 +16,8 @@ interface MyStudyInterface {
         @Body request: MyStudyRequest
     ): Call<MyStudyResponse>
 
-    @GET("study/subjects/1")
-    fun showCategories(@Header("Authorization") authorization: String): Call<List<MyStudyResponse>>
+    @GET("study/subjects/{userId}")
+    fun showCategories(
+        @Path("userId") userId: String
+    ): Call<List<MyStudyResponse>>
 }

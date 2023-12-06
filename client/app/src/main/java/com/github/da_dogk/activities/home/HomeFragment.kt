@@ -79,16 +79,18 @@ class HomeFragment : Fragment() {
 
         val sharedPreferences = requireActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         val jwtToken = sharedPreferences.getString("accessToken", "")
+        val userId = sharedPreferences.getInt("userId", -1).toString() //기본값은 -1
 
         //레트로핏 설정
         val retrofit = RetrofitClient.createRetrofitInstance(jwtToken)
+
         val service = retrofit.create(MyStudyInterface::class.java)
 
-        service.showCategories("Bearer $jwtToken").enqueue(object : Callback<List<MyStudyResponse>> {
+        service.showCategories("1").enqueue(object : Callback<List<MyStudyResponse>> {
             override fun onResponse(call: Call<List<MyStudyResponse>>, response: Response<List<MyStudyResponse>>) {
                 if (response.isSuccessful) {
                     val categories = response.body()
-                    // categories를 사용하여 원하는 작업을 수행
+
                     if (categories != null && categories.isNotEmpty()) {
                         studyAdapter.setStudy(categories)
                         studyAdapter.notifyDataSetChanged() // RecyclerView 갱신
