@@ -161,4 +161,15 @@ public class SchoolService {
 
         schoolMemberRepository.delete(schoolMember.get());
     }
+
+    public SchoolMember getMySchool() {
+        User user = securityUtil.getCurrentUser();
+        Optional<SchoolMember> schoolMember = schoolMemberRepository.findByUser(user);
+        if (schoolMember.isEmpty()) {
+            log.warn("getMySchool: Not found school member. userId={}", user.getId());
+            throw new NotFoundException("학교 정보를 찾을 수 없음.");
+        }
+
+        return schoolMember.get();
+    }
 }
