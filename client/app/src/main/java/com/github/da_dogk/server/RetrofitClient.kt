@@ -34,12 +34,17 @@ object RetrofitClient {
     private fun createOkHttpClient(jwtToken: String?): OkHttpClient {
         val httpClient = OkHttpClient.Builder()
 
+
         if (!jwtToken.isNullOrBlank()) {
             httpClient.addInterceptor { chain ->
                 val original = chain.request()
+
+                val method = original.method
+                val body = original.body
+
                 val requestBuilder = original.newBuilder()
                     .header("Authorization", "Bearer $jwtToken")
-                    .method(original.method(), original.body())
+                    .method(method ?: "GET", body)
 
                 val request = requestBuilder.build()
                 chain.proceed(request)
@@ -66,3 +71,16 @@ object RetrofitClient {
         }
     }
 }
+
+    //okhttp gradle추가 하기 전 코드
+//if (!jwtToken.isNullOrBlank()) {
+//    httpClient.addInterceptor { chain ->
+//        val original = chain.request()
+//        val requestBuilder = original.newBuilder()
+//            .header("Authorization", "Bearer $jwtToken")
+//            .method(original.method(), original.body())
+//
+//        val request = requestBuilder.build()
+//        chain.proceed(request)
+//    }
+//}
