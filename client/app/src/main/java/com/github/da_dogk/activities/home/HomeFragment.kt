@@ -19,9 +19,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.github.da_dogk.R
 import com.github.da_dogk.adapter.StudyAdapter
 import com.github.da_dogk.server.RetrofitClient
+import com.github.da_dogk.server.interface_folder.MyInfoInterface
 import com.github.da_dogk.server.interface_folder.MyStudyInterface
 import com.github.da_dogk.server.request.MyStudyRequest
 import com.github.da_dogk.server.response.MyStudyResponse
+import com.github.da_dogk.server.response.User
 import com.google.android.material.tabs.TabLayout
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
@@ -85,30 +87,45 @@ class HomeFragment : Fragment() {
         val retrofit = RetrofitClient.createRetrofitInstance(jwtToken)
 
         val service = retrofit.create(MyStudyInterface::class.java)
+        val serviceMyInfo = retrofit.create(MyInfoInterface::class.java)
 
-        service.showCategories("1").enqueue(object : Callback<List<MyStudyResponse>> {
-            override fun onResponse(call: Call<List<MyStudyResponse>>, response: Response<List<MyStudyResponse>>) {
-                if (response.isSuccessful) {
-                    val categories = response.body()
+        serviceMyInfo.showMyInfo("Bearer $jwtToken").enqueue(object :
+            Callback<User> {
+            override fun onResponse(call: Call<User>, response: Response<User>) {
+                val user = response.body()
+                val userId = user?.userId
+                service.showCategories("$userId").enqueue(object : Callback<List<MyStudyResponse>> {
+                    override fun onResponse(call: Call<List<MyStudyResponse>>, response: Response<List<MyStudyResponse>>) {
+                        if (response.isSuccessful) {
+                            val categories = response.body()
 
-                    if (categories != null && categories.isNotEmpty()) {
-                        studyAdapter.setStudy(categories)
-                        studyAdapter.notifyDataSetChanged() // RecyclerView 갱신
+                            if (categories != null && categories.isNotEmpty()) {
+                                studyAdapter.setStudy(categories)
+                                studyAdapter.notifyDataSetChanged() // RecyclerView 갱신
+                            }
+
+
+                            Log.d("카테고리 불러오기", "성공 : $categories")
+                        } else {
+                            Log.e("카테고리 불러오기", "실패: ${response.code()}")
+                            Toast.makeText(requireContext(), "카테고리 불러오기 실패", Toast.LENGTH_SHORT).show()
+                        }
                     }
 
+                    override fun onFailure(call: Call<List<MyStudyResponse>>, t: Throwable) {
+                        Log.e("카테고리 불러오기", "${t.localizedMessage}")
+                        Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
+                    }
+                })
 
-                    Log.d("카테고리 불러오기", "성공 : $categories")
-                } else {
-                    Log.e("카테고리 불러오기", "실패: ${response.code()}")
-                    Toast.makeText(requireContext(), "카테고리 불러오기 실패", Toast.LENGTH_SHORT).show()
-                }
             }
 
-            override fun onFailure(call: Call<List<MyStudyResponse>>, t: Throwable) {
-                Log.e("카테고리 불러오기", "${t.localizedMessage}")
-                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
+            override fun onFailure(call: Call<User>, t: Throwable) {
+
             }
         })
+
+
 
 
         buttonAddCategory.setOnClickListener {

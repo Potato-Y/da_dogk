@@ -76,13 +76,12 @@ class MyProfileFragment : Fragment() {
         service.showMyInfo("Bearer $jwtToken").enqueue(object :
             Callback<User> {
             override fun onResponse(call: Call<User>, response: Response<User>) {
-                val userId = response.body()
-                profileName.text = userId?.nickname
+                val user = response.body()
+                profileName.text = user?.nickname
             }
 
             override fun onFailure(call: Call<User>, t: Throwable) {
-                Log.e("이름 불러오기", "${t.localizedMessage}")
-                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
+
             }
         })
 
