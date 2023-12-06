@@ -1,5 +1,7 @@
 package com.github.dadogk.group;
 
+import static com.github.dadogk.study.util.StudyUtil.calculateStudyTime;
+
 import com.github.dadogk.enums.State;
 import com.github.dadogk.error.exception.NotFoundException;
 import com.github.dadogk.group.dto.UpdateGroupRequest;
@@ -24,6 +26,7 @@ import com.github.dadogk.security.util.SecurityUtil;
 import com.github.dadogk.study.StudyService;
 import com.github.dadogk.study.dto.api.recode.GetUserRecodesRequest;
 import com.github.dadogk.study.entity.StudyRecord;
+import com.github.dadogk.study.util.StudyUtil;
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.exception.DuplicateGroupMemberException;
 
@@ -230,8 +233,7 @@ public class GroupService {
             List<StudyRecord> records = studyService
                     .getUserRecodes(member.getUser(), new GetUserRecodesRequest(dto.getYear(), dto.getMonth()));
             for (StudyRecord record : records) { // 공부 시간 초 단위로 계산
-                Duration duration = Duration.between(record.getStartAt(), record.getEndAt());
-                totalStudyTime += (int) duration.getSeconds();
+                totalStudyTime += calculateStudyTime(record);
             }
             count += records.size(); // 기록 수 추가
         }

@@ -1,5 +1,7 @@
 package com.github.dadogk.user.util;
 
+import static com.github.dadogk.study.util.StudyUtil.calculateStudyTime;
+
 import com.github.dadogk.study.StudyService;
 import com.github.dadogk.study.entity.StudyRecord;
 import com.github.dadogk.study.entity.StudyRecordRepository;
@@ -43,16 +45,10 @@ public class UserUtil {
         List<StudyRecord> records = studyRecordRepository.findByUserAndStartAtBetween(findUser, startTime, endTime);
         Long todayStudyTime = 0L;
         for (StudyRecord record : records) {
-            LocalDateTime startAt = record.getStartAt();
-            LocalDateTime endAt = record.getEndAt();
-            if (endAt == null) { // 만약 아직 공부가 끝나지 않았다면 현재 시간으로
-                endAt = LocalDateTime.now();
-            }
-
-            todayStudyTime += Duration.between(startAt, endAt).getSeconds();
+            todayStudyTime += calculateStudyTime(record);
         }
 
-        return new UserResponse(findUser.getId(), findUser.getEmail(), findUser.getNickname(),todayStudyTime);
+        return new UserResponse(findUser.getId(), findUser.getEmail(), findUser.getNickname(), todayStudyTime);
     }
 
 }
