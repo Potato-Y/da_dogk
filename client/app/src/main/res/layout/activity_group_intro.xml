@@ -122,6 +122,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="구성인원보기"
+            android:visibility="invisible"
             android:layout_marginLeft="300dp"
             android:layout_marginTop="400dp"
             android:textColor="#FFFFFF"

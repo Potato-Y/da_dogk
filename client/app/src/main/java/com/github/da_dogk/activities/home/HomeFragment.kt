@@ -239,17 +239,20 @@ class HomeFragment : Fragment() {
             }
         })
 
+        //시간 측정 - 카테고리 클릭시 해당 카테고리 시간측정
+        studyAdapter.setOnStudyClickListener(object : StudyAdapter.OnStudyClickListener {
+            override fun onStudyClick(study: MyStudyResponse) {
+                val subjectId = study.id
 
-        //timer 클릭시
-        timer.setOnClickListener {
-            if (!timerRunning) {
-                startTimer()
-                // WebSocket 연결 시작
-                connectWebSocket(jwtToken!!)
-            } else {
-                showSaveDialog()
+                if (!timerRunning) {
+                    startTimer()
+                    // WebSocket 연결 시작
+                    connectWebSocket(jwtToken!!,subjectId)
+                } else {
+                    showSaveDialog()
+                }
             }
-        }
+        })
 
         //탭 레이아웃 변경 (내공부, 속한 그룹)
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -361,13 +364,13 @@ class HomeFragment : Fragment() {
 
     private fun showStudyTime(studyTimeInSeconds: Int) { //(studyTimeInSeconds: Int, service: MyInfoInterface)
         // 로컬 데이터베이스에 공부 시간을 저장하는 로직을 구현
-        Log.d("시간 저장하기", "저장할 시간 (단위: 초): $studyTimeInSeconds seconds")
+        Log.d("WebSocket- 시간 저장하기", "저장할 시간 (단위: 초): $studyTimeInSeconds seconds")
     }
-    private fun connectWebSocket(jwtToken: String) {
-        myWebSocketListener = MyWebSocketListener(jwtToken)
+    private fun connectWebSocket(jwtToken: String, subjectId: Int) {
+        myWebSocketListener = MyWebSocketListener(jwtToken,subjectId)
         myWebSocketListener.startWebSocket()
     }
-    inner class MyWebSocketListener(val accessToken : String): WebSocketListener() {
+    inner class MyWebSocketListener(val accessToken : String, val subjectId: Int): WebSocketListener() {
 
         private lateinit var webSocket: WebSocket
 
@@ -391,7 +394,7 @@ class HomeFragment : Fragment() {
             val studyStartMessage = JSONObject().apply {
                 put("type", "STUDY_START")
                 put("accessToken", accessToken)
-                put("subjectId", 5)
+                put("subjectId", subjectId)
             }
 
             sendMessage(studyStartMessage.toString())

@@ -2,6 +2,7 @@ package com.github.da_dogk.server.interface_folder
 
 import com.github.da_dogk.server.request.GroupGenerateRequest
 import com.github.da_dogk.server.request.GroupPasswordRequest
+import com.github.da_dogk.server.response.GroupAvgTimeResponse
 import com.github.da_dogk.server.response.GroupGenerateResponse
 import com.github.da_dogk.server.response.User
 import retrofit2.Call
@@ -43,4 +44,9 @@ interface GroupGenerateInterface {
     fun showMembers(
         @Path("groupId") groupId: String,
     ): Call<List<User>>
+
+    @GET("groups/{groupId}/study/average")
+    fun showAverageTime(
+        @Path("groupId") groupId: String
+    ): Call<GroupAvgTimeResponse>
 }

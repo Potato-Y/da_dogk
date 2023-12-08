@@ -56,9 +56,9 @@
     <FrameLayout
         android:id="@+id/FL_group"
         android:layout_width="match_parent"
-        android:layout_height="579dp"
+        android:layout_height="450dp"
         android:layout_marginTop="20dp">
-        
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_group"
             android:layout_width="match_parent"
@@ -72,7 +72,6 @@
                 android:layout_width="66dp"
                 android:layout_height="66dp"
                 android:layout_gravity="bottom|end"
-                android:layout_marginBottom="130dp"
                 android:background="@drawable/btn_writing" />
         
     </FrameLayout>

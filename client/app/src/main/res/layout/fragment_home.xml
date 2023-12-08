@@ -92,7 +92,7 @@
     <FrameLayout
         android:id="@+id/FL_myStudy"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="300dp">
 
 
         <androidx.recyclerview.widget.RecyclerView
@@ -108,7 +108,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            android:layout_marginBottom="120dp"
+
             android:clickable="true"
             android:focusable="true"
             android:src="@drawable/sharp_add_24" />

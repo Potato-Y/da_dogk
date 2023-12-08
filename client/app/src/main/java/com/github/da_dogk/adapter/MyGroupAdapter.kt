@@ -6,11 +6,13 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.github.da_dogk.R
+import com.github.da_dogk.server.response.GroupAvgTimeResponse
 import com.github.da_dogk.server.response.GroupGenerateResponse
 
 class MyGroupAdapter : RecyclerView.Adapter<MyGroupAdapter.MyGroupViewHolder>() {
 
     private var myGroups: List<GroupGenerateResponse> = emptyList()
+
 
     private var groupClickListener: OnGroupClickListener? = null
 
@@ -24,6 +26,7 @@ class MyGroupAdapter : RecyclerView.Adapter<MyGroupAdapter.MyGroupViewHolder>() 
     // 뷰 홀더에 데이터를 바인딩
     override fun onBindViewHolder(holder: MyGroupViewHolder, position: Int) {
         val myGroup = myGroups[position]
+
         holder.bind(myGroup)
 
         holder.itemView.setOnClickListener {
@@ -52,8 +55,9 @@ class MyGroupAdapter : RecyclerView.Adapter<MyGroupAdapter.MyGroupViewHolder>() 
         fun bind(myGroup: GroupGenerateResponse) {
             groupName.text = myGroup.groupName
 
-//            val formattedTime = convertSecondsToFormattedTime(myGroup.)
-//            groupAvgTime.text = formattedTime
+
+            //val formattedTime = convertSecondsToFormattedTime(avg.averageTime)
+            //groupAvgTime.text = formattedTime
         }
 
         // 초를 시:분:초 형식으로 변환하는 함수
