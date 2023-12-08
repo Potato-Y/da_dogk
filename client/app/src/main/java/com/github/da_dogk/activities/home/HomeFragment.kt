@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -28,12 +29,14 @@ import com.github.da_dogk.server.response.GroupGenerateResponse
 import com.github.da_dogk.server.response.MyStudyResponse
 import com.github.da_dogk.server.response.User
 import com.google.android.material.tabs.TabLayout
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.WebSocket
+import okhttp3.WebSocketListener
+import okio.ByteString
 import retrofit2.Call
 import retrofit2.Callback
-import retrofit2.Converter
 import retrofit2.Response
-import retrofit2.Retrofit
-import java.lang.reflect.Type
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -54,7 +57,15 @@ class HomeFragment : Fragment() {
     lateinit var recyclerViewGroup : RecyclerView
     lateinit var myGroupAdapter: MyGroupAdapter
 
+    //웹소켓
+    lateinit var myWebSocketListener: MyWebSocketListener
+    private var isWebSocketConnected = false
 
+    private var timerRunning = false
+    private var seconds = 0
+
+    private lateinit var timerHandler: Handler
+    private lateinit var timerRunnable: Runnable
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,6 +103,7 @@ class HomeFragment : Fragment() {
         //현재 날짜 표시
         date.text = getCurrentFormattedDate()
 
+
         val sharedPreferences = requireActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         val jwtToken = sharedPreferences.getString("accessToken", "")
 
@@ -102,6 +114,7 @@ class HomeFragment : Fragment() {
         val serviceMyInfo = retrofit.create(MyInfoInterface::class.java)
         val serviceMyGroup = retrofit.create(GroupGenerateInterface::class.java)
 
+
         //그룹 클릭시 멤버로 이동
         myGroupAdapter.setOnGroupClickListener(object : MyGroupAdapter.OnGroupClickListener {
             override fun onGroupClick(group: GroupGenerateResponse) {
@@ -110,7 +123,7 @@ class HomeFragment : Fragment() {
             }
         })
 
-        //내 카테고리 표시하기
+            //내 카테고리 표시하기
         serviceMyInfo.showMyInfo("Bearer $jwtToken").enqueue(object :
             Callback<User> {
             override fun onResponse(call: Call<User>, response: Response<User>) {
@@ -220,11 +233,17 @@ class HomeFragment : Fragment() {
             }
         })
 
-        //타이머 클릭시
+
+        //timer 클릭시
         timer.setOnClickListener {
-
+            if (!timerRunning) {
+                startTimer()
+                // WebSocket 연결 시작
+                connectWebSocket()
+            } else {
+                showSaveDialog()
+            }
         }
-
 
         //탭 레이아웃 변경 (내공부, 속한 그룹)
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -256,19 +275,147 @@ class HomeFragment : Fragment() {
 
         return view
     }
+    //현재 날짜 가져오기
     private fun getCurrentFormattedDate(): String {
         val calendar = Calendar.getInstance()
         val dateFormat = SimpleDateFormat("yyyy-MM-dd (E)", Locale.KOREA)
         return dateFormat.format(calendar.time)
     }
 
+    //리사이클러뷰 클릭 시 그룹 id 보내기
     private fun navigateToGroupDetail(groupId: String) {
-        // GroupDetailActivity로 이동하는 코드 작성
         val intent = Intent(requireContext(), GroupMemberTimerActivity::class.java)
         intent.putExtra("id", groupId)
         startActivity(intent)
     }
+
+
+
+
+
+    private fun startTimer() {
+        timerRunning = true
+
+        timerHandler = Handler()
+        timerRunnable = object : Runnable {
+            override fun run() {
+                seconds++
+                updateTimerText()
+                timerHandler.postDelayed(this, 1000)
+            }
+        }
+
+        timerHandler.postDelayed(timerRunnable, 1000)
+
+    }
+    private fun updateTimerText() {
+        val formattedTime = String.format(
+            Locale.getDefault(),
+            "%02d:%02d:%02d",
+            seconds / 3600,
+            (seconds % 3600) / 60,
+            seconds % 60
+        )
+        timer.text = formattedTime
+    }
+    private fun showSaveDialog() {
+        // Stop the timer
+        timerHandler.removeCallbacks(timerRunnable)
+        timerRunning = false
+
+        // Create and show the save dialog
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("저장")
+        builder.setMessage("공부 시간을 저장하시겠습니까?")
+
+        builder.setPositiveButton("확인") { _, _ ->
+            // 추가된 부분: 웹소켓 연결이 되어 있다면 연결 종료
+            if (isWebSocketConnected) {
+                myWebSocketListener.closeWebSocket()
+                isWebSocketConnected = false
+            }
+
+            saveStudyTime(seconds)
+
+            seconds = 0
+            updateTimerText()
+        }
+
+        builder.setNegativeButton("취소") { dialog, _ ->
+            // Resume the timer
+            startTimer()
+            dialog.dismiss()
+        }
+
+        builder.show()
+    }
+    private fun saveStudyTime(studyTimeInSeconds: Int) {
+
+
+    }
+    private fun connectWebSocket() {
+        myWebSocketListener = MyWebSocketListener()
+        myWebSocketListener.startWebSocket()
+    }
+    inner class MyWebSocketListener: WebSocketListener() {
+
+        private lateinit var webSocket: WebSocket
+
+        fun startWebSocket() {
+            val client = OkHttpClient()
+            val request = Request.Builder()
+                .url(SW_SERVER_URL)
+                .build()
+
+            webSocket = client.newWebSocket(request, this)
+            // 추가된 부분: 웹소켓 연결이 성공했을 때 true로 설정
+            isWebSocketConnected = true
+        }
+
+        override fun onOpen(webSocket: WebSocket, response: okhttp3.Response) {
+            // WebSocket이 열릴 때 호출
+            // 연결이 성공했을 때 초기화 작업 수행
+            Log.d("WebSocket", "WebSocket이 열렸습니다.")
+        }
+
+        override fun onMessage(webSocket: WebSocket, text: String) {
+            // 서버로부터 텍스트 메시지를 수신했을 때 호출
+            // 메시지를 파싱하고 UI를 업데이트하는 작업 수행
+        }
+
+        override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
+            // 서버로부터 바이트 스트림을 수신했을 때 호출
+            // 바이트 데이터를 처리하는 작업 수행
+        }
+
+        override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+            // WebSocket이 닫히려고 할 때 호출
+            // 연결 종료 전에 정리 작업 수행
+            Log.d("WebSocket", "WebSocket이 닫히려 합니다. 코드: $code, 이유: $reason")
+        }
+
+        override fun onFailure(webSocket: WebSocket, t: Throwable, response: okhttp3.Response?) {
+            // WebSocket 연결이 실패했을 때 호출
+            // 에러 핸들링 및 재연결 로직 수행
+            Log.e("WebSocket", "WebSocket 연결 실패: ${t.localizedMessage}")
+        }
+        override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+            super.onClosed(webSocket, code, reason)
+            // WebSocket 닫힘 처리
+            Log.d("WebSocket", "WebSocket이 닫혔습니다: $code, 이유: $reason")
+            // 필요시 여기에서 재연결을 처리할 수 있습니다.
+        }
+        fun closeWebSocket() {
+            // WebSocket 연결을 닫음
+            webSocket.close(1000, "Goodbye, WebSocket!")
+        }
+
+
+    }
+
+
     companion object {
+        const val SW_SERVER_URL = "wss://dadogk2.duckdns.org/study/connect"
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             HomeFragment().apply {

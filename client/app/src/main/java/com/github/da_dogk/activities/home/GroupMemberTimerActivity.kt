@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,9 +24,13 @@ class GroupMemberTimerActivity : AppCompatActivity() {
 
     lateinit var recyclerView: RecyclerView
     lateinit var memberAdapter: MemberAdapter
+    lateinit var goback: ImageButton
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_group_member_timer)
+
+        goback = findViewById(R.id.b_go_back)
 
         //리사이클러뷰 설정
         recyclerView = findViewById(R.id.rv_members)
@@ -32,7 +38,9 @@ class GroupMemberTimerActivity : AppCompatActivity() {
         memberAdapter = MemberAdapter()
         recyclerView.adapter = memberAdapter
 
-
+        goback.setOnClickListener {
+            onBackPressed()
+        }
 
         val groupId = intent.getStringExtra("id")
 
@@ -64,5 +72,6 @@ class GroupMemberTimerActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext, "네트워크 오류", Toast.LENGTH_SHORT).show()
             }
         })
+
     }
 }

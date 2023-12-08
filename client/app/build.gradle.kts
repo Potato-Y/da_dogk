@@ -54,7 +54,7 @@ dependencies {
 
     //okhttp 라이브러리 추가
     val okhttp_version = "4.9.1"
-    implementation("com.squareup.okhttp3:okhttp:4.9.1")
+    implementation("com.squareup.okhttp3:okhttp:$okhttp_version")
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
