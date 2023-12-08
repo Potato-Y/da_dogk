@@ -34,6 +34,8 @@ import okhttp3.Request
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import okio.ByteString
+import org.json.JSONException
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -50,6 +52,7 @@ class HomeFragment : Fragment() {
     lateinit var editTextInputTitle: EditText
     lateinit var timer: TextView
     lateinit var date: TextView
+    lateinit var todayStudyTime: TextView
 
     lateinit var recyclerView : RecyclerView
     lateinit var studyAdapter: StudyAdapter
@@ -87,6 +90,7 @@ class HomeFragment : Fragment() {
         buttonAddCategory = view.findViewById(R.id.B_add_category)
         date = view.findViewById(R.id.TV_currentDate)
         timer = view.findViewById(R.id.TV_timer)
+        todayStudyTime = view.findViewById(R.id.tv_today_study_time)
 
         //내공부 리사이클러뷰 설정
         recyclerView = view.findViewById(R.id.rv_my)
@@ -124,11 +128,13 @@ class HomeFragment : Fragment() {
         })
 
             //내 카테고리 표시하기
-        serviceMyInfo.showMyInfo("Bearer $jwtToken").enqueue(object :
-            Callback<User> {
+        serviceMyInfo.showMyInfo("Bearer $jwtToken").enqueue(object : Callback<User> {
             override fun onResponse(call: Call<User>, response: Response<User>) {
                 val user = response.body()
                 val userId = user?.userId
+                val studyTime = convertSecondsToFormattedTime(user!!.todayStudyTime)
+                todayStudyTime.text = studyTime
+
                 service.showCategories("$userId").enqueue(object : Callback<List<MyStudyResponse>> {
                     override fun onResponse(call: Call<List<MyStudyResponse>>, response: Response<List<MyStudyResponse>>) {
                         if (response.isSuccessful) {
@@ -239,7 +245,7 @@ class HomeFragment : Fragment() {
             if (!timerRunning) {
                 startTimer()
                 // WebSocket 연결 시작
-                connectWebSocket()
+                connectWebSocket(jwtToken!!)
             } else {
                 showSaveDialog()
             }
@@ -288,10 +294,14 @@ class HomeFragment : Fragment() {
         intent.putExtra("id", groupId)
         startActivity(intent)
     }
+    //초를 00:00:00로 변환
+    private fun convertSecondsToFormattedTime(seconds: Int): String {
+        val hours = seconds / 3600
+        val minutes = (seconds % 3600) / 60
+        val remainingSeconds = seconds % 60
 
-
-
-
+        return String.format("%02d:%02d:%02d", hours, minutes, remainingSeconds)
+    }
 
     private fun startTimer() {
         timerRunning = true
@@ -306,6 +316,7 @@ class HomeFragment : Fragment() {
         }
 
         timerHandler.postDelayed(timerRunnable, 1000)
+
 
     }
     private fun updateTimerText() {
@@ -349,15 +360,18 @@ class HomeFragment : Fragment() {
 
         builder.show()
     }
-    private fun saveStudyTime(studyTimeInSeconds: Int) {
+
+    private fun saveStudyTime(studyTimeInSeconds: Int) { //(studyTimeInSeconds: Int, service: MyInfoInterface)
+        // 로컬 데이터베이스에 공부 시간을 저장하는 로직을 구현
+        Log.d("시간 저장하기", "저장할 시간 (단위: 초): $studyTimeInSeconds seconds")
 
 
     }
-    private fun connectWebSocket() {
-        myWebSocketListener = MyWebSocketListener()
+    private fun connectWebSocket(jwtToken: String) {
+        myWebSocketListener = MyWebSocketListener(jwtToken)
         myWebSocketListener.startWebSocket()
     }
-    inner class MyWebSocketListener: WebSocketListener() {
+    inner class MyWebSocketListener(val accessToken : String): WebSocketListener() {
 
         private lateinit var webSocket: WebSocket
 
@@ -365,6 +379,7 @@ class HomeFragment : Fragment() {
             val client = OkHttpClient()
             val request = Request.Builder()
                 .url(SW_SERVER_URL)
+                .addHeader("Authorization", "Bearer $accessToken") // 헤더 추가
                 .build()
 
             webSocket = client.newWebSocket(request, this)
@@ -376,11 +391,38 @@ class HomeFragment : Fragment() {
             // WebSocket이 열릴 때 호출
             // 연결이 성공했을 때 초기화 작업 수행
             Log.d("WebSocket", "WebSocket이 열렸습니다.")
+            // 연결이 열리면 STUDY_START 메시지 전송
+            val studyStartMessage = JSONObject().apply {
+                put("type", "STUDY_START")
+                put("accessToken", accessToken)
+                put("subjectId", 1)
+            }
+
+            sendMessage(studyStartMessage.toString())
         }
 
         override fun onMessage(webSocket: WebSocket, text: String) {
             // 서버로부터 텍스트 메시지를 수신했을 때 호출
             // 메시지를 파싱하고 UI를 업데이트하는 작업 수행
+            Log.d("WebSocket", "서버에서 메시지 수신: $text")
+            // 추가된 부분: 메시지 파싱 및 처리
+            try {
+                val jsonResponse = JSONObject(text)
+                val result = jsonResponse.getString("result")
+                val message = jsonResponse.getString("message")
+
+                // 처리 결과에 따른 동작 수행
+                if (result == "OK") {
+                    Log.d("WebSocket", "서버 응답: $message")
+                    // 처리 성공에 대한 추가 동작 수행
+                } else {
+                    Log.e("WebSocket", "서버 응답 실패: $message")
+                    // 처리 실패에 대한 추가 동작 수행
+                }
+            } catch (e: JSONException) {
+                Log.e("WebSocket", "메시지 파싱 실패: ${e.message}")
+            }
+
         }
 
         override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
@@ -405,11 +447,16 @@ class HomeFragment : Fragment() {
             Log.d("WebSocket", "WebSocket이 닫혔습니다: $code, 이유: $reason")
             // 필요시 여기에서 재연결을 처리할 수 있습니다.
         }
+
+        fun sendMessage(message: String) {
+            // WebSocket을 통해 메시지를 서버로 전송
+            webSocket.send(message)
+        }
+
         fun closeWebSocket() {
             // WebSocket 연결을 닫음
             webSocket.close(1000, "Goodbye, WebSocket!")
         }
-
 
     }
 
