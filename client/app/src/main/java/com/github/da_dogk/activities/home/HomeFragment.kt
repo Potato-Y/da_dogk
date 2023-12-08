@@ -346,9 +346,7 @@ class HomeFragment : Fragment() {
                 isWebSocketConnected = false
             }
 
-            saveStudyTime(seconds)
-
-            seconds = 0
+            showStudyTime(seconds)
             updateTimerText()
         }
 
@@ -361,11 +359,9 @@ class HomeFragment : Fragment() {
         builder.show()
     }
 
-    private fun saveStudyTime(studyTimeInSeconds: Int) { //(studyTimeInSeconds: Int, service: MyInfoInterface)
+    private fun showStudyTime(studyTimeInSeconds: Int) { //(studyTimeInSeconds: Int, service: MyInfoInterface)
         // 로컬 데이터베이스에 공부 시간을 저장하는 로직을 구현
         Log.d("시간 저장하기", "저장할 시간 (단위: 초): $studyTimeInSeconds seconds")
-
-
     }
     private fun connectWebSocket(jwtToken: String) {
         myWebSocketListener = MyWebSocketListener(jwtToken)
@@ -395,7 +391,7 @@ class HomeFragment : Fragment() {
             val studyStartMessage = JSONObject().apply {
                 put("type", "STUDY_START")
                 put("accessToken", accessToken)
-                put("subjectId", 1)
+                put("subjectId", 5)
             }
 
             sendMessage(studyStartMessage.toString())
