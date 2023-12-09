@@ -9,7 +9,8 @@ data class GroupGenerateResponse(
     val groupType: String,
     val privacyState: Boolean,
     val createAt: String,
-    val memberNumber: Int
+    val memberNumber: Int,
+    var groupAvgTimeResponse: GroupAvgTimeResponse
 )
 
 

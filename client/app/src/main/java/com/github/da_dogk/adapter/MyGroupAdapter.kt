@@ -55,9 +55,16 @@ class MyGroupAdapter : RecyclerView.Adapter<MyGroupAdapter.MyGroupViewHolder>() 
         fun bind(myGroup: GroupGenerateResponse) {
             groupName.text = myGroup.groupName
 
-
-            //val formattedTime = convertSecondsToFormattedTime(avg.averageTime)
-            //groupAvgTime.text = formattedTime
+            // Null 체크 추가
+            val avgResponse = myGroup.groupAvgTimeResponse
+            if (avgResponse != null) {
+                val avgTime = avgResponse.averageTime
+                val formattedTime = convertSecondsToFormattedTime(avgTime)
+                groupAvgTime.text = formattedTime
+            } else {
+                // 처리할 내용 추가 (예: 특별한 텍스트 설정 또는 빈 값으로 설정)
+                groupAvgTime.text = "N/A"
+            }
         }
 
         // 초를 시:분:초 형식으로 변환하는 함수

@@ -1,39 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:background="@color/black"
     android:padding="16dp">
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
         <ImageButton
             android:id="@+id/image_view_home_item"
-            android:layout_width="140dp"
+            android:layout_width="match_parent"
             android:layout_height="130dp"
             android:padding="8dp"
             android:scaleType="fitCenter" />
 
         <TextView
-            android:id="@+id/text_view_home_item_title"
+            android:id="@+id/tv_school_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="140dp"
             android:text="학교 이름"
-            android:textColor="#3c3c3c"
+            android:layout_gravity="center"
+            android:textColor="#FFFFFF"
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/item_home_post_D_text"
+            android:id="@+id/tv_school_avg_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="175dp"
+            android:layout_gravity="center"
             android:text="04:31:21"
-            android:textColor="#1c7eff"
+            android:textColor="#FFFFFF"
             android:textSize="15sp"
             android:textStyle="bold" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#757575"/>
 
-    </androidx.cardview.widget.CardView>
+
 </LinearLayout>

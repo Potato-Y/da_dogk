@@ -12,6 +12,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
@@ -28,6 +29,7 @@ import com.github.da_dogk.server.request.MyStudyRequest
 import com.github.da_dogk.server.request.SchoolEmailRequest
 import com.github.da_dogk.server.request.SchoolNumberRequest
 import com.github.da_dogk.server.response.GroupGenerateResponse
+import com.github.da_dogk.server.response.MySchoolResponse
 import com.github.da_dogk.server.response.MyStudyResponse
 import com.github.da_dogk.server.response.SchoolEmailResponse
 import com.google.android.material.tabs.TabLayout
@@ -54,17 +56,23 @@ class GroupFragment : Fragment() {
     //그룹 부분 변수
     lateinit var tabLayout: TabLayout
     lateinit var layoutGroup: FrameLayout
-    lateinit var layoutSchool: ConstraintLayout
+    lateinit var layoutSchool: FrameLayout
     lateinit var buttonWritePost : ImageButton
+    lateinit var schoolLL : LinearLayout
 
     //리사이클러뷰
     lateinit var recyclerView : RecyclerView
     lateinit var groupAdapter: GroupAdapter
 
+
     //학교 부분 변수
     lateinit var schoolEmail: EditText
     lateinit var buttonCertify: Button
     lateinit var certifyNumber: EditText
+
+    private var showSchoolList = false
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,7 +90,8 @@ class GroupFragment : Fragment() {
 
         tabLayout = view.findViewById(R.id.tab_layout_group)
         layoutGroup = view.findViewById(R.id.FL_group)
-        layoutSchool = view.findViewById(R.id.CL_school)
+        layoutSchool = view.findViewById(R.id.FL_school)
+        schoolLL = view.findViewById(R.id.LL_sub_school)
 
         //리사이클러뷰 설정
         recyclerView = view.findViewById(R.id.rv_group)
@@ -112,6 +121,7 @@ class GroupFragment : Fragment() {
         })
 
 
+
         //생성된 그룹들 보여주기
         service.showGroup().enqueue(object : Callback<List<GroupGenerateResponse>> {
             override fun onResponse(call: Call<List<GroupGenerateResponse>>, response: Response<List<GroupGenerateResponse>>) {
@@ -135,6 +145,28 @@ class GroupFragment : Fragment() {
             }
         })
 
+        serviceSchool.mySchool().enqueue(object :Callback<MySchoolResponse>{
+            override fun onResponse(call: Call<MySchoolResponse>, response: Response<MySchoolResponse>) {
+                if (response.isSuccessful) {
+                    val check = response.body()
+
+                    Log.d("학교 인증 유무 확인", "학교 인증 성공 : $check")
+                } else {
+                    Log.e("학교 인증 유무 확인", "학교 인증 실퍄: ${response.code()}")
+                    Toast.makeText(requireContext(), "대학교가 인증 되었습니다.", Toast.LENGTH_SHORT).show()
+                }
+
+            }
+
+            override fun onFailure(call: Call<MySchoolResponse>, t: Throwable) {
+                Log.e("학교 인증 유무 확인", "${t.localizedMessage}")
+                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
+
+            }
+        })
+
+
+
         //버튼 클릭시 학교인증 메일 보내기
         buttonCertify.setOnClickListener {
             schoolEmail = view.findViewById(R.id.ET_school_email)
@@ -150,7 +182,7 @@ class GroupFragment : Fragment() {
                         Toast.makeText(requireContext(), "인증번호를 보냈습니다.", Toast.LENGTH_SHORT).show()
 
                         val inflater = LayoutInflater.from(requireContext())
-                           val dialogView = inflater.inflate(R.layout.dialog1, null)
+                        val dialogView = inflater.inflate(R.layout.dialog1, null)
                         certifyNumber = dialogView.findViewById(R.id.ET_input_title)
 
                         val builder = AlertDialog.Builder(requireContext())
@@ -168,6 +200,10 @@ class GroupFragment : Fragment() {
                                             val result = response.body()
                                             Log.d("학교인증 ", "${result}")
                                             Toast.makeText(requireContext(), "학교인증 성공", Toast.LENGTH_SHORT).show()
+                                            schoolLL.visibility = View.VISIBLE
+                                            schoolEmail.visibility = View.GONE
+                                            buttonCertify.visibility = View.GONE
+
 
                                         } else {
                                             Log.e("학교인증", "실패: ${response.code()}")
@@ -249,6 +285,7 @@ class GroupFragment : Fragment() {
         intent.putExtra("id", groupId)
         startActivity(intent)
     }
+
 
     companion object {
         /**

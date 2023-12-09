@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,7 +26,9 @@ import com.github.da_dogk.server.interface_folder.GroupGenerateInterface
 import com.github.da_dogk.server.interface_folder.MyInfoInterface
 import com.github.da_dogk.server.interface_folder.MyStudyInterface
 import com.github.da_dogk.server.request.MyStudyRequest
+import com.github.da_dogk.server.response.GroupAvgTimeResponse
 import com.github.da_dogk.server.response.GroupGenerateResponse
+import com.github.da_dogk.server.response.MySchoolResponse
 import com.github.da_dogk.server.response.MyStudyResponse
 import com.github.da_dogk.server.response.User
 import com.google.android.material.tabs.TabLayout
@@ -47,13 +50,20 @@ class HomeFragment : Fragment() {
 
     lateinit var tabLayout: TabLayout
     lateinit var layoutMyStudy: FrameLayout
-    lateinit var layoutGroupStudy: FrameLayout
+    lateinit var layoutGroupStudy: LinearLayout
     lateinit var buttonAddCategory: ImageButton
     lateinit var editTextInputTitle: EditText
     lateinit var timer: TextView
     lateinit var date: TextView
     lateinit var todayStudyTime: TextView
 
+    lateinit var LLschool: LinearLayout
+    lateinit var schoolName: TextView
+    lateinit var schoolTime: TextView
+
+
+
+    //리사이클러뷰
     lateinit var recyclerView : RecyclerView
     lateinit var studyAdapter: StudyAdapter
 
@@ -86,11 +96,15 @@ class HomeFragment : Fragment() {
 
         tabLayout = view.findViewById(R.id.tab_layout_home)
         layoutMyStudy = view.findViewById(R.id.FL_myStudy)
-        layoutGroupStudy = view.findViewById(R.id.FL_groupStudy)
+        layoutGroupStudy = view.findViewById(R.id.LL_groupStudy)
         buttonAddCategory = view.findViewById(R.id.B_add_category)
         date = view.findViewById(R.id.TV_currentDate)
         timer = view.findViewById(R.id.TV_timer)
         todayStudyTime = view.findViewById(R.id.tv_today_study_time)
+
+        LLschool = view.findViewById(R.id.LL_school)
+        schoolName = view.findViewById(R.id.TV_school_name)
+        schoolTime = view.findViewById(R.id.TV_school_time)
 
         //내공부 리사이클러뷰 설정
         recyclerView = view.findViewById(R.id.rv_my)
@@ -220,13 +234,35 @@ class HomeFragment : Fragment() {
         serviceMyGroup.showMyGroup().enqueue(object : Callback<List<GroupGenerateResponse>> {
             override fun onResponse(call: Call<List<GroupGenerateResponse>>, response: Response<List<GroupGenerateResponse>>) {
                 if (response.isSuccessful) {
-                    val myGroup = response.body()
+                    val myGroups = response.body()
 
-                    if (myGroup != null && myGroup.isNotEmpty()) {
-                        myGroupAdapter.setMyGroup(myGroup)
-                        myGroupAdapter.notifyDataSetChanged()
+                    //그룹 이번달 평균 공부시간 표시
+                    if (myGroups != null && myGroups.isNotEmpty()) {
+                        for (myGroup in myGroups) {
+                            val groupId = myGroup.id
+                            serviceMyGroup.showAverageTime("$groupId").enqueue(object : Callback<GroupAvgTimeResponse> {
+                                override fun onResponse(call: Call<GroupAvgTimeResponse>, response: Response<GroupAvgTimeResponse>) {
+                                    if (response.isSuccessful) {
+                                        val groupAvgResponse = response.body()
+                                        if (groupAvgResponse != null) {
+                                            myGroup.groupAvgTimeResponse = groupAvgResponse
+                                            myGroupAdapter.setMyGroup(myGroups)
+                                            myGroupAdapter.notifyDataSetChanged()
+                                            Log.d("그룹별 이번달 평균 시간 불러오기", "성공 : $groupAvgResponse")
+                                        }
+                                    } else{
+                                        Log.e("그룹별 이번달 평균 시간 불러오기", "실패: ${response.code()}")
+                                    }
+                                }
+
+                                override fun onFailure(call: Call<GroupAvgTimeResponse>, t: Throwable) {
+                                    Log.e("그룹별 이번달 평균 시간 불러오기", "${t.localizedMessage}")
+                                }
+
+                            })
+                        }
                     }
-                    Log.d("내 그룹 불러오기", "성공 : $myGroup")
+                    Log.d("내 그룹 불러오기", "성공 : $myGroups")
                 } else {
                     Log.e("내 그룹 불러오기", "실패: ${response.code()}")
                     Toast.makeText(requireContext(), "내 그룹 불러오기 실패", Toast.LENGTH_SHORT).show()
