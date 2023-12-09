@@ -50,7 +50,7 @@ public class StudyService {
                 .user(user)
                 .build();
 
-        logger.info("defaultSetting. default 설정 추가 userId={}", user.getId());
+        logger.info("defaultSetting: default 설정 추가 userId={}", user.getId());
         subjectRepository.save(subject);
     }
 
@@ -58,11 +58,12 @@ public class StudyService {
         Optional<StudySubject> subject = subjectRepository.findById(subjectId);
         if (subject.isEmpty()) {
             logger.warn("getSubject. 잘못된 StudySubject id={}", subjectId);
-            throw new IllegalArgumentException(" 잘못된 StudySubject id");
+            throw new IllegalArgumentException("잘못된 StudySubject id");
         }
 
         validateSubjectUserMatch(subject.get(), userId);
 
+        log.info("getSubject: Get subject. userId={}, subjectId={}", userId, subjectId);
         return subject.get();
     }
 
@@ -71,7 +72,7 @@ public class StudyService {
             return;
         }
 
-        logger.warn("validateSubjectUserMatch. User와 Subject User가 동일하지 않음. userId={}, subjectId={}", userId,
+        logger.warn("validateSubjectUserMatch: User와 Subject User가 동일하지 않음. userId={}, subjectId={}", userId,
                 subject.getId());
         throw new IllegalArgumentException("User와 Subject user가 맞지 않음");
     }
@@ -82,10 +83,12 @@ public class StudyService {
                 .subject(subject)
                 .build());
 
+        log.info("startStudy: Start study. userId={}, subjectId={}", user.getId(), subject.getId());
         return record;
     }
 
     public StudyRecord endStudy(StudyRecord record) {
+        log.info("endStudy: End study. userId={}, recordId={}", record.getUser().getId(), record.getId());
         return studyRecordRepository.save(record.updateEndAt());
     }
 
@@ -96,8 +99,11 @@ public class StudyService {
      * @return List<SubjectTitleResponse>
      */
     public List<SubjectTitleResponse> getUserStudySubjectList(Long userId) {
+        User user = securityUtil.getCurrentUser();
         User findUser = userUtil.findById(userId); // 찾으려는 유저 불러오기
         List<StudySubject> studySubjects = subjectRepository.findAllByUser(findUser); // 유저의 목록을 가져온다.
+
+        log.info("getUserStudySubjectList: userId={}, findUserId={}", user.getId(), findUser.getId());
 
         List<SubjectTitleResponse> subjectTitleResponses = new ArrayList<>();
         if (studySubjects.isEmpty()) { // 만약 비어있다면 빈 리스트를 반환한다.
@@ -137,6 +143,7 @@ public class StudyService {
             throw new PermissionException("유저가 같지 않음");
         }
 
+        log.info("deleteSubject: userId={}, subjectId={}", user.getId(), subjectId);
         subjectRepository.delete(subject.get()); // 검증이 끝난 다음에 삭제
     }
 
@@ -155,6 +162,8 @@ public class StudyService {
         LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
         List<StudyRecord> records = studyRecordRepository.findByUserAndStartAtBetween(user, startDateTime, endDateTime);
 
+        log.info("getCurrentUserRecodes: userId={}, findYear={}, findMonth={}", user.getId(), dto.getYear(),
+                dto.getMonth());
         return records;
     }
 
@@ -174,6 +183,8 @@ public class StudyService {
 
         List<StudyRecord> records = studyRecordRepository.findByUserAndStartAtBetween(findUser, startDateTime,
                 endDateTime);
+        log.info("getUserRecodes: userId={}, findUserId={}, findYear={}, findMonth={}",
+                securityUtil.getCurrentUser().getId(), findUser.getId(), dto.getYear(), dto.getMonth());
         return records;
     }
 }

@@ -94,17 +94,21 @@ public class SchoolService {
     private void saveAuthInfo(User user, School school, String mail, String code) {
         Optional<MailAuthInfo> mailAuthCode = mailAuthInfoRepository.findByUser(user);
         if (mailAuthCode.isEmpty()) {
-            mailAuthInfoRepository.save(MailAuthInfo.builder()
+            MailAuthInfo createInfo = MailAuthInfo.builder()
                     .user(user)
                     .school(school)
                     .mail(mail)
                     .code(passwordUtil.convertPassword(code))
-                    .build());
+                    .build();
+            mailAuthInfoRepository.save(createInfo);
 
+            log.info("saveAuthInfo: Save auth info. userId={}, mailAuthInfoId={}", user.getId(), createInfo.getId());
             return;
         }
 
         // 이미 있으면 정보 업데이트
+        log.info("saveAuthInfo: Update auth info. userId={}, mailAuthInfoId={}", user.getId(),
+                mailAuthCode.get().getId());
         mailAuthInfoRepository.save(mailAuthCode.get().updateNewAuth(school, mail, passwordUtil.convertPassword(code)));
     }
 
@@ -130,23 +134,29 @@ public class SchoolService {
         Optional<MailAuthInfo> mailAuthCode = mailAuthInfoRepository.findByUser(user);
 
         if (mailAuthCode.isEmpty()) {
-            log.warn("verifyEmail: Not Found mail auth info. user={}", user.getId());
+            log.warn("verifyEmail: Not Found mail auth info. userId={}", user.getId());
             throw new NotFoundException("요청한 인증 정보가 없음");
         }
 
         boolean result = passwordUtil.matches(dto.getCode(), mailAuthCode.get().getCode());
         if (!result) {
-            log.warn("verifyEmail: Not match code. user={}, school={}", user.getId(),
+            log.warn("verifyEmail: Not match code. userId={}, school={}", user.getId(),
                     mailAuthCode.get().getSchool().getDomain());
             mailAuthInfoRepository.delete(mailAuthCode.get()); // 인증 정보 삭제
+
             throw new PasswordIncorrectException("인증 코드가 동일하지 않음");
         }
 
-        schoolMemberRepository.save(SchoolMember.builder()
+        SchoolMember schoolMember = SchoolMember.builder()
                 .school(mailAuthCode.get().getSchool())
                 .user(user)
                 .mail(mailAuthCode.get().getMail())
-                .build());
+                .build();
+        schoolMemberRepository.save(schoolMember);
+
+        log.info("verifyEmail: Success verify email. userId={}, schoolMemberId={}, mailAuthCodeId={}", user.getId(),
+                schoolMember.getId(), mailAuthCode.get()
+                        .getId());
         mailAuthInfoRepository.delete(mailAuthCode.get()); // 인증 정보 삭제
     }
 
@@ -159,6 +169,7 @@ public class SchoolService {
             throw new NotFoundException("인증한 학교가 없음");
         }
 
+        log.info("leaveSchool: Leave school. userId={}, schoolMember={}", user.getId(), schoolMember.get().getId());
         schoolMemberRepository.delete(schoolMember.get());
     }
 
@@ -170,6 +181,7 @@ public class SchoolService {
             throw new NotFoundException("학교 정보를 찾을 수 없음.");
         }
 
+        log.info("getMySchool: Get my school info. userId={}, schoolId={}", user.getId(), schoolMember.get().getId());
         return schoolMember.get();
     }
 }
