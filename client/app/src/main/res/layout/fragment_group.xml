@@ -53,12 +53,13 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+
     <FrameLayout
         android:id="@+id/FL_group"
         android:layout_width="match_parent"
-        android:layout_height="579dp"
+        android:layout_height="450dp"
         android:layout_marginTop="20dp">
-        
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_group"
             android:layout_width="match_parent"
@@ -72,13 +73,14 @@
                 android:layout_width="66dp"
                 android:layout_height="66dp"
                 android:layout_gravity="bottom|end"
-                android:layout_marginBottom="130dp"
                 android:background="@drawable/btn_writing" />
         
     </FrameLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/CL_school"
+
+
+    <FrameLayout
+        android:id="@+id/FL_school"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="20"
@@ -88,7 +90,7 @@
             android:id="@+id/ET_school_email"
             android:layout_width="300dp"
             android:layout_height="70dp"
-            android:layout_marginStart="36dp"
+            android:layout_marginStart="55dp"
             android:layout_marginTop="31dp"
             android:background="@drawable/edittext_rounded_corner_rectangle"
             android:hint="    xxxx@xxxxx"
@@ -98,17 +100,130 @@
 
         <android.widget.Button
             android:id="@+id/b_certify"
-            android:layout_width="77dp"
-            android:layout_height="0dp"
-            android:layout_marginEnd="17dp"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="265dp"
+            android:layout_marginTop="53dp"
             android:background="@drawable/btn_round_blue_box"
             android:text="인증"
             android:textColor="#ffffff"
             android:textSize="15sp"
-            app:layout_constraintBaseline_toBaselineOf="@+id/ET_school_email"
-            app:layout_constraintEnd_toEndOf="@+id/ET_school_email" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <LinearLayout
+            android:id="@+id/LL_sub_school"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:background="@color/black"
+            android:padding="16dp">
+
+            <ImageButton
+                android:id="@+id/image_view_home_item1"
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:padding="8dp"
+                android:scaleType="fitCenter" />
+
+            <TextView
+                android:id="@+id/tv_school_name1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="전주대"
+                android:layout_gravity="center"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tv_school_avg_time1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="00:31:21"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#757575"/>
+
+            <ImageButton
+                android:id="@+id/image_view_home_item2"
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:padding="8dp"
+                android:scaleType="fitCenter" />
+
+            <TextView
+                android:id="@+id/tv_school_name2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="원광대"
+                android:layout_gravity="center"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tv_school_avg_time2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="00:00:21"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#757575"/>
+
+            <ImageButton
+                android:id="@+id/image_view_home_item3"
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:padding="8dp"
+                android:scaleType="fitCenter" />
+
+            <TextView
+                android:id="@+id/tv_school_name3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="전북대"
+                android:layout_gravity="center"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tv_school_avg_time3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="04:31:21"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#757575"/>
+
+
+        </LinearLayout>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_school"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/school_item"/>
+
+    </FrameLayout>
 
 
 </LinearLayout>

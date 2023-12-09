@@ -14,6 +14,9 @@ class StudyAdapter : RecyclerView.Adapter<StudyAdapter.StudyViewHolder>() {
 
     private var studys: List<MyStudyResponse> = emptyList()
 
+    private var studyClickListener: OnStudyClickListener? = null
+
+
     // 새로운 아이템 뷰 홀더를 생성
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StudyViewHolder {
         val view =
@@ -25,6 +28,10 @@ class StudyAdapter : RecyclerView.Adapter<StudyAdapter.StudyViewHolder>() {
     override fun onBindViewHolder(holder: StudyViewHolder, position: Int) {
         val study = studys[position]
         holder.bind(study)
+
+        holder.itemView.setOnClickListener {
+            studyClickListener?.onStudyClick(study)
+        }
     }
 
     // 데이터 세트의 크기 반환
@@ -51,6 +58,8 @@ class StudyAdapter : RecyclerView.Adapter<StudyAdapter.StudyViewHolder>() {
             // todayStudyTime을 시:분:초 형식으로 변환하여 categoryTime에 표시
             val formattedTime = convertSecondsToFormattedTime(study.user.todayStudyTime)
             categoryTime.text = formattedTime
+            //categoryTime.text = study.user.todayStudyTime.toString()
+
         }
 
         // 초를 시:분:초 형식으로 변환하는 함수
@@ -61,5 +70,12 @@ class StudyAdapter : RecyclerView.Adapter<StudyAdapter.StudyViewHolder>() {
 
             return String.format("%02d:%02d:%02d", hours, minutes, remainingSeconds)
         }
+    }
+    interface  OnStudyClickListener {
+        fun onStudyClick(study: MyStudyResponse)
+    }
+
+    fun setOnStudyClickListener(listener: OnStudyClickListener) {
+        studyClickListener = listener
     }
 }

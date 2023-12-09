@@ -9,6 +9,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
 import com.github.da_dogk.R
+import com.github.da_dogk.server.RetrofitClient
 import com.github.da_dogk.server.interface_folder.GroupGenerateInterface
 import com.github.da_dogk.server.request.GroupGenerateRequest
 import com.github.da_dogk.server.response.GroupGenerateResponse
@@ -45,11 +46,7 @@ class GroupGenerateActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         val jwtToken = sharedPreferences.getString("accessToken", "")
 
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://dadogk2.duckdns.org/api/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(createOkHttpClient(jwtToken))
-            .build()
+        val retrofit = RetrofitClient.createRetrofitInstance(jwtToken)
 
         val service = retrofit.create(GroupGenerateInterface::class.java)
 
@@ -65,7 +62,7 @@ class GroupGenerateActivity : AppCompatActivity() {
                 GroupGenerateRequest(name, intro, password)
             }
 
-            service.addGroup("Bearer $jwtToken", request)
+            service.addGroup(request)
                 .enqueue(object : Callback<GroupGenerateResponse> {
                     override fun onResponse(
                         call: Call<GroupGenerateResponse>,
@@ -88,23 +85,5 @@ class GroupGenerateActivity : AppCompatActivity() {
                     }
                 })
         }
-    }
-
-    private fun createOkHttpClient(jwtToken: String?): OkHttpClient {
-        val httpClient = OkHttpClient.Builder()
-
-        if (!jwtToken.isNullOrBlank()) {
-            httpClient.addInterceptor { chain ->
-                val original = chain.request()
-                val requestBuilder = original.newBuilder()
-                    .header("Authorization", "Bearer $jwtToken")
-                    .method(original.method(), original.body())
-
-                val request = requestBuilder.build()
-                chain.proceed(request)
-            }
-        }
-
-        return httpClient.build()
     }
 }
