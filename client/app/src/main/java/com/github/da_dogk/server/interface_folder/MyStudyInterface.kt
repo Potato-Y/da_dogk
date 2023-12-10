@@ -22,7 +22,7 @@ interface MyStudyInterface {
         @Path("userId") userId: String
     ): Call<List<MyStudyResponse>>
 
-    @GET("study/recodes/{subjectId}")
+    @GET("study/subjects/{subjectId}/time")
     fun showCategoriesTime(
         @Path("subjectId") subjectId: String
     ): Call<List<MyStudyTimeResponse>>

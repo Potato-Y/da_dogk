@@ -124,7 +124,7 @@
         android:layout_marginLeft="55dp"
         android:lineSpacingExtra="8sp"
         android:hint="그룹 소개"
-        android:textColorHint="#000"
+        android:textColorHint="#ffffff"
         android:includeFontPadding="false"
         android:textColor="#ffffff"
         android:textSize="16sp" />

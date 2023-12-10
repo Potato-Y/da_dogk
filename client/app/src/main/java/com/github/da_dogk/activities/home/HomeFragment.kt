@@ -85,6 +85,9 @@ class HomeFragment : Fragment() {
     private lateinit var timerHandler2: Handler
     private lateinit var timerRunnable2: Runnable
 
+    private lateinit var timerHandler3: Handler
+    private lateinit var timerRunnable3: Runnable
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -127,6 +130,7 @@ class HomeFragment : Fragment() {
         date.text = getCurrentFormattedDate()
 
         timerHandler2 = Handler(Looper.getMainLooper())
+        timerHandler3 = Handler(Looper.getMainLooper())
 
 
         val sharedPreferences =
@@ -177,12 +181,12 @@ class HomeFragment : Fragment() {
 
             }
         })
-        timerHandler2 = Handler(Looper.getMainLooper())
 
+        //내 카테고리 표시하기
+        timerHandler2 = Handler(Looper.getMainLooper())
         timerRunnable2 = object : Runnable {
             override fun run() {
 
-                //내 카테고리 표시하기
                 serviceMyInfo.showMyInfo("Bearer $jwtToken").enqueue(object : Callback<User> {
                     override fun onResponse(call: Call<User>, response: Response<User>) {
                         val user = response.body()
@@ -239,7 +243,7 @@ class HomeFragment : Fragment() {
 
         //카테고리 생성 버튼
         buttonAddCategory.setOnClickListener {
-            // LayoutInflater를 사용하여 dialog.xml을 inflate
+
             val inflater = LayoutInflater.from(requireContext())
             val dialogView = inflater.inflate(R.layout.dialog1, null)
             editTextInputTitle = dialogView.findViewById(R.id.ET_input_title)
@@ -254,8 +258,12 @@ class HomeFragment : Fragment() {
                 val request = MyStudyRequest(edit)
 
                 if (edit.isNotEmpty()) {
-                    service.addCategory("Bearer $jwtToken", request).enqueue(object : Callback<MyStudyResponse> {
-                            override fun onResponse(call: Call<MyStudyResponse>, response: Response<MyStudyResponse>) {
+                    service.addCategory("Bearer $jwtToken", request)
+                        .enqueue(object : Callback<MyStudyResponse> {
+                            override fun onResponse(
+                                call: Call<MyStudyResponse>,
+                                response: Response<MyStudyResponse>
+                            ) {
                                 if (response.isSuccessful) {
                                     val result = response.body()
                                     Log.d("카테고리 만들기", "${result}")
@@ -293,62 +301,81 @@ class HomeFragment : Fragment() {
         }
 
         //내 그룹 표시
-        serviceMyGroup.showMyGroup().enqueue(object : Callback<List<GroupGenerateResponse>> {
-            override fun onResponse(
-                call: Call<List<GroupGenerateResponse>>,
-                response: Response<List<GroupGenerateResponse>>
-            ) {
-                if (response.isSuccessful) {
-                    val myGroups = response.body()
+        timerHandler3 = Handler(Looper.getMainLooper())
+        timerRunnable3 = object : Runnable {
+            override fun run() {
+                serviceMyGroup.showMyGroup()
+                    .enqueue(object : Callback<List<GroupGenerateResponse>> {
+                        override fun onResponse(
+                            call: Call<List<GroupGenerateResponse>>,
+                            response: Response<List<GroupGenerateResponse>>
+                        ) {
+                            if (response.isSuccessful) {
+                                val myGroups = response.body()
 
-                    //그룹 이번달 평균 공부시간 표시
-                    if (myGroups != null && myGroups.isNotEmpty()) {
-                        for (myGroup in myGroups) {
-                            val groupId = myGroup.id
-                            serviceMyGroup.showAverageTime("$groupId")
-                                .enqueue(object : Callback<GroupAvgTimeResponse> {
-                                    override fun onResponse(
-                                        call: Call<GroupAvgTimeResponse>,
-                                        response: Response<GroupAvgTimeResponse>
-                                    ) {
-                                        if (response.isSuccessful) {
-                                            val groupAvgResponse = response.body()
-                                            if (groupAvgResponse != null) {
-                                                myGroup.groupAvgTimeResponse = groupAvgResponse
-                                                myGroupAdapter.setMyGroup(myGroups)
-                                                myGroupAdapter.notifyDataSetChanged()
-                                                Log.d(
-                                                    "그룹별 이번달 평균 시간 불러오기",
-                                                    "성공 : $groupAvgResponse"
-                                                )
-                                            }
-                                        } else {
-                                            Log.e("그룹별 이번달 평균 시간 불러오기", "실패: ${response.code()}")
-                                        }
+                                //그룹 이번달 평균 공부시간 표시
+                                if (myGroups != null && myGroups.isNotEmpty()) {
+                                    for (myGroup in myGroups) {
+                                        val groupId = myGroup.id
+                                        serviceMyGroup.showAverageTime("$groupId")
+                                            .enqueue(object : Callback<GroupAvgTimeResponse> {
+                                                override fun onResponse(
+                                                    call: Call<GroupAvgTimeResponse>,
+                                                    response: Response<GroupAvgTimeResponse>
+                                                ) {
+                                                    if (response.isSuccessful) {
+                                                        val groupAvgResponse = response.body()
+                                                        if (groupAvgResponse != null) {
+                                                            myGroup.groupAvgTimeResponse =
+                                                                groupAvgResponse
+                                                            myGroupAdapter.setMyGroup(myGroups)
+                                                            myGroupAdapter.notifyDataSetChanged()
+                                                            Log.d(
+                                                                "그룹별 이번달 평균 시간 불러오기",
+                                                                "성공 : $groupAvgResponse"
+                                                            )
+                                                        }
+                                                    } else {
+                                                        Log.e(
+                                                            "그룹별 이번달 평균 시간 불러오기",
+                                                            "실패: ${response.code()}"
+                                                        )
+                                                    }
+                                                }
+
+                                                override fun onFailure(
+                                                    call: Call<GroupAvgTimeResponse>,
+                                                    t: Throwable
+                                                ) {
+                                                    Log.e(
+                                                        "그룹별 이번달 평균 시간 불러오기",
+                                                        "${t.localizedMessage}"
+                                                    )
+                                                }
+
+                                            })
                                     }
-
-                                    override fun onFailure(
-                                        call: Call<GroupAvgTimeResponse>,
-                                        t: Throwable
-                                    ) {
-                                        Log.e("그룹별 이번달 평균 시간 불러오기", "${t.localizedMessage}")
-                                    }
-
-                                })
+                                }
+                                Log.d("내 그룹 불러오기", "성공 : $myGroups")
+                            } else {
+                                Log.e("내 그룹 불러오기", "실패: ${response.code()}")
+                                Toast.makeText(requireContext(), "내 그룹 불러오기 실패", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
                         }
-                    }
-                    Log.d("내 그룹 불러오기", "성공 : $myGroups")
-                } else {
-                    Log.e("내 그룹 불러오기", "실패: ${response.code()}")
-                    Toast.makeText(requireContext(), "내 그룹 불러오기 실패", Toast.LENGTH_SHORT).show()
-                }
-            }
 
-            override fun onFailure(call: Call<List<GroupGenerateResponse>>, t: Throwable) {
-                Log.e("내 그룹 불러오기", "${t.localizedMessage}")
-                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
+                        override fun onFailure(
+                            call: Call<List<GroupGenerateResponse>>,
+                            t: Throwable
+                        ) {
+                            Log.e("내 그룹 불러오기", "${t.localizedMessage}")
+                            Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
+                        }
+                    })
+                timerHandler3.postDelayed(this, 1000)
             }
-        })
+        }
+        timerHandler3.postDelayed(timerRunnable3, 1000)
 
         //시간 측정 - 카테고리 클릭시 해당 카테고리 시간측정
         studyAdapter.setOnStudyClickListener(object : StudyAdapter.OnStudyClickListener {
