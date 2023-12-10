@@ -240,8 +240,8 @@ public class GroupService {
             for (StudyRecord record : records) { // 공부 시간 초 단위로 계산
                 totalStudyTime += calculateStudyTime(record);
             }
-            count += records.size(); // 기록 수 추가
         }
+        count += members.size(); // 사람 수 만큼 카운트 추가
 
         log.info("getGroupAverage: userId={}, groupId={}, findYear={}, findMonth={}", user.getId(), groupId,
                 dto.getYear(), dto.getMonth());
