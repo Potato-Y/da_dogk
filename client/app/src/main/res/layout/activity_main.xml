@@ -79,18 +79,19 @@
         android:textSize="18sp"
         android:textColor="#ffffff"
         android:background="#808080"
+        android:focusable="true"
         />
 
     <TextView
-        android:text="아직 회원이 아니신가요? 회원가입 하러가기"
         android:id="@+id/registerTextButton"
-        android:layout_marginLeft="67dp"
-        android:layout_marginTop="633dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="67dp"
+        android:layout_marginTop="633dp"
         android:clickable="true"
+        android:text="아직 회원이 아니신가요? 회원가입 하러가기"
+        android:textColor="@color/register_text_color_selector"
         android:textSize="16sp"
-        android:textColor="#ffffff"
-        />
+        android:textStyle="italic" />
 
 </RelativeLayout>

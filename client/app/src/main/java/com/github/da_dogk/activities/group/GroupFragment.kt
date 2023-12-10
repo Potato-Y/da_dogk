@@ -66,11 +66,11 @@ class GroupFragment : Fragment() {
 
 
     //학교 부분 변수
-    lateinit var schoolEmail: EditText
+    private lateinit var schoolEmail: EditText
     lateinit var buttonCertify: Button
     lateinit var certifyNumber: EditText
 
-    private var showSchoolList = false
+    private var checkSchool = false
 
 
 
@@ -92,6 +92,8 @@ class GroupFragment : Fragment() {
         layoutGroup = view.findViewById(R.id.FL_group)
         layoutSchool = view.findViewById(R.id.FL_school)
         schoolLL = view.findViewById(R.id.LL_sub_school)
+        schoolEmail = view.findViewById(R.id.ET_school_email)
+
 
         //리사이클러뷰 설정
         recyclerView = view.findViewById(R.id.rv_group)
@@ -120,8 +122,6 @@ class GroupFragment : Fragment() {
             }
         })
 
-
-
         //생성된 그룹들 보여주기
         service.showGroup().enqueue(object : Callback<List<GroupGenerateResponse>> {
             override fun onResponse(call: Call<List<GroupGenerateResponse>>, response: Response<List<GroupGenerateResponse>>) {
@@ -145,15 +145,18 @@ class GroupFragment : Fragment() {
             }
         })
 
+        //학교 인증 유무 확인
         serviceSchool.mySchool().enqueue(object :Callback<MySchoolResponse>{
             override fun onResponse(call: Call<MySchoolResponse>, response: Response<MySchoolResponse>) {
                 if (response.isSuccessful) {
                     val check = response.body()
-
                     Log.d("학교 인증 유무 확인", "학교 인증 성공 : $check")
+                    checkSchool = true
+                    updateUI()
                 } else {
                     Log.e("학교 인증 유무 확인", "학교 인증 실퍄: ${response.code()}")
-                    Toast.makeText(requireContext(), "대학교가 인증 되었습니다.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "대학교 인증 안됨", Toast.LENGTH_SHORT).show()
+                    updateUI()
                 }
 
             }
@@ -165,11 +168,8 @@ class GroupFragment : Fragment() {
             }
         })
 
-
-
         //버튼 클릭시 학교인증 메일 보내기
         buttonCertify.setOnClickListener {
-            schoolEmail = view.findViewById(R.id.ET_school_email)
 
             val school = schoolEmail.text.toString()
             val request = SchoolEmailRequest(school)
@@ -285,6 +285,17 @@ class GroupFragment : Fragment() {
         intent.putExtra("id", groupId)
         startActivity(intent)
     }
+
+    private fun updateUI() {
+        if (checkSchool) {
+            buttonCertify.visibility = View.GONE
+            schoolEmail.visibility = View.GONE
+            schoolLL.visibility = View.VISIBLE
+        } else {
+
+        }
+    }
+
 
 
     companion object {

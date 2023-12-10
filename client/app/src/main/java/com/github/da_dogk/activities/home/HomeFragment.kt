@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -25,6 +26,7 @@ import com.github.da_dogk.server.RetrofitClient
 import com.github.da_dogk.server.interface_folder.GroupGenerateInterface
 import com.github.da_dogk.server.interface_folder.MyInfoInterface
 import com.github.da_dogk.server.interface_folder.MyStudyInterface
+import com.github.da_dogk.server.interface_folder.SchoolEmailInterface
 import com.github.da_dogk.server.request.MyStudyRequest
 import com.github.da_dogk.server.response.GroupAvgTimeResponse
 import com.github.da_dogk.server.response.GroupGenerateResponse
@@ -55,19 +57,19 @@ class HomeFragment : Fragment() {
     lateinit var editTextInputTitle: EditText
     lateinit var timer: TextView
     lateinit var date: TextView
-    lateinit var todayStudyTime: TextView
+
 
     lateinit var LLschool: LinearLayout
     lateinit var schoolName: TextView
     lateinit var schoolTime: TextView
-
+    private var checkSchool = false
 
 
     //리사이클러뷰
-    lateinit var recyclerView : RecyclerView
+    lateinit var recyclerView: RecyclerView
     lateinit var studyAdapter: StudyAdapter
 
-    lateinit var recyclerViewGroup : RecyclerView
+    lateinit var recyclerViewGroup: RecyclerView
     lateinit var myGroupAdapter: MyGroupAdapter
 
     //웹소켓
@@ -79,6 +81,9 @@ class HomeFragment : Fragment() {
 
     private lateinit var timerHandler: Handler
     private lateinit var timerRunnable: Runnable
+
+    private lateinit var timerHandler2: Handler
+    private lateinit var timerRunnable2: Runnable
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -100,7 +105,7 @@ class HomeFragment : Fragment() {
         buttonAddCategory = view.findViewById(R.id.B_add_category)
         date = view.findViewById(R.id.TV_currentDate)
         timer = view.findViewById(R.id.TV_timer)
-        todayStudyTime = view.findViewById(R.id.tv_today_study_time)
+
 
         LLschool = view.findViewById(R.id.LL_school)
         schoolName = view.findViewById(R.id.TV_school_name)
@@ -121,8 +126,11 @@ class HomeFragment : Fragment() {
         //현재 날짜 표시
         date.text = getCurrentFormattedDate()
 
+        timerHandler2 = Handler(Looper.getMainLooper())
 
-        val sharedPreferences = requireActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+
+        val sharedPreferences =
+            requireActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         val jwtToken = sharedPreferences.getString("accessToken", "")
 
         //레트로핏 설정
@@ -131,6 +139,7 @@ class HomeFragment : Fragment() {
         val service = retrofit.create(MyStudyInterface::class.java)
         val serviceMyInfo = retrofit.create(MyInfoInterface::class.java)
         val serviceMyGroup = retrofit.create(GroupGenerateInterface::class.java)
+        val serviceSchool = retrofit.create(SchoolEmailInterface::class.java)
 
 
         //그룹 클릭시 멤버로 이동
@@ -141,44 +150,92 @@ class HomeFragment : Fragment() {
             }
         })
 
-            //내 카테고리 표시하기
-        serviceMyInfo.showMyInfo("Bearer $jwtToken").enqueue(object : Callback<User> {
-            override fun onResponse(call: Call<User>, response: Response<User>) {
-                val user = response.body()
-                val userId = user?.userId
-                val studyTime = convertSecondsToFormattedTime(user!!.todayStudyTime)
-                todayStudyTime.text = studyTime
-
-                service.showCategories("$userId").enqueue(object : Callback<List<MyStudyResponse>> {
-                    override fun onResponse(call: Call<List<MyStudyResponse>>, response: Response<List<MyStudyResponse>>) {
-                        if (response.isSuccessful) {
-                            val categories = response.body()
-
-                            if (categories != null && categories.isNotEmpty()) {
-                                studyAdapter.setStudy(categories)
-                                studyAdapter.notifyDataSetChanged() // RecyclerView 갱신
-                            }
-
-
-                            Log.d("카테고리 불러오기", "성공 : $categories")
-                        } else {
-                            Log.e("카테고리 불러오기", "실패: ${response.code()}")
-                            Toast.makeText(requireContext(), "카테고리 불러오기 실패", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-
-                    override fun onFailure(call: Call<List<MyStudyResponse>>, t: Throwable) {
-                        Log.e("카테고리 불러오기", "${t.localizedMessage}")
-                        Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
-                    }
-                })
+        //학교 인증 유무 확인
+        serviceSchool.mySchool().enqueue(object : Callback<MySchoolResponse> {
+            override fun onResponse(
+                call: Call<MySchoolResponse>,
+                response: Response<MySchoolResponse>
+            ) {
+                if (response.isSuccessful) {
+                    val check = response.body()
+                    Log.d("학교 인증 유무 확인", "학교 인증 성공 : $check")
+                    checkSchool = true
+                    updateUI()
+                    schoolName.text = check?.schoolName
+                    val schoolAvgTime = convertSecondsToFormattedTime(check!!.averageTime)
+                    schoolTime.text = schoolAvgTime
+                } else {
+                    Log.e("학교 인증 유무 확인", "학교 인증 실퍄: ${response.code()}")
+                    updateUI()
+                }
 
             }
 
-            override fun onFailure(call: Call<User>, t: Throwable) {
+            override fun onFailure(call: Call<MySchoolResponse>, t: Throwable) {
+                Log.e("학교 인증 유무 확인", "${t.localizedMessage}")
+                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
 
             }
         })
+        timerHandler2 = Handler(Looper.getMainLooper())
+
+        timerRunnable2 = object : Runnable {
+            override fun run() {
+
+                //내 카테고리 표시하기
+                serviceMyInfo.showMyInfo("Bearer $jwtToken").enqueue(object : Callback<User> {
+                    override fun onResponse(call: Call<User>, response: Response<User>) {
+                        val user = response.body()
+                        val userId = user?.userId
+                        timer.text = convertSecondsToFormattedTime(user!!.todayStudyTime)
+
+
+                        service.showCategories("$userId")
+                            .enqueue(object : Callback<List<MyStudyResponse>> {
+                                override fun onResponse(
+                                    call: Call<List<MyStudyResponse>>,
+                                    response: Response<List<MyStudyResponse>>
+                                ) {
+                                    if (response.isSuccessful) {
+                                        val categories = response.body()
+
+                                        if (categories != null && categories.isNotEmpty()) {
+                                            studyAdapter.setStudy(categories)
+                                            studyAdapter.notifyDataSetChanged() // RecyclerView 갱신
+                                        }
+
+
+                                        Log.d("카테고리 불러오기", "성공 : $categories")
+                                    } else {
+                                        Log.e("카테고리 불러오기", "실패: ${response.code()}")
+                                        Toast.makeText(
+                                            requireContext(),
+                                            "카테고리 불러오기 실패",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
+
+                                override fun onFailure(
+                                    call: Call<List<MyStudyResponse>>,
+                                    t: Throwable
+                                ) {
+                                    Log.e("카테고리 불러오기", "${t.localizedMessage}")
+                                    Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
+                            })
+
+                    }
+
+                    override fun onFailure(call: Call<User>, t: Throwable) {
+
+                    }
+                })
+                timerHandler2.postDelayed(this, 1000)
+            }
+        }
+        timerHandler2.postDelayed(timerRunnable2, 1000)
 
         //카테고리 생성 버튼
         buttonAddCategory.setOnClickListener {
@@ -196,24 +253,33 @@ class HomeFragment : Fragment() {
                 val edit = editTextInputTitle.text.toString()
                 val request = MyStudyRequest(edit)
 
-                if(edit.isNotEmpty()){
-                    service.addCategory("Bearer $jwtToken",request).enqueue(object : Callback<MyStudyResponse>{
-                        override fun onResponse(call: Call<MyStudyResponse>, response: Response<MyStudyResponse>) {
-                            if (response.isSuccessful) {
-                                val result = response.body()
-                                Log.d("카테고리 만들기", "${result}")
-                                Toast.makeText(requireContext(), "카테고리가 만들어 졌습니다.", Toast.LENGTH_SHORT).show()
+                if (edit.isNotEmpty()) {
+                    service.addCategory("Bearer $jwtToken", request)
+                        .enqueue(object : Callback<MyStudyResponse> {
+                            override fun onResponse(
+                                call: Call<MyStudyResponse>,
+                                response: Response<MyStudyResponse>
+                            ) {
+                                if (response.isSuccessful) {
+                                    val result = response.body()
+                                    Log.d("카테고리 만들기", "${result}")
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "카테고리가 만들어 졌습니다.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
 
-                            } else {
-                                Log.e("카테고리 만들기", "실패: ${response.code()}")
-                                Toast.makeText(requireContext(), "error", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Log.e("카테고리 만들기", "실패: ${response.code()}")
+                                    Toast.makeText(requireContext(), "error", Toast.LENGTH_SHORT)
+                                        .show()
+                                }
                             }
-                        }
 
-                        override fun onFailure(call: Call<MyStudyResponse>, t: Throwable) {
-                            Log.e("카테고리 만들기", "${t.localizedMessage}")
-                        }
-                    })
+                            override fun onFailure(call: Call<MyStudyResponse>, t: Throwable) {
+                                Log.e("카테고리 만들기", "${t.localizedMessage}")
+                            }
+                        })
                 } else {
                     Toast.makeText(requireContext(), "카테고리 이름이 비었습니다.", Toast.LENGTH_SHORT).show()
                 }
@@ -232,7 +298,10 @@ class HomeFragment : Fragment() {
 
         //내 그룹 표시
         serviceMyGroup.showMyGroup().enqueue(object : Callback<List<GroupGenerateResponse>> {
-            override fun onResponse(call: Call<List<GroupGenerateResponse>>, response: Response<List<GroupGenerateResponse>>) {
+            override fun onResponse(
+                call: Call<List<GroupGenerateResponse>>,
+                response: Response<List<GroupGenerateResponse>>
+            ) {
                 if (response.isSuccessful) {
                     val myGroups = response.body()
 
@@ -240,26 +309,36 @@ class HomeFragment : Fragment() {
                     if (myGroups != null && myGroups.isNotEmpty()) {
                         for (myGroup in myGroups) {
                             val groupId = myGroup.id
-                            serviceMyGroup.showAverageTime("$groupId").enqueue(object : Callback<GroupAvgTimeResponse> {
-                                override fun onResponse(call: Call<GroupAvgTimeResponse>, response: Response<GroupAvgTimeResponse>) {
-                                    if (response.isSuccessful) {
-                                        val groupAvgResponse = response.body()
-                                        if (groupAvgResponse != null) {
-                                            myGroup.groupAvgTimeResponse = groupAvgResponse
-                                            myGroupAdapter.setMyGroup(myGroups)
-                                            myGroupAdapter.notifyDataSetChanged()
-                                            Log.d("그룹별 이번달 평균 시간 불러오기", "성공 : $groupAvgResponse")
+                            serviceMyGroup.showAverageTime("$groupId")
+                                .enqueue(object : Callback<GroupAvgTimeResponse> {
+                                    override fun onResponse(
+                                        call: Call<GroupAvgTimeResponse>,
+                                        response: Response<GroupAvgTimeResponse>
+                                    ) {
+                                        if (response.isSuccessful) {
+                                            val groupAvgResponse = response.body()
+                                            if (groupAvgResponse != null) {
+                                                myGroup.groupAvgTimeResponse = groupAvgResponse
+                                                myGroupAdapter.setMyGroup(myGroups)
+                                                myGroupAdapter.notifyDataSetChanged()
+                                                Log.d(
+                                                    "그룹별 이번달 평균 시간 불러오기",
+                                                    "성공 : $groupAvgResponse"
+                                                )
+                                            }
+                                        } else {
+                                            Log.e("그룹별 이번달 평균 시간 불러오기", "실패: ${response.code()}")
                                         }
-                                    } else{
-                                        Log.e("그룹별 이번달 평균 시간 불러오기", "실패: ${response.code()}")
                                     }
-                                }
 
-                                override fun onFailure(call: Call<GroupAvgTimeResponse>, t: Throwable) {
-                                    Log.e("그룹별 이번달 평균 시간 불러오기", "${t.localizedMessage}")
-                                }
+                                    override fun onFailure(
+                                        call: Call<GroupAvgTimeResponse>,
+                                        t: Throwable
+                                    ) {
+                                        Log.e("그룹별 이번달 평균 시간 불러오기", "${t.localizedMessage}")
+                                    }
 
-                            })
+                                })
                         }
                     }
                     Log.d("내 그룹 불러오기", "성공 : $myGroups")
@@ -279,13 +358,18 @@ class HomeFragment : Fragment() {
         studyAdapter.setOnStudyClickListener(object : StudyAdapter.OnStudyClickListener {
             override fun onStudyClick(study: MyStudyResponse) {
                 val subjectId = study.id
+                val categoryName = study.title
+                val todayStudyTime = study.user.todayStudyTime
 
                 if (!timerRunning) {
                     startTimer()
                     // WebSocket 연결 시작
-                    connectWebSocket(jwtToken!!,subjectId)
+                    connectWebSocket(jwtToken!!, subjectId)
+                    Toast.makeText(requireContext(), "$categoryName 공부 시작!!", Toast.LENGTH_SHORT)
+                        .show()
                 } else {
-                    showSaveDialog()
+                    showSaveDialog(categoryName, todayStudyTime)
+
                 }
             }
         })
@@ -320,6 +404,7 @@ class HomeFragment : Fragment() {
 
         return view
     }
+
     //현재 날짜 가져오기
     private fun getCurrentFormattedDate(): String {
         val calendar = Calendar.getInstance()
@@ -333,6 +418,7 @@ class HomeFragment : Fragment() {
         intent.putExtra("id", groupId)
         startActivity(intent)
     }
+
     //초를 00:00:00로 변환
     private fun convertSecondsToFormattedTime(seconds: Int): String {
         val hours = seconds / 3600
@@ -340,6 +426,15 @@ class HomeFragment : Fragment() {
         val remainingSeconds = seconds % 60
 
         return String.format("%02d:%02d:%02d", hours, minutes, remainingSeconds)
+    }
+
+
+    private fun updateUI() {
+        if (checkSchool) {
+            LLschool.visibility = View.VISIBLE
+        } else {
+
+        }
     }
 
     private fun startTimer() {
@@ -353,11 +448,9 @@ class HomeFragment : Fragment() {
                 timerHandler.postDelayed(this, 1000)
             }
         }
-
         timerHandler.postDelayed(timerRunnable, 1000)
-
-
     }
+
     private fun updateTimerText() {
         val formattedTime = String.format(
             Locale.getDefault(),
@@ -366,17 +459,18 @@ class HomeFragment : Fragment() {
             (seconds % 3600) / 60,
             seconds % 60
         )
-        timer.text = formattedTime
+//        timer.text = formattedTime
     }
-    private fun showSaveDialog() {
+
+    private fun showSaveDialog(categoryName: String, todayStudyTime: Int) {
         // Stop the timer
         timerHandler.removeCallbacks(timerRunnable)
         timerRunning = false
 
-        // Create and show the save dialog
+        // Create and show the save dialog`
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("저장")
-        builder.setMessage("공부 시간을 저장하시겠습니까?")
+        builder.setMessage("$categoryName 시간 측정을 끝내겠습니까?")
 
         builder.setPositiveButton("확인") { _, _ ->
             // 추가된 부분: 웹소켓 연결이 되어 있다면 연결 종료
@@ -385,8 +479,10 @@ class HomeFragment : Fragment() {
                 isWebSocketConnected = false
             }
 
-            showStudyTime(seconds)
-            updateTimerText()
+            showLogcatStudyTime(seconds)
+            val time = convertSecondsToFormattedTime(todayStudyTime)
+            timer.text = time
+
         }
 
         builder.setNegativeButton("취소") { dialog, _ ->
@@ -398,15 +494,18 @@ class HomeFragment : Fragment() {
         builder.show()
     }
 
-    private fun showStudyTime(studyTimeInSeconds: Int) { //(studyTimeInSeconds: Int, service: MyInfoInterface)
+    private fun showLogcatStudyTime(studyTimeInSeconds: Int) { //(studyTimeInSeconds: Int, service: MyInfoInterface)
         // 로컬 데이터베이스에 공부 시간을 저장하는 로직을 구현
         Log.d("WebSocket- 시간 저장하기", "저장할 시간 (단위: 초): $studyTimeInSeconds seconds")
     }
+
     private fun connectWebSocket(jwtToken: String, subjectId: Int) {
-        myWebSocketListener = MyWebSocketListener(jwtToken,subjectId)
+        myWebSocketListener = MyWebSocketListener(jwtToken, subjectId)
         myWebSocketListener.startWebSocket()
     }
-    inner class MyWebSocketListener(val accessToken : String, val subjectId: Int): WebSocketListener() {
+
+    inner class MyWebSocketListener(val accessToken: String, val subjectId: Int) :
+        WebSocketListener() {
 
         private lateinit var webSocket: WebSocket
 
@@ -476,6 +575,7 @@ class HomeFragment : Fragment() {
             // 에러 핸들링 및 재연결 로직 수행
             Log.e("WebSocket", "WebSocket 연결 실패: ${t.localizedMessage}")
         }
+
         override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
             super.onClosed(webSocket, code, reason)
             // WebSocket 닫힘 처리
@@ -498,6 +598,7 @@ class HomeFragment : Fragment() {
 
     companion object {
         const val SW_SERVER_URL = "wss://dadogk2.duckdns.org/study/connect"
+
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             HomeFragment().apply {

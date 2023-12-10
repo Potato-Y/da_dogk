@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 터치된 상태 (Pressed) -->
+    <item android:state_pressed="true" android:color="#7C7C7C" />
+    <!-- 포커스된 상태 (Focused) - 선택 사항 -->
+    <item android:state_focused="true" android:color="#D53030" />
+    <!-- 기본 상태 -->
+    <item android:color="@color/register_text_default" />
+</selector>

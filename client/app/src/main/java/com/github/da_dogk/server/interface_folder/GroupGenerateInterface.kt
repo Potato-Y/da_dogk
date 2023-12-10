@@ -28,7 +28,7 @@ interface GroupGenerateInterface {
     @GET("groups/{groupId}")
     fun getGroupDetails(@Path("groupId") groupId: String): Call<GroupGenerateResponse>
 
-    //그룹 비번 있을때
+    //그룹 가입 하기
     @POST("groups/{groupId}/members")
     fun joinGroupTrue(
         @Path("groupId") groupId: String,

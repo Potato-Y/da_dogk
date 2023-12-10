@@ -79,10 +79,6 @@ class GroupIntroActivity : AppCompatActivity() {
 
                         val password = group?.privacyState
 
-                        groupMembers.setOnClickListener {
-
-                        }
-
                         //그룹 가입하기 버튼
                         joinButton.setOnClickListener {
                             //비밀번호 있을때
@@ -95,10 +91,10 @@ class GroupIntroActivity : AppCompatActivity() {
                                 builder.setTitle("그룹 비밀번호 입력")
                                 groupPassword = dialogView.findViewById(R.id.ET_input_title)
                                 val password = groupPassword.text.toString()
+                                val request = GroupPasswordRequest(password)
 
                                 builder.setPositiveButton("확인") { _, _ ->
                                     if(password.isNotEmpty()){
-                                        val request = GroupPasswordRequest(password)
                                         service.joinGroupTrue("$groupId",request).enqueue(object : Callback<GroupGenerateResponse>{
                                             override fun onResponse(call: Call<GroupGenerateResponse>, response: Response<GroupGenerateResponse>) {
                                                 if (response.isSuccessful) {
