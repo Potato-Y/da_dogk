@@ -9,4 +9,6 @@ import com.github.dadogk.user.entity.User;
 
 public interface StudyRecordRepository extends JpaRepository<StudyRecord, Long> {
     List<StudyRecord> findByUserAndStartAtBetween(User user, LocalDateTime start, LocalDateTime end);
+
+    List<StudyRecord> findBySubjectAndStartAtBetween(StudySubject subject, LocalDateTime start, LocalDateTime end);
 }

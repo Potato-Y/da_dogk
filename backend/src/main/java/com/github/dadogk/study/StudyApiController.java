@@ -1,5 +1,6 @@
 package com.github.dadogk.study;
 
+import com.github.dadogk.study.dto.api.SubjectTodayTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -64,5 +65,13 @@ public class StudyApiController {
         }
         return ResponseEntity.status(HttpStatus.OK)
                 .body(recodeResponses);
+    }
+
+    @GetMapping("/subjects/{subjectId}/time") // 특정 과목 당일 전체 공부 시간
+    public ResponseEntity<SubjectTodayTime> getSubjectTodayTime(@PathVariable Long subjectId) {
+        Long totalTime = studyService.getSubjectTodayTime(subjectId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new SubjectTodayTime(totalTime));
     }
 }
