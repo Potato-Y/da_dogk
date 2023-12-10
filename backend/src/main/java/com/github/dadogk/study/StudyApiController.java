@@ -1,6 +1,8 @@
 package com.github.dadogk.study;
 
 import com.github.dadogk.study.dto.api.SubjectTodayTime;
+import com.github.dadogk.user.entity.User;
+import com.github.dadogk.user.util.UserUtil;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ import com.github.dadogk.study.util.StudyUtil;
 public class StudyApiController {
     private final StudyService studyService;
     private final StudyUtil studyUtil;
+    private final UserUtil userUtil;
 
     @GetMapping("/subjects/{userId}") // 특정 사용자의 과목 리스트를 요청한다.
     public ResponseEntity<List<SubjectTitleResponse>> getSubjectList(@PathVariable Long userId) {
@@ -55,9 +58,23 @@ public class StudyApiController {
                 .body(null);
     }
 
-    @GetMapping("/recodes/{userId}")
-    public ResponseEntity<List<RecodeResponse>> getUserRecodes(GetUserRecodesRequest request) {
+    @GetMapping("/recodes")
+    public ResponseEntity<List<RecodeResponse>> getCurrentUserRecodes(GetUserRecodesRequest request) {
         List<StudyRecord> records = studyService.getCurrentUserRecodes(request);
+        List<RecodeResponse> recodeResponses = new ArrayList<>();
+        for (StudyRecord record : records) {
+            recodeResponses.add(studyUtil.convertRecodeResponse(record));
+
+        }
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(recodeResponses);
+    }
+
+    @GetMapping("/recodes/{userId}")
+    public ResponseEntity<List<RecodeResponse>> getUserRecodes(@PathVariable Long userId,
+                                                               GetUserRecodesRequest request) {
+        User findUser = userUtil.findById(userId);
+        List<StudyRecord> records = studyService.getUserRecodes(findUser, request);
         List<RecodeResponse> recodeResponses = new ArrayList<>();
         for (StudyRecord record : records) {
             recodeResponses.add(studyUtil.convertRecodeResponse(record));
