@@ -254,12 +254,8 @@ class HomeFragment : Fragment() {
                 val request = MyStudyRequest(edit)
 
                 if (edit.isNotEmpty()) {
-                    service.addCategory("Bearer $jwtToken", request)
-                        .enqueue(object : Callback<MyStudyResponse> {
-                            override fun onResponse(
-                                call: Call<MyStudyResponse>,
-                                response: Response<MyStudyResponse>
-                            ) {
+                    service.addCategory("Bearer $jwtToken", request).enqueue(object : Callback<MyStudyResponse> {
+                            override fun onResponse(call: Call<MyStudyResponse>, response: Response<MyStudyResponse>) {
                                 if (response.isSuccessful) {
                                     val result = response.body()
                                     Log.d("카테고리 만들기", "${result}")

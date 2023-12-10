@@ -79,7 +79,6 @@ class GroupIntroActivity : AppCompatActivity() {
 
                         val password = group?.privacyState
 
-                        //그룹 가입하기 버튼
                         joinButton.setOnClickListener {
                             //비밀번호 있을때
                             if(password == true) {
@@ -90,14 +89,15 @@ class GroupIntroActivity : AppCompatActivity() {
                                 builder.setView(dialogView)
                                 builder.setTitle("그룹 비밀번호 입력")
                                 groupPassword = dialogView.findViewById(R.id.ET_input_title)
-                                val password = groupPassword.text.toString()
-                                val request = GroupPasswordRequest(password)
 
                                 builder.setPositiveButton("확인") { _, _ ->
+                                    val password = groupPassword.text.toString()
+                                    val request = GroupPasswordRequest(password)
                                     if(password.isNotEmpty()){
                                         service.joinGroupTrue("$groupId",request).enqueue(object : Callback<GroupGenerateResponse>{
                                             override fun onResponse(call: Call<GroupGenerateResponse>, response: Response<GroupGenerateResponse>) {
                                                 if (response.isSuccessful) {
+
                                                     val result = response.body()
                                                     Log.d("그룹 패스워드 입력", "${result}")
                                                     Toast.makeText(applicationContext, "가입완료", Toast.LENGTH_SHORT).show()
@@ -115,6 +115,7 @@ class GroupIntroActivity : AppCompatActivity() {
                                     } else {
                                         // 비밀번호를 입력하지 않았을 때의 처리
                                         Toast.makeText(this@GroupIntroActivity, "비밀번호를 입력하세요.", Toast.LENGTH_SHORT).show()
+
                                     }
                                 }
                                 // "Cancel" 버튼 추가
