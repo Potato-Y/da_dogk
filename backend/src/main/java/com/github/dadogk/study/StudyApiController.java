@@ -1,6 +1,5 @@
 package com.github.dadogk.study;
 
-import com.github.dadogk.study.dto.api.SubjectTodayTime;
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.util.UserUtil;
 import java.util.ArrayList;
@@ -44,7 +43,7 @@ public class StudyApiController {
     @PostMapping("/subjects")
     public ResponseEntity<SubjectResponse> createSubject(@Validated @RequestBody CreateSubjectRequest request) {
         StudySubject subject = studyService.createSubject(request);
-        SubjectResponse response = studyUtil.convertSubjectToTitleResponse(subject);
+        SubjectResponse response = studyUtil.convertSubjectResponse(subject);
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(response);
@@ -82,13 +81,5 @@ public class StudyApiController {
         }
         return ResponseEntity.status(HttpStatus.OK)
                 .body(recodeResponses);
-    }
-
-    @GetMapping("/subjects/{subjectId}/time") // 특정 과목 당일 전체 공부 시간
-    public ResponseEntity<SubjectTodayTime> getSubjectTodayTime(@PathVariable Long subjectId) {
-        Long totalTime = studyService.getSubjectTodayTime(subjectId);
-
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new SubjectTodayTime(totalTime));
     }
 }

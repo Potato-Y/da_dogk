@@ -1,7 +1,5 @@
 package com.github.dadogk.study;
 
-import static com.github.dadogk.study.util.StudyUtil.calculateStudyTime;
-
 import com.github.dadogk.exceptions.PermissionException;
 import com.github.dadogk.security.util.SecurityUtil;
 import com.github.dadogk.study.dto.api.SubjectResponse;
@@ -115,7 +113,7 @@ public class StudyService {
 
         UserResponse userResponse = userUtil.convertUserResponse(findUser);
         for (StudySubject subject : studySubjects) { // 유저의 과목 목록을 dto 리스트에 담는다.
-            subjectRespons.add(studyUtil.convertSubjectToTitleResponse(subject));
+            subjectRespons.add(studyUtil.convertSubjectResponse(subject));
         }
 
         return subjectRespons;
@@ -189,35 +187,5 @@ public class StudyService {
         log.info("getUserRecodes: userId={}, findUserId={}, findYear={}, findMonth={}",
                 securityUtil.getCurrentUser().getId(), findUser.getId(), dto.getYear(), dto.getMonth());
         return records;
-    }
-
-    /**
-     * 특정 과목의 오늘 공부 시간을 반환한다.
-     *
-     * @param subjectId 과목 id
-     * @return 총 공부 시간(초)
-     */
-    public Long getSubjectTodayTime(Long subjectId) {
-        User user = securityUtil.getCurrentUser();
-
-        Optional<StudySubject> subject = subjectRepository.findById(subjectId);
-        if (subject.isEmpty()) {
-            log.warn("getSubjectTodayTime: Not found subject. userId={}, subjectId={}", user.getId(), subjectId);
-            throw new NotFoundStudyException("과목을 찾을 수 없음");
-        }
-
-        LocalDate today = LocalDate.now();
-        LocalDateTime startDate = today.atStartOfDay();
-        LocalDateTime endDate = today.atTime(23, 59, 59);
-
-        Long totalTime = 0L;
-        List<StudyRecord> records = studyRecordRepository.findBySubjectAndStartAtBetween(subject.get(), startDate,
-                endDate);
-        for (StudyRecord record : records) {
-            totalTime += calculateStudyTime(record);
-        }
-
-        log.info("getSubjectTodayTime: userId={}, subjectId={}", user.getId(), subjectId);
-        return totalTime;
     }
 }

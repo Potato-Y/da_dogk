@@ -1,7 +1,10 @@
 package com.github.dadogk.study.util;
 
+import com.github.dadogk.study.entity.StudyRecordRepository;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.github.dadogk.study.dto.api.SubjectResponse;
@@ -17,16 +20,28 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class StudyUtil {
     private final UserUtil userUtil;
+    private final StudyRecordRepository studyRecordRepository;
 
-    public SubjectResponse convertSubjectToTitleResponse(StudySubject subject) {
+    public SubjectResponse convertSubjectResponse(StudySubject subject) {
+        LocalDate today = LocalDate.now();
+        LocalDateTime startDate = today.atStartOfDay();
+        LocalDateTime endDate = today.atTime(23, 59, 59);
+
+        Long totalTime = 0L;
+        List<StudyRecord> records = studyRecordRepository.findBySubjectAndStartAtBetween(subject, startDate,
+                endDate);
+        for (StudyRecord record : records) {
+            totalTime += calculateStudyTime(record);
+        }
+
         UserResponse userResponse = userUtil.convertUserResponse(subject.getUser());
-        SubjectResponse response = new SubjectResponse(subject.getId(), userResponse, subject.getTitle());
+        SubjectResponse response = new SubjectResponse(subject.getId(), userResponse, subject.getTitle(),totalTime);
 
         return response;
     }
 
     public RecodeResponse convertRecodeResponse(StudyRecord record) {
-        SubjectResponse subjectResponse = convertSubjectToTitleResponse(record.getSubject());
+        SubjectResponse subjectResponse = convertSubjectResponse(record.getSubject());
 
         return new RecodeResponse(subjectResponse, record.getStartAt(), record.getEndAt());
     }

@@ -10,4 +10,5 @@ public class SubjectResponse {
     private Long id;
     private UserResponse user;
     private String title;
+    private Long todayStudyTime;
 }
