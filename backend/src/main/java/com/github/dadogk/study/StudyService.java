@@ -12,6 +12,7 @@ import com.github.dadogk.study.entity.StudyRecordRepository;
 import com.github.dadogk.study.entity.StudySubject;
 import com.github.dadogk.study.entity.StudySubjectRepository;
 import com.github.dadogk.study.exception.NotFoundStudyException;
+import com.github.dadogk.study.util.StudyUtil;
 import com.github.dadogk.user.util.UserUtil;
 import com.github.dadogk.utils.DateTimeUtil;
 import com.github.dadogk.user.dto.UserResponse;
@@ -37,6 +38,7 @@ public class StudyService {
     private static final Logger logger = LoggerFactory.getLogger(StudyService.class);
     private final StudySubjectRepository subjectRepository;
     private final StudyRecordRepository studyRecordRepository;
+    private final StudyUtil studyUtil;
     private final SecurityUtil securityUtil;
     private final UserUtil userUtil;
 
@@ -113,7 +115,7 @@ public class StudyService {
 
         UserResponse userResponse = userUtil.convertUserResponse(findUser);
         for (StudySubject subject : studySubjects) { // 유저의 과목 목록을 dto 리스트에 담는다.
-            subjectRespons.add(new SubjectResponse(subject.getId(), userResponse, subject.getTitle()));
+            subjectRespons.add(studyUtil.convertSubjectToTitleResponse(subject));
         }
 
         return subjectRespons;
