@@ -4,7 +4,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import org.springframework.stereotype.Component;
 
-import com.github.dadogk.study.dto.api.SubjectTitleResponse;
+import com.github.dadogk.study.dto.api.SubjectResponse;
 import com.github.dadogk.study.dto.api.recode.RecodeResponse;
 import com.github.dadogk.study.entity.StudyRecord;
 import com.github.dadogk.study.entity.StudySubject;
@@ -18,15 +18,15 @@ import lombok.RequiredArgsConstructor;
 public class StudyUtil {
     private final UserUtil userUtil;
 
-    public SubjectTitleResponse convertSubjectToTitleResponse(StudySubject subject) {
+    public SubjectResponse convertSubjectToTitleResponse(StudySubject subject) {
         UserResponse userResponse = userUtil.convertUserResponse(subject.getUser());
-        SubjectTitleResponse response = new SubjectTitleResponse(subject.getId(), userResponse, subject.getTitle());
+        SubjectResponse response = new SubjectResponse(subject.getId(), userResponse, subject.getTitle());
 
         return response;
     }
 
     public RecodeResponse convertRecodeResponse(StudyRecord record) {
-        SubjectTitleResponse subjectResponse = convertSubjectToTitleResponse(record.getSubject());
+        SubjectResponse subjectResponse = convertSubjectToTitleResponse(record.getSubject());
 
         return new RecodeResponse(subjectResponse, record.getStartAt(), record.getEndAt());
     }

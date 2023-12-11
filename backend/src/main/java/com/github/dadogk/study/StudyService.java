@@ -4,7 +4,7 @@ import static com.github.dadogk.study.util.StudyUtil.calculateStudyTime;
 
 import com.github.dadogk.exceptions.PermissionException;
 import com.github.dadogk.security.util.SecurityUtil;
-import com.github.dadogk.study.dto.api.SubjectTitleResponse;
+import com.github.dadogk.study.dto.api.SubjectResponse;
 import com.github.dadogk.study.dto.api.create.CreateSubjectRequest;
 import com.github.dadogk.study.dto.api.recode.GetUserRecodesRequest;
 import com.github.dadogk.study.entity.StudyRecord;
@@ -17,7 +17,6 @@ import com.github.dadogk.utils.DateTimeUtil;
 import com.github.dadogk.user.dto.UserResponse;
 import com.github.dadogk.user.entity.User;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -100,24 +99,24 @@ public class StudyService {
      * @param userId 조회하려는 UserId
      * @return List<SubjectTitleResponse>
      */
-    public List<SubjectTitleResponse> getUserStudySubjectList(Long userId) {
+    public List<SubjectResponse> getUserStudySubjectList(Long userId) {
         User user = securityUtil.getCurrentUser();
         User findUser = userUtil.findById(userId); // 찾으려는 유저 불러오기
         List<StudySubject> studySubjects = subjectRepository.findAllByUser(findUser); // 유저의 목록을 가져온다.
 
         log.info("getUserStudySubjectList: userId={}, findUserId={}", user.getId(), findUser.getId());
 
-        List<SubjectTitleResponse> subjectTitleResponses = new ArrayList<>();
+        List<SubjectResponse> subjectRespons = new ArrayList<>();
         if (studySubjects.isEmpty()) { // 만약 비어있다면 빈 리스트를 반환한다.
-            return subjectTitleResponses;
+            return subjectRespons;
         }
 
         UserResponse userResponse = userUtil.convertUserResponse(findUser);
         for (StudySubject subject : studySubjects) { // 유저의 과목 목록을 dto 리스트에 담는다.
-            subjectTitleResponses.add(new SubjectTitleResponse(subject.getId(), userResponse, subject.getTitle()));
+            subjectRespons.add(new SubjectResponse(subject.getId(), userResponse, subject.getTitle()));
         }
 
-        return subjectTitleResponses;
+        return subjectRespons;
     }
 
     public StudySubject createSubject(CreateSubjectRequest dto) {
