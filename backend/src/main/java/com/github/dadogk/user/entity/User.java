@@ -1,7 +1,11 @@
 package com.github.dadogk.user.entity;
 
 import com.github.dadogk.group.entity.GroupMember;
+import com.github.dadogk.school.entity.MailAuthInfo;
+import com.github.dadogk.school.entity.SchoolMember;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -46,14 +50,22 @@ public class User implements UserDetails {
     @Column(name = "nickname", nullable = false)
     private String nickname;
 
-    @OneToMany(mappedBy = "hostUser", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "hostUser", cascade = CascadeType.REMOVE)
     private List<Group> groups = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     private List<GroupMember> groupMembers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<StudySubject> studySubjects = new ArrayList<>();
+
+    @OneToOne(mappedBy = "user",cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "school")
+    private SchoolMember schoolMember;
+
+    @OneToOne(mappedBy = "user",cascade = CascadeType.REMOVE)
+    @JoinColumn(name="mail_auth")
+    private MailAuthInfo mailAuthInfo;
 
     @Builder
     public User(String email, String password, String nickname) {

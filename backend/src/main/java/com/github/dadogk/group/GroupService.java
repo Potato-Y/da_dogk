@@ -1,6 +1,9 @@
 package com.github.dadogk.group;
 
+import static com.github.dadogk.study.util.StudyUtil.calculateStudyTime;
+
 import com.github.dadogk.enums.State;
+import com.github.dadogk.error.exception.NotFoundException;
 import com.github.dadogk.group.dto.UpdateGroupRequest;
 import com.github.dadogk.group.dto.UpdateGroupPasswordRequest;
 import com.github.dadogk.group.dto.average.GetGroupAverageRequest;
@@ -23,6 +26,7 @@ import com.github.dadogk.security.util.SecurityUtil;
 import com.github.dadogk.study.StudyService;
 import com.github.dadogk.study.dto.api.recode.GetUserRecodesRequest;
 import com.github.dadogk.study.entity.StudyRecord;
+import com.github.dadogk.study.util.StudyUtil;
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.exception.DuplicateGroupMemberException;
 
@@ -62,14 +66,16 @@ public class GroupService {
         if (isPassword) {
             group.updatePassword(passwordUtil.convertPassword(dto.getPassword()));
         }
-
         groupRepository.save(group);
 
-        groupMemberRepository.save(GroupMember.builder()
+        GroupMember groupMember = GroupMember.builder()
                 .group(group)
                 .user(hostUser)
-                .build());
+                .build();
+        groupMemberRepository.save(groupMember);
 
+        log.info("createGroup: userId={}, groupId={}, groupMemberId={}", hostUser.getId(), group.getId(),
+                groupMember.getId());
         return groupUtil.convertGroup(group);
     }
 
@@ -99,6 +105,7 @@ public class GroupService {
                 .user(user)
                 .build();
 
+        log.info("signupGroup: userId={}, groupId={}", user.getId(), groupId);
         groupMemberRepository.save(signupMember);
     }
 
@@ -148,6 +155,7 @@ public class GroupService {
             throw new PermissionException("호스트 유저가 아님");
         }
 
+        log.info("deleteGroup: userId={}, groupId={}", user.getId(), groupId);
         groupRepository.delete(group.get()); // 그룹 삭제
     }
 
@@ -202,6 +210,7 @@ public class GroupService {
             throw new NotFoundGroupMemberException("그룹 멤버가 아님");
         }
 
+        log.info("getGroupMemberList: userId={}, groupId={}", user.getId(), groupId);
         List<GroupMember> groupMembers = groupMemberRepository.findAllByGroup(group.get());
         return groupMembers;
     }
@@ -229,15 +238,17 @@ public class GroupService {
             List<StudyRecord> records = studyService
                     .getUserRecodes(member.getUser(), new GetUserRecodesRequest(dto.getYear(), dto.getMonth()));
             for (StudyRecord record : records) { // 공부 시간 초 단위로 계산
-                Duration duration = Duration.between(record.getStartAt(), record.getEndAt());
-                totalStudyTime += (int) duration.getSeconds();
+                totalStudyTime += calculateStudyTime(record);
             }
-            count += records.size(); // 기록 수 추가
         }
+        count += members.size(); // 사람 수 만큼 카운트 추가
 
+        log.info("getGroupAverage: userId={}, groupId={}, findYear={}, findMonth={}", user.getId(), groupId,
+                dto.getYear(), dto.getMonth());
         if (count == 0) { // 0인 경우 나눌 수 없다. 그대로 리턴한다.
             return totalStudyTime;
         }
+
         return totalStudyTime / count; // 평균으로 반환
     }
 
@@ -273,6 +284,20 @@ public class GroupService {
             }
         }
 
+        log.info("updateGroup: userId={}, groupId={}", user.getId(), groupId);
         return groupRepository.save(updateGroup);
+    }
+
+    public Group findGroup(Long groupId) {
+        User user = securityUtil.getCurrentUser();
+        Optional<Group> group = groupRepository.findById(groupId);
+
+        if (group.isEmpty()) {
+            log.warn("findGroup: Not found group. userId={}, groupId={}", user.getId(), groupId);
+            throw new NotFoundException("그룹을  찾을 수 없음.");
+        }
+
+        log.info("findGroup: userId={}, groupId={}", user.getId(), groupId);
+        return group.get();
     }
 }

@@ -48,6 +48,14 @@ public class GroupApiController {
                 .body(groupResponse);
     }
 
+    @GetMapping("/{groupId}")
+    public ResponseEntity<GroupResponse> getGroup(@PathVariable Long groupId) {
+        Group group = groupService.findGroup(groupId);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(groupUtil.convertGroup(group));
+    }
+
     @PatchMapping("/{groupId}")
     public ResponseEntity<GroupResponse> updateGroup(@PathVariable Long groupId,
                                                      @RequestBody UpdateGroupRequest request) {

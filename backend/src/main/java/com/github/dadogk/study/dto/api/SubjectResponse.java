@@ -6,8 +6,9 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class SubjectTitleResponse {
+public class SubjectResponse {
     private Long id;
     private UserResponse user;
     private String title;
+    private Long todayStudyTime;
 }
