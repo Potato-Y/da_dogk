@@ -40,20 +40,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/tv_today_study_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:text="00:00:00"
-            android:textColor="#55375A"
-            android:textSize="20sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -95,6 +83,7 @@
         android:layout_width="match_parent"
         android:layout_height="300dp">
 
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_my"
             android:layout_width="match_parent"
@@ -109,13 +98,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-
             android:clickable="true"
             android:focusable="true"
             android:src="@drawable/sharp_add_24" />
 
     </FrameLayout>
-
 
     <!--그룹 공부 시간 측정 -->
     <LinearLayout
@@ -124,13 +111,23 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:visibility="gone">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="12월 STUDY TIME"
+            android:textColor="#fff"
+            android:textSize="30sp"
+            android:layout_marginLeft="90dp"
+            android:shadowDx="4"
+            android:shadowDy="4"
+            android:shadowRadius="8"/>
 
         <!--학교-->
         <LinearLayout
             android:id="@+id/LL_school"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:visibility="gone"
             android:padding="10dp">
 
@@ -164,7 +161,6 @@
                 </FrameLayout>
 
             </LinearLayout>
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"

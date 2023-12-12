@@ -28,12 +28,13 @@ interface GroupGenerateInterface {
     @GET("groups/{groupId}")
     fun getGroupDetails(@Path("groupId") groupId: String): Call<GroupGenerateResponse>
 
-    //그룹 비번 있을때
+    //그룹 가입
     @POST("groups/{groupId}/members")
     fun joinGroupTrue(
         @Path("groupId") groupId: String,
         @Body request: GroupPasswordRequest
     ): Call<GroupGenerateResponse>
+
 
     //내가 가입한 그룹들
     @GET("groups")

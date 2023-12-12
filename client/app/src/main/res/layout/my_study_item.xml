@@ -23,7 +23,7 @@
             android:layout_marginLeft="20dp"
             android:text="카테고리 종류"
             android:textSize="18sp"
-            android:textColor="#ffffff"/>
+            android:textColor="@color/register_text_color_selector"/>
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -36,7 +36,7 @@
                 android:layout_marginRight="30dp"
                 android:text="00:00:00"
                 android:textSize="18sp"
-                android:textColor="#ffffff"/>
+                android:textColor="@color/register_text_color_selector"/>
         </FrameLayout>
     </LinearLayout>
     <View

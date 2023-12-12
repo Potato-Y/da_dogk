@@ -2,6 +2,7 @@ package com.github.da_dogk.server.interface_folder
 
 import com.github.da_dogk.server.request.MyStudyRequest
 import com.github.da_dogk.server.response.MyStudyResponse
+import com.github.da_dogk.server.response.MyStudyTimeResponse
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -20,4 +21,9 @@ interface MyStudyInterface {
     fun showCategories(
         @Path("userId") userId: String
     ): Call<List<MyStudyResponse>>
+
+    @GET("study/subjects/{subjectId}/time")
+    fun showCategoriesTime(
+        @Path("subjectId") subjectId: String
+    ): Call<List<MyStudyTimeResponse>>
 }

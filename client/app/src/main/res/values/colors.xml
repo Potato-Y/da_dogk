@@ -3,4 +3,15 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="Gold">#FFFFD700</color>
+
+    <!-- 기본 텍스트 컬러 -->
+    <color name="register_text_default">#ffffff</color>
+    <!-- 텍스트 클릭했을 때의 텍스트 컬러 -->
+    <color name="register_text_pressed">@android:color/holo_red_light</color>
+    <!-- 텍스트 포커스 되었을 때의 텍스트 컬러 (선택 사항) -->
+    <color name="register_text_focused">@android:color/holo_blue_light</color>
+
+    <color name="pressed_color">#BBA7DD</color>
+    <color name="focused_color">#252525</color>
+    <color name="default_color">#5A5A5A</color>
 </resources>

@@ -63,15 +63,14 @@
 
 
     <android.widget.Button
-        android:text="회원가입하기"
         android:id="@+id/button_Resister"
-        android:layout_marginTop="30dp"
         android:layout_width="344dp"
         android:layout_height="60dp"
-        android:textSize="18sp"
+        android:layout_marginTop="30dp"
+        android:background="@color/default_color"
+        android:text="회원가입하기"
         android:textColor="#ffffff"
-        android:background="#808080"
-        />
+        android:textSize="18sp" />
 
     <TextView
         android:text="로그인 창으로"
@@ -81,7 +80,7 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         android:textSize="16sp"
-        android:textColor="#ffffff"
+        android:textColor="@color/register_text_color_selector"
         />
 
 

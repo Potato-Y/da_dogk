@@ -4,6 +4,8 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -57,21 +59,23 @@ class GroupFragment : Fragment() {
     lateinit var tabLayout: TabLayout
     lateinit var layoutGroup: FrameLayout
     lateinit var layoutSchool: FrameLayout
-    lateinit var buttonWritePost : ImageButton
-    lateinit var schoolLL : LinearLayout
+    lateinit var buttonWritePost: ImageButton
+    lateinit var schoolLL: LinearLayout
 
     //리사이클러뷰
-    lateinit var recyclerView : RecyclerView
+    lateinit var recyclerView: RecyclerView
     lateinit var groupAdapter: GroupAdapter
 
 
     //학교 부분 변수
-    lateinit var schoolEmail: EditText
+    private lateinit var schoolEmail: EditText
     lateinit var buttonCertify: Button
     lateinit var certifyNumber: EditText
 
-    private var showSchoolList = false
+    private var checkSchool = false
 
+    private lateinit var timerHandler: Handler
+    private lateinit var timerRunnable: Runnable
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,6 +96,8 @@ class GroupFragment : Fragment() {
         layoutGroup = view.findViewById(R.id.FL_group)
         layoutSchool = view.findViewById(R.id.FL_school)
         schoolLL = view.findViewById(R.id.LL_sub_school)
+        schoolEmail = view.findViewById(R.id.ET_school_email)
+
 
         //리사이클러뷰 설정
         recyclerView = view.findViewById(R.id.rv_group)
@@ -102,8 +108,11 @@ class GroupFragment : Fragment() {
         //학교 인증 버튼
         buttonCertify = view.findViewById(R.id.b_certify)
 
+        timerHandler = Handler(Looper.getMainLooper())
 
-        val sharedPreferences = requireActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+
+        val sharedPreferences =
+            requireActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
         val jwtToken = sharedPreferences.getString("accessToken", "")
 
 
@@ -120,40 +129,53 @@ class GroupFragment : Fragment() {
             }
         })
 
-
-
         //생성된 그룹들 보여주기
-        service.showGroup().enqueue(object : Callback<List<GroupGenerateResponse>> {
-            override fun onResponse(call: Call<List<GroupGenerateResponse>>, response: Response<List<GroupGenerateResponse>>) {
-                if (response.isSuccessful) {
-                    val group = response.body()
+        timerRunnable = object : Runnable {
+            override fun run() {
+                service.showGroup().enqueue(object : Callback<List<GroupGenerateResponse>> {
+                    override fun onResponse(
+                        call: Call<List<GroupGenerateResponse>>,
+                        response: Response<List<GroupGenerateResponse>>
+                    ) {
+                        if (response.isSuccessful) {
+                            val group = response.body()
 
-                    if (group != null && group.isNotEmpty()) {
-                        groupAdapter.setGroups(group)
-                        groupAdapter.notifyDataSetChanged()
+                            if (group != null && group.isNotEmpty()) {
+                                groupAdapter.setGroups(group)
+                                groupAdapter.notifyDataSetChanged()
+                            }
+                            Log.d("글 불러오기", "성공 : $group")
+                        } else {
+                            Log.e("글 불러오기", "실패: ${response.code()}")
+                            Toast.makeText(requireContext(), "글 불러오기 실패", Toast.LENGTH_SHORT).show()
+                        }
                     }
-                    Log.d("글 불러오기", "성공 : $group")
-                } else {
-                    Log.e("글 불러오기", "실패: ${response.code()}")
-                    Toast.makeText(requireContext(), "글 불러오기 실패", Toast.LENGTH_SHORT).show()
-                }
-            }
 
-            override fun onFailure(call: Call<List<GroupGenerateResponse>>, t: Throwable) {
-                Log.e("글 불러오기", "${t.localizedMessage}")
-                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
+                    override fun onFailure(call: Call<List<GroupGenerateResponse>>, t: Throwable) {
+                        Log.e("글 불러오기", "${t.localizedMessage}")
+                        Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
+                    }
+                })
+                timerHandler.postDelayed(this, 1000)
             }
-        })
+        }
+        timerHandler.postDelayed(timerRunnable, 1000)
 
-        serviceSchool.mySchool().enqueue(object :Callback<MySchoolResponse>{
-            override fun onResponse(call: Call<MySchoolResponse>, response: Response<MySchoolResponse>) {
+        //학교 인증 유무 확인
+        serviceSchool.mySchool().enqueue(object : Callback<MySchoolResponse> {
+            override fun onResponse(
+                call: Call<MySchoolResponse>,
+                response: Response<MySchoolResponse>
+            ) {
                 if (response.isSuccessful) {
                     val check = response.body()
-
                     Log.d("학교 인증 유무 확인", "학교 인증 성공 : $check")
+                    checkSchool = true
+                    updateUI()
                 } else {
                     Log.e("학교 인증 유무 확인", "학교 인증 실퍄: ${response.code()}")
-                    Toast.makeText(requireContext(), "대학교가 인증 되었습니다.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "대학교 인증 안됨", Toast.LENGTH_SHORT).show()
+                    updateUI()
                 }
 
             }
@@ -165,80 +187,102 @@ class GroupFragment : Fragment() {
             }
         })
 
-
-
         //버튼 클릭시 학교인증 메일 보내기
         buttonCertify.setOnClickListener {
-            schoolEmail = view.findViewById(R.id.ET_school_email)
 
             val school = schoolEmail.text.toString()
             val request = SchoolEmailRequest(school)
 
-            serviceSchool.sendEmail("Bearer $jwtToken",request).enqueue(object : Callback<SchoolEmailResponse>{
-                override fun onResponse(call: Call<SchoolEmailResponse>, response: Response<SchoolEmailResponse>) {
-                    if (response.isSuccessful) {
-                        val result = response.body()
-                        Log.d("학교 인증 번호 보내기", "${result}")
-                        Toast.makeText(requireContext(), "인증번호를 보냈습니다.", Toast.LENGTH_SHORT).show()
+            serviceSchool.sendEmail("Bearer $jwtToken", request)
+                .enqueue(object : Callback<SchoolEmailResponse> {
+                    override fun onResponse(
+                        call: Call<SchoolEmailResponse>,
+                        response: Response<SchoolEmailResponse>
+                    ) {
+                        if (response.isSuccessful) {
+                            val result = response.body()
+                            Log.d("학교 인증 번호 보내기", "${result}")
+                            Toast.makeText(requireContext(), "인증번호를 보냈습니다.", Toast.LENGTH_SHORT)
+                                .show()
 
-                        val inflater = LayoutInflater.from(requireContext())
-                        val dialogView = inflater.inflate(R.layout.dialog1, null)
-                        certifyNumber = dialogView.findViewById(R.id.ET_input_title)
+                            val inflater = LayoutInflater.from(requireContext())
+                            val dialogView = inflater.inflate(R.layout.dialog1, null)
+                            certifyNumber = dialogView.findViewById(R.id.ET_input_title)
 
-                        val builder = AlertDialog.Builder(requireContext())
-                        builder.setView(dialogView)
-                        builder.setTitle("인증 번호 입력")
+                            val builder = AlertDialog.Builder(requireContext())
+                            builder.setView(dialogView)
+                            builder.setTitle("인증 번호 입력")
 
-                        builder.setPositiveButton("확인") { _, _ ->
-                            val edit = certifyNumber.text.toString()
-                            val request = SchoolNumberRequest(edit)
+                            builder.setPositiveButton("확인") { _, _ ->
+                                val edit = certifyNumber.text.toString()
+                                val request = SchoolNumberRequest(edit)
 
-                            if(edit.isNotEmpty()){
-                                serviceSchool.sendNumber("Bearer $jwtToken",request).enqueue(object : Callback<SchoolEmailResponse>{
-                                    override fun onResponse(call: Call<SchoolEmailResponse>, response: Response<SchoolEmailResponse>) {
-                                        if (response.isSuccessful) {
-                                            val result = response.body()
-                                            Log.d("학교인증 ", "${result}")
-                                            Toast.makeText(requireContext(), "학교인증 성공", Toast.LENGTH_SHORT).show()
-                                            schoolLL.visibility = View.VISIBLE
-                                            schoolEmail.visibility = View.GONE
-                                            buttonCertify.visibility = View.GONE
+                                if (edit.isNotEmpty()) {
+                                    serviceSchool.sendNumber("Bearer $jwtToken", request)
+                                        .enqueue(object : Callback<SchoolEmailResponse> {
+                                            override fun onResponse(
+                                                call: Call<SchoolEmailResponse>,
+                                                response: Response<SchoolEmailResponse>
+                                            ) {
+                                                if (response.isSuccessful) {
+                                                    val result = response.body()
+                                                    Log.d("학교인증 ", "${result}")
+                                                    Toast.makeText(
+                                                        requireContext(),
+                                                        "학교인증 성공",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                    schoolLL.visibility = View.VISIBLE
+                                                    schoolEmail.visibility = View.GONE
+                                                    buttonCertify.visibility = View.GONE
 
 
-                                        } else {
-                                            Log.e("학교인증", "실패: ${response.code()}")
-                                            Toast.makeText(requireContext(), "error", Toast.LENGTH_SHORT).show()
-                                        }
-                                    }
+                                                } else {
+                                                    Log.e("학교인증", "실패: ${response.code()}")
+                                                    Toast.makeText(
+                                                        requireContext(),
+                                                        "error",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }
+                                            }
 
-                                    override fun onFailure(call: Call<SchoolEmailResponse>, t: Throwable) {
-                                        Log.e("학교인증", "${t.localizedMessage}")
-                                    }
-                                })
-                            } else {
-                                Toast.makeText(requireContext(), "코드를 입력하지 않았습니다.", Toast.LENGTH_SHORT).show()
+                                            override fun onFailure(
+                                                call: Call<SchoolEmailResponse>,
+                                                t: Throwable
+                                            ) {
+                                                Log.e("학교인증", "${t.localizedMessage}")
+                                            }
+                                        })
+                                } else {
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "코드를 입력하지 않았습니다.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             }
-                        }
-                        // "Cancel" 버튼 추가
-                        builder.setNegativeButton("취소") { dialog, _ ->
-                            Toast.makeText(requireContext(), "취소했습니다.", Toast.LENGTH_SHORT).show()
-                            dialog.dismiss()
-                        }
+                            // "Cancel" 버튼 추가
+                            builder.setNegativeButton("취소") { dialog, _ ->
+                                Toast.makeText(requireContext(), "취소했습니다.", Toast.LENGTH_SHORT)
+                                    .show()
+                                dialog.dismiss()
+                            }
 
-                        // 다이얼로그 생성 및 표시
-                        val alertDialog = builder.create()
-                        alertDialog.show()
+                            // 다이얼로그 생성 및 표시
+                            val alertDialog = builder.create()
+                            alertDialog.show()
 
-                    } else {
-                        Log.e("학교 인증 번호 보내기", "실패: ${response.code()}")
-                        Toast.makeText(requireContext(), "error", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Log.e("학교 인증 번호 보내기", "실패: ${response.code()}")
+                            Toast.makeText(requireContext(), "error", Toast.LENGTH_SHORT).show()
+                        }
                     }
-                }
 
-                override fun onFailure(call: Call<SchoolEmailResponse>, t: Throwable) {
-                    Log.e("학교 인증 번호 보내기", "${t.localizedMessage}")
-                }
-            })
+                    override fun onFailure(call: Call<SchoolEmailResponse>, t: Throwable) {
+                        Log.e("학교 인증 번호 보내기", "${t.localizedMessage}")
+                    }
+                })
         }
 
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
@@ -271,7 +315,7 @@ class GroupFragment : Fragment() {
         buttonWritePost = view.findViewById(R.id.B_write_post1)
 
         buttonWritePost.setOnClickListener {
-            activity?.let{
+            activity?.let {
                 val intent = Intent(context, GroupGenerateActivity::class.java)
                 startActivity(intent)
             }
@@ -279,11 +323,22 @@ class GroupFragment : Fragment() {
 
         return view
     }
+
     private fun navigateToGroupDetail(groupId: String) {
         // GroupDetailActivity로 이동하는 코드 작성
         val intent = Intent(requireContext(), GroupIntroActivity::class.java)
         intent.putExtra("id", groupId)
         startActivity(intent)
+    }
+
+    private fun updateUI() {
+        if (checkSchool) {
+            buttonCertify.visibility = View.GONE
+            schoolEmail.visibility = View.GONE
+            schoolLL.visibility = View.VISIBLE
+        } else {
+
+        }
     }
 
 
