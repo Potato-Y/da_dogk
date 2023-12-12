@@ -88,6 +88,9 @@ class HomeFragment : Fragment() {
     private lateinit var timerHandler3: Handler
     private lateinit var timerRunnable3: Runnable
 
+    private lateinit var timerHandler4: Handler
+    private lateinit var timerRunnable4: Runnable
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -131,6 +134,7 @@ class HomeFragment : Fragment() {
 
         timerHandler2 = Handler(Looper.getMainLooper())
         timerHandler3 = Handler(Looper.getMainLooper())
+        timerHandler4 = Handler(Looper.getMainLooper())
 
 
         val sharedPreferences =
@@ -155,32 +159,39 @@ class HomeFragment : Fragment() {
         })
 
         //학교 인증 유무 확인
-        serviceSchool.mySchool().enqueue(object : Callback<MySchoolResponse> {
-            override fun onResponse(
-                call: Call<MySchoolResponse>,
-                response: Response<MySchoolResponse>
-            ) {
-                if (response.isSuccessful) {
-                    val check = response.body()
-                    Log.d("학교 인증 유무 확인", "학교 인증 성공 : $check")
-                    checkSchool = true
-                    updateUI()
-                    schoolName.text = check?.schoolName
-                    val schoolAvgTime = convertSecondsToFormattedTime(check!!.averageTime)
-                    schoolTime.text = schoolAvgTime
-                } else {
-                    Log.e("학교 인증 유무 확인", "학교 인증 실퍄: ${response.code()}")
-                    updateUI()
-                }
+        timerHandler4 = Handler(Looper.getMainLooper())
+        timerRunnable4 = object : Runnable {
+            override fun run() {
+                serviceSchool.mySchool().enqueue(object : Callback<MySchoolResponse> {
+                    override fun onResponse(
+                        call: Call<MySchoolResponse>,
+                        response: Response<MySchoolResponse>
+                    ) {
+                        if (response.isSuccessful) {
+                            val check = response.body()
+                            Log.d("학교 인증 유무 확인", "학교 인증 성공 : $check")
+                            checkSchool = true
+                            updateUI()
+                            schoolName.text = check?.schoolName
+                            val schoolAvgTime = convertSecondsToFormattedTime(check!!.averageTime)
+                            schoolTime.text = schoolAvgTime
+                        } else {
+                            Log.e("학교 인증 유무 확인", "학교 인증 실퍄: ${response.code()}")
+                            updateUI()
+                        }
 
+                    }
+
+                    override fun onFailure(call: Call<MySchoolResponse>, t: Throwable) {
+                        Log.e("학교 인증 유무 확인", "${t.localizedMessage}")
+                        Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
+
+                    }
+                })
+                timerHandler4.postDelayed(this, 1000)
             }
-
-            override fun onFailure(call: Call<MySchoolResponse>, t: Throwable) {
-                Log.e("학교 인증 유무 확인", "${t.localizedMessage}")
-                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
-
-            }
-        })
+        }
+        timerHandler4.postDelayed(timerRunnable4, 1000)
 
         //내 카테고리 표시하기
         timerHandler2 = Handler(Looper.getMainLooper())

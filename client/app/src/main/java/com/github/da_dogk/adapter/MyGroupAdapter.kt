@@ -61,9 +61,6 @@ class MyGroupAdapter : RecyclerView.Adapter<MyGroupAdapter.MyGroupViewHolder>() 
                 val avgTime = avgResponse.averageTime
                 val formattedTime = convertSecondsToFormattedTime(avgTime)
                 groupAvgTime.text = formattedTime
-            } else {
-                // 처리할 내용 추가 (예: 특별한 텍스트 설정 또는 빈 값으로 설정)
-                groupAvgTime.text = "N/A"
             }
         }
 

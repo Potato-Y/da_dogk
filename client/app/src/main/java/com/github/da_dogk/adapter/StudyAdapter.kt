@@ -56,7 +56,7 @@ class StudyAdapter : RecyclerView.Adapter<StudyAdapter.StudyViewHolder>() {
             categoryName.text = study.title
 
             // todayStudyTime을 시:분:초 형식으로 변환하여 categoryTime에 표시
-            val formattedTime = convertSecondsToFormattedTime(study.user.todayStudyTime)
+            val formattedTime = convertSecondsToFormattedTime(study.todayStudyTime)
             categoryTime.text = formattedTime
             //categoryTime.text = study.user.todayStudyTime.toString()
 
