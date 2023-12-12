@@ -104,6 +104,7 @@
 
     </FrameLayout>
 
+
     <!--그룹 공부 시간 측정 -->
     <LinearLayout
         android:id="@+id/LL_groupStudy"
@@ -129,7 +130,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="gone"
-            android:padding="10dp">
+            android:padding="10dp"
+            android:layout_marginTop="5dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -141,6 +143,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="50dp"
                     android:text="학교"
+                    android:textStyle="bold"
                     android:textColor="#ffffff"
                     android:textSize="18sp" />
 
@@ -161,6 +164,11 @@
                 </FrameLayout>
 
             </LinearLayout>
+
+
+
+
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"

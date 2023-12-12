@@ -5,5 +5,6 @@ import com.google.gson.annotations.SerializedName
 data class MyStudyResponse(
     val id: Int,
     val user: User,
-    val title: String
+    val title: String,
+    val todayStudyTime: Int
 )
