@@ -6,7 +6,7 @@ import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.reflect.Type
-
+//a
 object RetrofitClient {
     private const val BASE_URL = "https://dadogk2.duckdns.org/api/"
 
