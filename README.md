@@ -37,6 +37,9 @@
 - 서버의 비정상 종료 시 공부 종료 시간이 저장되지 않음 (Backend)
 - 그룹원의 실시간 공부 정보를 Socket이 아닌 RestAPI로 반복 요청 (Client)
 
+## 프로젝트 시스템 아키텍처
+![팀프 drawio (1)](https://github.com/Potato-Y/da_dogk/assets/68105481/00ec52c8-e2ac-4518-9429-6916b9de2fbb)
+
 ## API 문서 안내
 개발에 사용된 API 문서는 다음 페이지에서 확인할 수 있습니다.
 
