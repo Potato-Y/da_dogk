@@ -11,8 +11,8 @@
 <img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
 
 ### Client
-<img src="https://img.shields.io/badge/kotlin-7F52FF?style=for-the-badge&logo=springboot&logoColor=white"> 
-<img src="https://img.shields.io/badge/android-34A853?style=for-the-badge&logo=springboot&logoColor=white">
+<img src="https://img.shields.io/badge/Kotlin-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white"> 
+<img src="https://img.shields.io/badge/Android-34A853?style=for-the-badge&logo=android&logoColor=white">
 
 ## 프로젝트 소개
 사용자의 학습 시간을 자동으로 동기화합니다. 동기화된 데이터를 동료들과 공유하는 서비스를 제공합니다.
