@@ -11,8 +11,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AuthenticateResponse {
-    private String accessToken;
-    private String refreshToken;
 
-    private UserResponse user;
+  private String accessToken;
+  private String refreshToken;
+
+  private UserResponse user;
 }

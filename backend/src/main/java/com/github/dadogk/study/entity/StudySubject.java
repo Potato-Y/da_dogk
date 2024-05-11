@@ -24,30 +24,30 @@ import lombok.NoArgsConstructor;
 @Entity
 public class StudySubject {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false)
-    private Long id; // 자동 생성 고유 ID
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id", updatable = false)
+  private Long id; // 자동 생성 고유 ID
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", updatable = false)
-    private User user;
+  @ManyToOne
+  @JoinColumn(name = "user_id", updatable = false)
+  private User user;
 
-    @Column(name = "title", nullable = false)
-    private String title;
+  @Column(name = "title", nullable = false)
+  private String title;
 
-    @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL)
-    private List<StudyRecord> records = new ArrayList<>();
+  @OneToMany(mappedBy = "subject", cascade = CascadeType.ALL)
+  private List<StudyRecord> records = new ArrayList<>();
 
-    @Builder
-    public StudySubject(User user, String title) {
-        this.user = user;
-        this.title = title;
-    }
+  @Builder
+  public StudySubject(User user, String title) {
+    this.user = user;
+    this.title = title;
+  }
 
-    public StudySubject updateTitle(String title) {
-        this.title = title;
+  public StudySubject updateTitle(String title) {
+    this.title = title;
 
-        return this;
-    }
+    return this;
+  }
 }

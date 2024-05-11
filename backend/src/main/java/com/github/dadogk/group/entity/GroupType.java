@@ -6,12 +6,11 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum GroupType {
-    SCHOOL("school"),
-    COMMON("common");
+  SCHOOL("school"), COMMON("common");
 
-    private String type;
+  private String type;
 
-    GroupType(String type) {
-        this.type = type;
-    }
+  GroupType(String type) {
+    this.type = type;
+  }
 }

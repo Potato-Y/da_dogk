@@ -9,19 +9,12 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 public class GroupUtil {
-    private final UserUtil userUtil;
 
-    public GroupResponse convertGroup(Group group) {
-        return new GroupResponse(
-                group.getId(),
-                group.getGroupName(),
-                group.getGroupIntro(),
-                userUtil.convertUserResponse(group.getHostUser()),
-                group.getState(),
-                group.getType(),
-                group.isPrivacyState(),
-                group.getCreatedAt(),
-                group.getGroupMembers().size()
-        );
-    }
+  private final UserUtil userUtil;
+
+  public GroupResponse convertGroup(Group group) {
+    return new GroupResponse(group.getId(), group.getGroupName(), group.getGroupIntro(),
+        userUtil.convertUserResponse(group.getHostUser()), group.getState(), group.getType(),
+        group.isPrivacyState(), group.getCreatedAt(), group.getGroupMembers().size());
+  }
 }

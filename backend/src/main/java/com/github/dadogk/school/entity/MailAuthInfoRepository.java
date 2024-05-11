@@ -5,5 +5,6 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MailAuthInfoRepository extends JpaRepository<MailAuthInfo, Long> {
-    Optional<MailAuthInfo> findByUser(User user);
+
+  Optional<MailAuthInfo> findByUser(User user);
 }

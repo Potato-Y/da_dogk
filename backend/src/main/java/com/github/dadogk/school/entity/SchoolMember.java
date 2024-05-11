@@ -21,25 +21,26 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 public class SchoolMember {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @OneToOne(cascade = CascadeType.REFRESH)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "school_id", nullable = false)
-    private School school;
+  @OneToOne(cascade = CascadeType.REFRESH)
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
 
-    @Column(name = "mail", unique = true)
-    private String mail;
+  @ManyToOne
+  @JoinColumn(name = "school_id", nullable = false)
+  private School school;
 
-    @Builder
-    public SchoolMember(User user, School school, String mail) {
-        this.user = user;
-        this.school = school;
-        this.mail = mail;
-    }
+  @Column(name = "mail", unique = true)
+  private String mail;
+
+  @Builder
+  public SchoolMember(User user, School school, String mail) {
+    this.user = user;
+    this.school = school;
+    this.mail = mail;
+  }
 }

@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class StudyStartRequest {
-    private String type;
-    private String accessToken;
-    private Long subjectId;
+
+  private String type;
+  private String accessToken;
+  private Long subjectId;
 }

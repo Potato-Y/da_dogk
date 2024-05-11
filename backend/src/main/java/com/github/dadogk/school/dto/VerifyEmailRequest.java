@@ -7,6 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class VerifyEmailRequest {
-    @NotBlank
-    private String code;
+
+  @NotBlank
+  private String code;
 }

@@ -6,5 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UpdateGroupPasswordRequest {
-    private String groupPassword;
+
+  private String groupPassword;
 }

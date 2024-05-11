@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class AddUserResponse {
-    private Long userId;
-    private String email;
-    private String nickname;
+
+  private Long userId;
+  private String email;
+  private String nickname;
 }

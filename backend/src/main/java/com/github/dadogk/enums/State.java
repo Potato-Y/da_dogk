@@ -7,14 +7,14 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum State {
 
-    ACTIVE("active"), // 활성 상태
-    DISABLED("disabled"), // 비활성 상태
-    DELETE("delete"); // 삭제 상태
+  ACTIVE("active"), // 활성 상태
+  DISABLED("disabled"), // 비활성 상태
+  DELETE("delete"); // 삭제 상태
 
-    private String state;
+  private String state;
 
-    State(String state) {
-        this.state = state;
-    }
+  State(String state) {
+    this.state = state;
+  }
 }
 

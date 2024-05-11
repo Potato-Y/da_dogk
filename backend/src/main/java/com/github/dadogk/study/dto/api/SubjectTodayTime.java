@@ -6,5 +6,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class SubjectTodayTime {
-    private Long time;
+
+  private Long time;
 }
