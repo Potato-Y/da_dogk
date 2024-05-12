@@ -1,8 +1,7 @@
 package com.github.dadogk.user;
 
 import com.github.dadogk.security.util.SecurityUtil;
-import com.github.dadogk.user.dto.AddUserRequest;
-import com.github.dadogk.user.dto.AddUserResponse;
+import com.github.dadogk.user.dto.AddUserDto;
 import com.github.dadogk.user.dto.UserResponse;
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.util.UserUtil;
@@ -30,11 +29,12 @@ public class UserApiController {
   private final UserUtil userUtil;
 
   @PostMapping("/signup")
-  public ResponseEntity<AddUserResponse> signup(@Validated @RequestBody AddUserRequest request) {
+  public ResponseEntity<AddUserDto.AddUserResponse> signup(
+      @Validated @RequestBody AddUserDto.AddUserRequest request) {
     User user = userService.save(request);
 
     return ResponseEntity.status(HttpStatus.CREATED)
-        .body(new AddUserResponse(user.getId(), user.getEmail(), user.getNickname()));
+        .body(new AddUserDto.AddUserResponse(user.getId(), user.getEmail(), user.getNickname()));
   }
 
   @GetMapping("/user")

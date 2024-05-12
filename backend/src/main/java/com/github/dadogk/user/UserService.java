@@ -2,7 +2,7 @@ package com.github.dadogk.user;
 
 import com.github.dadogk.security.util.SecurityUtil;
 import com.github.dadogk.study.StudyService;
-import com.github.dadogk.user.dto.AddUserRequest;
+import com.github.dadogk.user.dto.AddUserDto;
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.entity.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class UserService {
   private final StudyService studyService;
   private final SecurityUtil securityUtil;
 
-  public User save(AddUserRequest dto) {
+  public User save(AddUserDto.AddUserRequest dto) {
     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     User user = userRepository.save(User.builder()
