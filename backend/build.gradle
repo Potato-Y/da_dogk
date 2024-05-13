@@ -1,51 +1,51 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.1.1'
-	id 'io.spring.dependency-management' version '1.1.0'
+    id 'java'
+    id 'org.springframework.boot' version '3.1.1'
+    id 'io.spring.dependency-management' version '1.1.0'
 }
 
 group = 'com.github'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	sourceCompatibility = '17'
+    sourceCompatibility = '17'
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation('org.springframework.boot:spring-boot-starter-web:3.1.0')
+    implementation('org.springframework.boot:spring-boot-starter-web:3.1.0')
     implementation('org.springframework.boot:spring-boot-starter-data-jpa:3.1.1') // Spring Data JPA
     implementation('org.springframework.boot:spring-boot-starter-security:3.0.4') // 스프링 시큐리티
-	implementation('org.springframework.boot:spring-boot-starter-websocket:3.1.5') // web socket
+    implementation('org.springframework.boot:spring-boot-starter-websocket:3.1.5') // web socket
     implementation('io.jsonwebtoken:jjwt:0.9.1') // 자바 jwt 라이브러리
-	implementation('javax.xml.bind:jaxb-api:2.3.1') // XML 문서와 JAVA 객체 간 매핑을 자동화
-	implementation('org.springframework.boot:spring-boot-starter-validation:3.1.1') // validation
-	implementation('org.springframework.boot:spring-boot-starter-mail:3.1.2')
+    implementation('javax.xml.bind:jaxb-api:2.3.1') // XML 문서와 JAVA 객체 간 매핑을 자동화
+    implementation('org.springframework.boot:spring-boot-starter-validation:3.1.1') // validation
+    implementation('org.springframework.boot:spring-boot-starter-mail:3.1.2')
 
-	annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 
     developmentOnly('org.springframework.boot:spring-boot-devtools:3.0.4') // 변경 내용 자동 재시작 추가
 
     compileOnly('org.projectlombok:lombok:1.18.26')
     compileOnly('org.springframework.boot:spring-boot-starter-actuator:3.1.1')
 
-	runtimeOnly 'com.h2database:h2'
-	runtimeOnly('org.mariadb.jdbc:mariadb-java-client:3.1.4')
+    runtimeOnly 'com.h2database:h2'
+    runtimeOnly('org.mariadb.jdbc:mariadb-java-client:3.1.4')
 
     testAnnotationProcessor('org.projectlombok:lombok:1.18.26')
     testImplementation('org.springframework.security:spring-security-test:6.0.2')
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
