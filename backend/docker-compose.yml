@@ -1,0 +1,73 @@
+version: '3'
+
+services:
+  maria-db:
+    image: mariadb:11.4
+    container_name: dadogk_db
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=dadogk
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=pwd
+      - TZ=Asia/Seoul
+    volumes:
+      - ../db:/var/lib/mysql
+    command:
+      - '--character-set-server=utf8mb4'
+      - '--collation-server=utf8mb4_unicode_ci'
+    networks:
+      - dadogk_network
+
+  smtp-mailhog:
+    image: mailhog/mailhog
+    container_name: dadogk_smtp
+    ports:
+      - "1025:1025"
+    networks:
+      - dadogk_network
+
+  spring-boot:
+    build: .
+    container_name: dadogk_spring_boot_app
+    depends_on:
+      - maria-db
+      - smtp-mailhog
+    environment:
+      - SPRING_DATASOURCE_DRIVER-CLASS-NAME=org.mariadb.jdbc.Driver
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://dadogk_db:3306/dadogk
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=pwd
+
+      - SPRING_JPA_HIBERNATE_DDL-AUTO=update
+      - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true
+      - SPRING_JPA_PROPERTIES_HIBERNATE_SHOW_SQL=false
+
+      - SPRING_MAIL_HOST=dadogk_smtp
+      - SPRING_MAIL_PORT=1025
+      - SPRING_MAIL_PROPERTIES_MAIL_DEBUG=false
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=false
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH=false
+
+      - JWT_ISSUER=dadogk@issuer
+      - JWT_SECRET_KEY=jwt_secret
+    restart: on-failure
+    networks:
+      - dadogk_network
+
+  nginx:
+    image: nginx:1.27.0
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker-init/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - spring-boot
+    networks:
+      - dadogk_network
+
+networks:
+  dadogk_network:
+    driver: bridge
