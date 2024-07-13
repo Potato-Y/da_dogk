@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class CreateSubjectRequest {
-    @NotBlank
-    private String title;
+
+  @NotBlank
+  private String title;
 }

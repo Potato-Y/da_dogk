@@ -12,13 +12,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class SecurityUtil {
 
-    private final UserRepository userRepository;
+  private final UserRepository userRepository;
 
-    public User getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        User user = userRepository.findByEmail(userDetails.getUsername()).get();
+  public User getCurrentUser() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+    User user = userRepository.findByEmail(userDetails.getUsername()).get();
 
-        return user;
-    }
+    return user;
+  }
 }

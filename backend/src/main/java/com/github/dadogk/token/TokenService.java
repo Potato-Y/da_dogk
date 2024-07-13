@@ -4,9 +4,9 @@ import com.github.dadogk.config.jwt.TokenProvider;
 import com.github.dadogk.token.dto.AuthenticateRequest;
 import com.github.dadogk.token.dto.AuthenticateResponse;
 import com.github.dadogk.token.dto.TokenRequest;
-import com.github.dadogk.user.util.UserUtil;
 import com.github.dadogk.user.dto.UserResponse;
 import com.github.dadogk.user.entity.User;
+import com.github.dadogk.user.util.UserUtil;
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -21,63 +21,64 @@ import org.springframework.stereotype.Service;
 @Service
 public class TokenService {
 
-    private static final Logger logger = LoggerFactory.getLogger(TokenService.class);
-    private static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
-    private static final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(1);
+  private static final Logger logger = LoggerFactory.getLogger(TokenService.class);
+  private static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
+  private static final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(1);
 
-    private final TokenProvider tokenProvider;
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final UserUtil userUtil;
+  private final TokenProvider tokenProvider;
+  private final AuthenticationManagerBuilder authenticationManagerBuilder;
+  private final UserUtil userUtil;
 
-    /**
-     * 새로운 Access Token을 생성
-     *
-     * @param dto
-     * @return
-     */
-    public String createNewAccessToken(TokenRequest dto) {
-        // 토큰 유효성 검사에 실패하면 예외 발생
-        if (!tokenProvider.validToken(dto.getRefreshToken().toString())) {
-            throw new IllegalArgumentException("Unexpected token");
-        }
-
-        ////
-        // TODO: access token이 비어있지 않은지 검증
-        // TODO: access token이 본 서버에서 발급한 것이 맞는 지 검증
-        // TODO: access token만 왔는지 검증을 통해 공격 차단 로직 위치
-        ////
-
-        Long userId = tokenProvider.getUserId(dto.getRefreshToken());
-        User user = userUtil.findById(userId);
-
-        return tokenProvider.generateToken(user, ACCESS_TOKEN_DURATION);
+  /**
+   * 새로운 Access Token을 생성
+   *
+   * @param dto
+   * @return
+   */
+  public String createNewAccessToken(TokenRequest dto) {
+    // 토큰 유효성 검사에 실패하면 예외 발생
+    if (!tokenProvider.validToken(dto.getRefreshToken().toString())) {
+      throw new IllegalArgumentException("Unexpected token");
     }
 
-    /**
-     * 새로운 Access Token과 Refresh Token을 생성
-     *
-     * @param dto
-     * @return
-     */
-    public AuthenticateResponse createNewTokenSet(AuthenticateRequest dto) {
-        // 유저의 이메일과 패스워드를 통해 유저를 확인
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                dto.getEmail(), dto.getPassword());
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+    ////
+    // TODO: access token이 비어있지 않은지 검증
+    // TODO: access token이 본 서버에서 발급한 것이 맞는 지 검증
+    // TODO: access token만 왔는지 검증을 통해 공격 차단 로직 위치
+    ////
 
-        // 정상적으로 수행될 경우 user 객체 생성
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        User user = userUtil.findByEmail(userDetails.getUsername());
+    Long userId = tokenProvider.getUserId(dto.getRefreshToken());
+    User user = userUtil.findById(userId);
 
-        // refresh token 생성
-        String refreshToken = tokenProvider.generateToken(user, REFRESH_TOKEN_DURATION);
-        // access token 생성
-        String accessToken = tokenProvider.generateToken(user, ACCESS_TOKEN_DURATION);
+    return tokenProvider.generateToken(user, ACCESS_TOKEN_DURATION);
+  }
 
-        UserResponse userResponse = userUtil.convertUserResponse(user);
+  /**
+   * 새로운 Access Token과 Refresh Token을 생성
+   *
+   * @param dto
+   * @return
+   */
+  public AuthenticateResponse createNewTokenSet(AuthenticateRequest dto) {
+    // 유저의 이메일과 패스워드를 통해 유저를 확인
+    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+        dto.getEmail(), dto.getPassword());
+    Authentication authentication = authenticationManagerBuilder.getObject()
+        .authenticate(authenticationToken);
 
-        logger.info("createNewTokenSet. 새로운 token set이 생성됨. userId={}", user.getId());
+    // 정상적으로 수행될 경우 user 객체 생성
+    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+    User user = userUtil.findByEmail(userDetails.getUsername());
 
-        return new AuthenticateResponse(accessToken, refreshToken, userResponse);
-    }
+    // refresh token 생성
+    String refreshToken = tokenProvider.generateToken(user, REFRESH_TOKEN_DURATION);
+    // access token 생성
+    String accessToken = tokenProvider.generateToken(user, ACCESS_TOKEN_DURATION);
+
+    UserResponse userResponse = userUtil.convertUserResponse(user);
+
+    logger.info("createNewTokenSet. 새로운 token set이 생성됨. userId={}", user.getId());
+
+    return new AuthenticateResponse(accessToken, refreshToken, userResponse);
+  }
 }

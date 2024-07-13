@@ -6,10 +6,11 @@ import lombok.Getter;
 
 @Getter
 public class ConnectingGroupMembersResponse {
-    private String result = "CONNECTING_GROUP_MEMBER";
-    private List<GroupMembersResponse> groupMemberResponses = new ArrayList<>();
 
-    public void addGroupMembers(GroupMembersResponse groupMembersResponse) {
-        this.groupMemberResponses.add(groupMembersResponse);
-    }
+  private String result = "CONNECTING_GROUP_MEMBER";
+  private List<GroupMembersResponse> groupMemberResponses = new ArrayList<>();
+
+  public void addGroupMembers(GroupMembersResponse groupMembersResponse) {
+    this.groupMemberResponses.add(groupMembersResponse);
+  }
 }

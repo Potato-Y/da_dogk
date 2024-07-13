@@ -8,9 +8,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AuthenticateRequest {
-    @NotBlank
-    @Email
-    private String email;
-    @NotBlank
-    private String password;
+
+  @NotBlank
+  @Email
+  private String email;
+  @NotBlank
+  private String password;
 }

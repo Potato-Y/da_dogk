@@ -6,8 +6,9 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class GetGroupAverageResponse {
-    private Long groupId;
-    private int year;
-    private int month;
-    private Long averageTime;
+
+  private Long groupId;
+  private int year;
+  private int month;
+  private Long averageTime;
 }

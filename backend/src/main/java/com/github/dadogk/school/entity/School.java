@@ -18,17 +18,18 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 public class School {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false)
-    private Long id;
 
-    @Column(name = "domain", nullable = false)
-    private String domain;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id", updatable = false)
+  private Long id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+  @Column(name = "domain", nullable = false)
+  private String domain;
 
-    @OneToMany(mappedBy = "school")
-    private List<SchoolMember> schoolMembers = new ArrayList<>();
+  @Column(name = "name", nullable = false)
+  private String name;
+
+  @OneToMany(mappedBy = "school")
+  private List<SchoolMember> schoolMembers = new ArrayList<>();
 }

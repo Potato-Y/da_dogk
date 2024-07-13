@@ -18,22 +18,22 @@ import lombok.NoArgsConstructor;
 @Entity
 public class GroupMember {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id", updatable = false)
+  private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+  @ManyToOne
+  @JoinColumn(name = "user_id", nullable = false)
+  private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "group_id", nullable = false)
-    private Group group;
+  @ManyToOne
+  @JoinColumn(name = "group_id", nullable = false)
+  private Group group;
 
-    @Builder
-    public GroupMember(User user, Group group) {
-        this.user = user;
-        this.group = group;
-    }
+  @Builder
+  public GroupMember(User user, Group group) {
+    this.user = user;
+    this.group = group;
+  }
 }

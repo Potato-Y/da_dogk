@@ -6,6 +6,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class SimpleResponse {
-    private String result;
-    private String message;
+
+  private String result;
+  private String message;
 }

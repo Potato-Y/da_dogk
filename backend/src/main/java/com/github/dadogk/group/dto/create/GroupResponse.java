@@ -10,13 +10,14 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class GroupResponse {
-    private Long id;
-    private String groupName;
-    private String groupIntro;
-    private UserResponse hostUser;
-    private State state;
-    private GroupType groupType;
-    private boolean privacyState;
-    private LocalDateTime createAt;
-    private int memberNumber;
+
+  private Long id;
+  private String groupName;
+  private String groupIntro;
+  private UserResponse hostUser;
+  private State state;
+  private GroupType groupType;
+  private boolean privacyState;
+  private LocalDateTime createAt;
+  private int memberNumber;
 }

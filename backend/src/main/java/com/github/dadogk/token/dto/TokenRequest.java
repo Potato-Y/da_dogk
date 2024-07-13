@@ -7,8 +7,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TokenRequest {
-    @NotBlank
-    private String accessToken;
-    @NotBlank
-    private String refreshToken;
+
+  @NotBlank
+  private String accessToken;
+  @NotBlank
+  private String refreshToken;
 }

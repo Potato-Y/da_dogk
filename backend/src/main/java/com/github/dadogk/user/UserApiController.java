@@ -1,8 +1,7 @@
 package com.github.dadogk.user;
 
 import com.github.dadogk.security.util.SecurityUtil;
-import com.github.dadogk.user.dto.AddUserRequest;
-import com.github.dadogk.user.dto.AddUserResponse;
+import com.github.dadogk.user.dto.AddUserDto;
 import com.github.dadogk.user.dto.UserResponse;
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.util.UserUtil;
@@ -24,37 +23,38 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class UserApiController {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserApiController.class);
-    private final UserService userService;
-    private final SecurityUtil securityUtil;
-    private final UserUtil userUtil;
+  private static final Logger logger = LoggerFactory.getLogger(UserApiController.class);
+  private final UserService userService;
+  private final SecurityUtil securityUtil;
+  private final UserUtil userUtil;
 
-    @PostMapping("/signup")
-    public ResponseEntity<AddUserResponse> signup(@Validated @RequestBody AddUserRequest request) {
-        User user = userService.save(request);
+  @PostMapping("/signup")
+  public ResponseEntity<AddUserDto.AddUserResponse> signup(
+      @Validated @RequestBody AddUserDto.AddUserRequest request) {
+    User user = userService.save(request);
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new AddUserResponse(user.getId(), user.getEmail(), user.getNickname()));
-    }
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(new AddUserDto.AddUserResponse(user.getId(), user.getEmail(), user.getNickname()));
+  }
 
-    @GetMapping("/user")
-    public ResponseEntity<UserResponse> user() {
-        User user = securityUtil.getCurrentUser();
+  @GetMapping("/user")
+  public ResponseEntity<UserResponse> user() {
+    User user = securityUtil.getCurrentUser();
 
-        logger.info("user. userId={}", user.getId());
+    logger.info("user. userId={}", user.getId());
 
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(userUtil.convertUserResponse(user));
-    }
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(userUtil.convertUserResponse(user));
+  }
 
-    @DeleteMapping("/user")
-    public ResponseEntity<String> deleteUser() {
-        userService.deleteUser();
+  @DeleteMapping("/user")
+  public ResponseEntity<String> deleteUser() {
+    userService.deleteUser();
 
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(null);
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(null);
 
-    }
+  }
 
-    // TODO: 특정 유저 조회
+  // TODO: 특정 유저 조회
 }

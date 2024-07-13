@@ -8,8 +8,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor // 모든 필드 값을 파라미터로 받는 생성자 추가
 @Getter
 public class UserResponse {
-    private Long userId;
-    private String email;
-    private String nickname;
-    private Long todayStudyTime;
+
+  private Long userId;
+  private String email;
+  private String nickname;
+  private Long todayStudyTime;
 }

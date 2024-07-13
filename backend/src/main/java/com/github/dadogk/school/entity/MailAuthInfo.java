@@ -21,37 +21,38 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 public class MailAuthInfo {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @OneToOne(cascade = CascadeType.REFRESH)
-    @JoinColumn(name = "user_id", unique = true)
-    private User user;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "school_domain", nullable = false)
-    private School school;
+  @OneToOne(cascade = CascadeType.REFRESH)
+  @JoinColumn(name = "user_id", unique = true)
+  private User user;
 
-    @Column(name = "code", nullable = false)
-    private String code;
+  @ManyToOne
+  @JoinColumn(name = "school_domain", nullable = false)
+  private School school;
 
-    @Column(name = "mail", nullable = false)
-    private String mail;
+  @Column(name = "code", nullable = false)
+  private String code;
 
-    @Builder
-    public MailAuthInfo(User user, School school, String mail, String code ) {
-        this.user = user;
-        this.school = school;
-        this.mail = mail;
-        this.code = code;
-    }
+  @Column(name = "mail", nullable = false)
+  private String mail;
 
-    public MailAuthInfo updateNewAuth(School school, String mail, String code) {
-        this.school = school;
-        this.mail = mail;
-        this.code = code;
+  @Builder
+  public MailAuthInfo(User user, School school, String mail, String code) {
+    this.user = user;
+    this.school = school;
+    this.mail = mail;
+    this.code = code;
+  }
 
-        return this;
-    }
+  public MailAuthInfo updateNewAuth(School school, String mail, String code) {
+    this.school = school;
+    this.mail = mail;
+    this.code = code;
+
+    return this;
+  }
 }

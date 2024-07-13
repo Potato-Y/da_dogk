@@ -8,5 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 public class SignupGroupRequest {
-    private String password;
+
+  private String password;
 }

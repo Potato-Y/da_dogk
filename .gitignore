@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/macos,windows
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,windows
 
+# docker-compose를 통해 생성되는 volume 제외
+/db 
+
 ### macOS ###
 # General
 .DS_Store

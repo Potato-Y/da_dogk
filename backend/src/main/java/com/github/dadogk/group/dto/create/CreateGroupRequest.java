@@ -9,8 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class CreateGroupRequest {
-    @NotBlank
-    private String groupName;
-    private String groupIntro;
-    private String password;
+
+  @NotBlank
+  private String groupName;
+  private String groupIntro;
+  private String password;
 }

@@ -8,6 +8,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class GroupMembersResponse {
-    private Long groupId;
-    private List<UserResponse> user;
+
+  private Long groupId;
+  private List<UserResponse> user;
 }
