@@ -25,6 +25,7 @@ import lombok.extern.log4j.Log4j2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -43,6 +44,7 @@ public class StudyService {
    *
    * @param user 유저 객체
    */
+  @Transactional
   public void defaultSetting(User user) {
     StudySubject subject = StudySubject.builder()
         .title("개인 공부")
@@ -53,6 +55,7 @@ public class StudyService {
     subjectRepository.save(subject);
   }
 
+  @Transactional(readOnly = true)
   public StudySubject getSubject(Long subjectId, Long userId) {
     Optional<StudySubject> subject = subjectRepository.findById(subjectId);
     if (subject.isEmpty()) {
@@ -77,6 +80,7 @@ public class StudyService {
     throw new IllegalArgumentException("User와 Subject user가 맞지 않음");
   }
 
+  @Transactional
   public StudyRecord startStudy(User user, StudySubject subject) {
     StudyRecord record = studyRecordRepository.save(StudyRecord.builder()
         .user(user)
@@ -87,6 +91,7 @@ public class StudyService {
     return record;
   }
 
+  @Transactional
   public StudyRecord endStudy(StudyRecord record) {
     log.info("endStudy: End study. userId={}, recordId={}", record.getUser().getId(),
         record.getId());
@@ -99,6 +104,7 @@ public class StudyService {
    * @param userId 조회하려는 UserId
    * @return List<SubjectTitleResponse>
    */
+  @Transactional(readOnly = true)
   public List<SubjectResponse> getUserStudySubjectList(Long userId) {
     User user = securityUtil.getCurrentUser();
     User findUser = userUtil.findById(userId); // 찾으려는 유저 불러오기
@@ -119,6 +125,7 @@ public class StudyService {
     return subjectRespons;
   }
 
+  @Transactional
   public StudySubject createSubject(CreateSubjectRequest dto) {
     User user = securityUtil.getCurrentUser();
     StudySubject subject = subjectRepository.save(StudySubject.builder()
@@ -131,6 +138,7 @@ public class StudyService {
     return subject;
   }
 
+  @Transactional
   public void deleteSubject(Long subjectId) {
     User user = securityUtil.getCurrentUser();
     Optional<StudySubject> subject = subjectRepository.findById(subjectId);
@@ -156,6 +164,7 @@ public class StudyService {
    * @param dto
    * @return List<StudyRecord>
    */
+  @Transactional(readOnly = true)
   public List<StudyRecord> getCurrentUserRecodes(GetUserRecodesRequest dto) {
     User user = securityUtil.getCurrentUser();
     LocalDate startDate = LocalDate.of(dto.getYear(), dto.getMonth(), 1);
@@ -179,6 +188,7 @@ public class StudyService {
    * @param dto      검색할 월
    * @return List<StudyRecord>
    */
+  @Transactional(readOnly = true)
   public List<StudyRecord> getUserRecodes(User findUser, GetUserRecodesRequest dto) {
     LocalDate startDate = LocalDate.of(dto.getYear(), dto.getMonth(), 1);
     LocalDate endDate = DateTimeUtil.getLastDayOfMonth(dto.getYear(), dto.getMonth());

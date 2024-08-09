@@ -26,6 +26,7 @@ import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -93,7 +94,8 @@ public class SchoolService {
    * @param school
    * @param code
    */
-  private void saveAuthInfo(User user, School school, String mail, String code) {
+  @Transactional
+  public void saveAuthInfo(User user, School school, String mail, String code) {
     Optional<MailAuthInfo> mailAuthCode = mailAuthInfoRepository.findByUser(user);
     if (mailAuthCode.isEmpty()) {
       MailAuthInfo createInfo = MailAuthInfo.builder().user(user).school(school).mail(mail)
@@ -129,6 +131,7 @@ public class SchoolService {
     return school.get();
   }
 
+  @Transactional
   public void verifyEmail(VerifyEmailRequest dto) {
     User user = securityUtil.getCurrentUser();
     Optional<MailAuthInfo> mailAuthCode = mailAuthInfoRepository.findByUser(user);
@@ -156,6 +159,7 @@ public class SchoolService {
     mailAuthInfoRepository.delete(mailAuthCode.get()); // 인증 정보 삭제
   }
 
+  @Transactional
   public void leaveSchool() {
     User user = securityUtil.getCurrentUser();
 

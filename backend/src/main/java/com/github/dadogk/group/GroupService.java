@@ -33,6 +33,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -46,6 +47,7 @@ public class GroupService {
   private final SecurityUtil securityUtil;
   private final PasswordUtil passwordUtil;
 
+  @Transactional
   public GroupResponse createGroup(CreateGroupRequest dto) {
     User hostUser = securityUtil.getCurrentUser(); // 그룹을 생성하려는 사람의 정보를 가져온다.
 
@@ -68,6 +70,7 @@ public class GroupService {
     return groupUtil.convertGroup(group);
   }
 
+  @Transactional
   public void signupGroup(Long groupId, SignupGroupRequest dto) {
     Optional<Group> group = groupRepository.findById(groupId);
     User user = securityUtil.getCurrentUser();
@@ -101,6 +104,7 @@ public class GroupService {
    * @param groupId 탈퇴할 그룹 id
    * @param user    탈퇴할 유저
    */
+  @Transactional
   public void leaveGroup(Long groupId, User user) {
     Optional<Group> group = groupRepository.findById(groupId);
     if (group.isEmpty()) {
@@ -129,6 +133,7 @@ public class GroupService {
    *
    * @param groupId 삭제할 그룹 id
    */
+  @Transactional
   public void deleteGroup(Long groupId) {
     User user = securityUtil.getCurrentUser();
     Optional<Group> group = groupRepository.findById(groupId);
@@ -151,6 +156,7 @@ public class GroupService {
    *
    * @return List<Group> 접속한 그룹 리스트
    */
+  @Transactional(readOnly = true)
   public List<Group> getGroupList() {
     User user = securityUtil.getCurrentUser();
     List<GroupMember> inGroupMembers = groupMemberRepository.findAllByUser(user); // 가입한 그룹 조회
@@ -171,6 +177,7 @@ public class GroupService {
    * @param groupName 검색할 그룹 이름
    * @return List<Group> 검색된 그룹
    */
+  @Transactional(readOnly = true)
   public List<Group> getSearchGroups(String groupName) {
     User user = securityUtil.getCurrentUser();
     List<Group> groups = groupRepository.findByGroupNameContaining(groupName);
@@ -181,6 +188,7 @@ public class GroupService {
     return groups;
   }
 
+  @Transactional(readOnly = true)
   public List<GroupMember> getGroupMemberList(Long groupId) {
     User user = securityUtil.getCurrentUser();
     Optional<Group> group = groupRepository.findById(groupId);
@@ -210,6 +218,7 @@ public class GroupService {
    * @param dto     검색 월
    * @return int 형 평균 공부 시간 (초)
    */
+  @Transactional(readOnly = true)
   public Long getGroupAverage(Long groupId, GetGroupAverageRequest dto) {
     User user = securityUtil.getCurrentUser();
     Optional<Group> group = groupRepository.findById(groupId);
@@ -240,6 +249,7 @@ public class GroupService {
     return totalStudyTime / count; // 평균으로 반환
   }
 
+  @Transactional
   public Group updateGroup(Long groupId, UpdateGroupRequest dto) {
     User user = securityUtil.getCurrentUser();
     Optional<Group> group = groupRepository.findById(groupId);
@@ -276,6 +286,7 @@ public class GroupService {
     return groupRepository.save(updateGroup);
   }
 
+  @Transactional(readOnly = true)
   public Group findGroup(Long groupId) {
     User user = securityUtil.getCurrentUser();
     Optional<Group> group = groupRepository.findById(groupId);

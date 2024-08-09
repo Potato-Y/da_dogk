@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -20,6 +21,7 @@ public class UserService {
   private final StudyService studyService;
   private final SecurityUtil securityUtil;
 
+  @Transactional
   public User save(AddUserDto.AddUserRequest dto) {
     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
@@ -36,6 +38,7 @@ public class UserService {
     return user;
   }
 
+  @Transactional
   public void deleteUser() {
     User user = securityUtil.getCurrentUser();
     userRepository.delete(user);
