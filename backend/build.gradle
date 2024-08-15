@@ -31,19 +31,19 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-validation:3.1.1') // validation
     implementation('org.springframework.boot:spring-boot-starter-mail:3.1.2')
 
-    annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor('org.projectlombok:lombok')
 
     developmentOnly('org.springframework.boot:spring-boot-devtools:3.0.4') // 변경 내용 자동 재시작 추가
 
     compileOnly('org.projectlombok:lombok:1.18.26')
     compileOnly('org.springframework.boot:spring-boot-starter-actuator:3.1.1')
 
-    runtimeOnly 'com.h2database:h2'
+    runtimeOnly('com.h2database:h2')
     runtimeOnly('org.mariadb.jdbc:mariadb-java-client:3.1.4')
 
     testAnnotationProcessor('org.projectlombok:lombok:1.18.26')
     testImplementation('org.springframework.security:spring-security-test:6.0.2')
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
 }
 
 tasks.named('test') {
