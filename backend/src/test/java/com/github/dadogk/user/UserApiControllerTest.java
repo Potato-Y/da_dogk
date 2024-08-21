@@ -1,13 +1,15 @@
 package com.github.dadogk.user;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dadogk.user.dto.AddUserDto.AddUserRequest;
+import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.entity.UserRepository;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -28,6 +31,8 @@ class UserApiControllerTest {
   protected MockMvc mockMvc;
   @Autowired
   protected ObjectMapper objectMapper; // JSON 직렬화, 역직렬화를 위한 클래스
+  @Autowired
+  BCryptPasswordEncoder bCryptPasswordEncoder;
   @Autowired
   UserRepository userRepository;
 
@@ -60,6 +65,12 @@ class UserApiControllerTest {
         .andExpect(jsonPath("$.email").value(email))
         .andExpect(jsonPath("$.nickname").value(nickname));
 
-    assertTrue(userRepository.findByEmail(email).isPresent());
+    // then
+    Optional<User> savedUser = userRepository.findByEmail(email);
+
+    assertThat(savedUser).isPresent();
+    assertThat(savedUser.get().getEmail()).isEqualTo(email);
+    assertThat(savedUser.get().getNickname()).isEqualTo(nickname);
+    assertThat(bCryptPasswordEncoder.matches(password, savedUser.get().getPassword())).isTrue();
   }
 }
