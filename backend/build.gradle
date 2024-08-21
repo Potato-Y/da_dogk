@@ -44,6 +44,8 @@ dependencies {
     testAnnotationProcessor('org.projectlombok:lombok:1.18.26')
     testImplementation('org.springframework.security:spring-security-test:6.0.2')
     testImplementation('org.springframework.boot:spring-boot-starter-test')
+    testRuntimeOnly('org.junit.platform:junit-platform-launcher')
+    testCompileOnly('org.projectlombok:lombok')
 }
 
 tasks.named('test') {
