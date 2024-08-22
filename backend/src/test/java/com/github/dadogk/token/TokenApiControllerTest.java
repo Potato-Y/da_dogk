@@ -52,6 +52,7 @@ class TokenApiControllerTest {
   @BeforeEach
   public void mockMvcSetup() {
     this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+    userRepository.deleteAll();
     this.testUserUtil = new TestUserUtil(bCryptPasswordEncoder, userRepository);
   }
 
@@ -77,8 +78,8 @@ class TokenApiControllerTest {
 
     resultActions
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.accessToken").isEmpty())
-        .andExpect(jsonPath("$.refreshToken").isEmpty());
+        .andExpect(jsonPath("$.accessToken").isNotEmpty())
+        .andExpect(jsonPath("$.refreshToken").isNotEmpty());
   }
 
   @DisplayName("token(): refresh token을 통해 새로운 access token 발급")
