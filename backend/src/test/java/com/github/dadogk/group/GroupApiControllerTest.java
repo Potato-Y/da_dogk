@@ -9,15 +9,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dadogk.enums.State;
+import com.github.dadogk.group.dto.SignupGroupRequest;
 import com.github.dadogk.group.dto.UpdateGroupRequest;
 import com.github.dadogk.group.dto.create.CreateGroupRequest;
 import com.github.dadogk.group.dto.create.GroupResponse;
+import com.github.dadogk.group.entity.Group;
 import com.github.dadogk.group.entity.GroupMemberRepository;
 import com.github.dadogk.group.entity.GroupRepository;
 import com.github.dadogk.group.entity.GroupType;
+import com.github.dadogk.group.util.TestGroupUtil;
 import com.github.dadogk.user.UserService;
 import com.github.dadogk.user.dto.AddUserDto.AddUserRequest;
+import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.entity.UserRepository;
+import com.github.dadogk.user.util.TestUserUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -57,12 +62,18 @@ class GroupApiControllerTest {
   @Autowired
   GroupService groupService;
 
+  private TestGroupUtil testGroupUtil;
+  private TestUserUtil testUserUtil;
+
   @BeforeEach
   public void mockMvcSetup() {
     this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
     groupMemberRepository.deleteAll();
     groupRepository.deleteAll();
     userRepository.deleteAll();
+
+    this.testGroupUtil = new TestGroupUtil(groupRepository, groupMemberRepository);
+    this.testUserUtil = new TestUserUtil(bCryptPasswordEncoder, userRepository);
   }
 
   @DisplayName("createGroup(): 비공개 그룹 생성 성공")
@@ -229,4 +240,110 @@ class GroupApiControllerTest {
   }
 
   // TODO: 그룹원이 있을 때 삭제 여부 테스트
+
+  @DisplayName("leaveGroup(): 그룹 나가기 성공")
+  @WithMockUser(username = "user@mail.com")
+  @Test
+  public void successLeaveGroup() throws Exception {
+    // given
+    final String url = "/api/groups/{groupId}/members";
+
+    User hostUser = userService.save(new AddUserRequest("host@mail.com", "host", "host"));
+    User testUser = userService.save(new AddUserRequest("user@mail.com", "user", "user"));
+
+    Group group = testGroupUtil.createCommonTestGroup(hostUser);
+    testGroupUtil.signInGroup(testUser, group);
+
+    // when
+    ResultActions result = mockMvc.perform(
+        delete(url.replace("{groupId}", String.valueOf(group.getId()))));
+
+    // then
+    result.andExpect(status().isOk());
+  }
+
+  @DisplayName("signupGroup(): 그룹 가입 성공")
+  @WithMockUser(username = "user@mail.com")
+  @Test
+  public void successSignupGroup() throws Exception {
+    // given
+    final String url = "/api/groups/{groupId}/members";
+
+    User hostUser = userService.save(new AddUserRequest("host@mail.com", "host", "host"));
+    userService.save(new AddUserRequest("user@mail.com", "user", "user"));
+
+    Group group = testGroupUtil.createCommonTestGroup(hostUser);
+
+    SignupGroupRequest request = new SignupGroupRequest(null);
+    String requestBody = objectMapper.writeValueAsString(request);
+
+    // when
+    ResultActions result = mockMvc.perform(
+        post(url.replace("{groupId}", String.valueOf(group.getId()))).contentType(
+            MediaType.APPLICATION_JSON_VALUE).content(requestBody));
+
+    result.andExpect(status().isOk());
+  }
+
+
+  @DisplayName("getGroupList(): 가입한 그룹 목록 조회 성공")
+  @WithMockUser(username = "user@mail.com")
+  @Test
+  public void successGetGroupList() throws Exception {
+    // given
+    final String url = "/api/groups";
+
+    User hostUser = testUserUtil.createTestUser("host@mail.com", "host");
+    User testUser = testUserUtil.createTestUser("user@mail.com", "user");
+
+    Group group1 = testGroupUtil.createCommonTestGroup(hostUser);
+    Group group2 = testGroupUtil.createCommonTestGroup(hostUser);
+    Group group3 = testGroupUtil.createCommonTestGroup(hostUser);
+    testGroupUtil.signInGroup(testUser, group1);
+    testGroupUtil.signInGroup(testUser, group2);
+    testGroupUtil.signInGroup(testUser, group3);
+
+    // when
+    ResultActions result = mockMvc.perform(get(url));
+
+    // then
+    result
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].id").isNotEmpty())
+        .andExpect(jsonPath("$[0].groupName").isNotEmpty())
+        .andExpect(jsonPath("$[1].id").isNotEmpty())
+        .andExpect(jsonPath("$[1].groupName").isNotEmpty())
+        .andExpect(jsonPath("$[2].id").isNotEmpty())
+        .andExpect(jsonPath("$[2].groupName").isNotEmpty());
+  }
+
+  @DisplayName("getGroupMembers(): 그룹원 목록 조회 성공")
+  @WithMockUser(username = "user1@mail.com")
+  @Test
+  public void successGetGroupMembers() throws Exception {
+    // given
+    final String url = "/api/groups/{groupId}/members";
+
+    User hostUser = testUserUtil.createTestUser("host@mail.com", "host");
+    User testUser1 = testUserUtil.createTestUser("user1@mail.com", "user");
+    User testUser2 = testUserUtil.createTestUser("user2@mail.com", "user");
+    User testUser3 = testUserUtil.createTestUser("user3@mail.com", "user");
+
+    Group group = testGroupUtil.createCommonTestGroup(hostUser);
+    testGroupUtil.signInGroup(testUser1, group);
+    testGroupUtil.signInGroup(testUser2, group);
+    testGroupUtil.signInGroup(testUser3, group);
+
+    // when
+    ResultActions result = mockMvc.perform(
+        get(url.replace("{groupId}", String.valueOf(group.getId()))));
+
+    // then
+    result
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].userId").isNotEmpty())
+        .andExpect(jsonPath("$[1].userId").isNotEmpty())
+        .andExpect(jsonPath("$[2].userId").isNotEmpty())
+        .andExpect(jsonPath("$[3].userId").isNotEmpty());
+  }
 }
