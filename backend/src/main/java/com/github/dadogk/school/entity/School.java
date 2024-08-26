@@ -10,6 +10,7 @@ import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -32,4 +33,10 @@ public class School {
 
   @OneToMany(mappedBy = "school")
   private List<SchoolMember> schoolMembers = new ArrayList<>();
+
+  @Builder
+  public School(String domain, String name) {
+    this.domain = domain;
+    this.name = name;
+  }
 }
