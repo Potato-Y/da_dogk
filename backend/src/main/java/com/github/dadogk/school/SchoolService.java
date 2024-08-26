@@ -41,6 +41,7 @@ public class SchoolService {
   private final PasswordUtil passwordUtil;
   private final SecurityUtil securityUtil;
 
+  @Transactional
   public void sendAuthCodeMail(AuthMailRequest dto) {
     User user = securityUtil.getCurrentUser();
 
@@ -175,6 +176,7 @@ public class SchoolService {
     schoolMemberRepository.delete(schoolMember.get());
   }
 
+  @Transactional(readOnly = true)
   public SchoolMember getMySchool() {
     User user = securityUtil.getCurrentUser();
     Optional<SchoolMember> schoolMember = schoolMemberRepository.findByUser(user);
