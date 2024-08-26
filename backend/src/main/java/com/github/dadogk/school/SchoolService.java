@@ -33,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Log4j2
 public class SchoolService {
 
+  // application.yml에 smtp 정보가 입력되지 않아 밑줄이 표시되나 active profiles에 명시됨
   private final JavaMailSender javaMailSender;
   private final SchoolRepository schoolRepository;
   private final SchoolMemberRepository schoolMemberRepository;
