@@ -27,7 +27,6 @@ import com.github.dadogk.study.dto.api.recode.GetUserRecodesRequest;
 import com.github.dadogk.study.entity.StudyRecord;
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.exception.DuplicateGroupMemberException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -161,10 +160,7 @@ public class GroupService {
     User user = securityUtil.getCurrentUser();
     List<GroupMember> inGroupMembers = groupMemberRepository.findAllByUser(user); // 가입한 그룹 조회
 
-    List<Group> inGroups = new ArrayList<>(); // Group으로 반환
-    for (GroupMember groupMember : inGroupMembers) {
-      inGroups.add(groupMember.getGroup());
-    }
+    List<Group> inGroups = inGroupMembers.stream().map(GroupMember::getGroup).toList();
 
     log.info("getGroupList: userId={}", user.getId());
 

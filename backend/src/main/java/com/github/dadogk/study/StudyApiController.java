@@ -9,7 +9,6 @@ import com.github.dadogk.study.entity.StudySubject;
 import com.github.dadogk.study.util.StudyUtil;
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.util.UserUtil;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -61,11 +60,10 @@ public class StudyApiController {
   @GetMapping("/recodes")
   public ResponseEntity<List<RecodeResponse>> getCurrentUserRecodes(GetUserRecodesRequest request) {
     List<StudyRecord> records = studyService.getCurrentUserRecodes(request);
-    List<RecodeResponse> recodeResponses = new ArrayList<>();
-    for (StudyRecord record : records) {
-      recodeResponses.add(studyUtil.convertRecodeResponse(record));
+    List<RecodeResponse> recodeResponses = records.stream()
+        .map(studyUtil::convertRecodeResponse)
+        .toList();
 
-    }
     return ResponseEntity.status(HttpStatus.OK)
         .body(recodeResponses);
   }
@@ -75,11 +73,10 @@ public class StudyApiController {
       GetUserRecodesRequest request) {
     User findUser = userUtil.findById(userId);
     List<StudyRecord> records = studyService.getUserRecodes(findUser, request);
-    List<RecodeResponse> recodeResponses = new ArrayList<>();
-    for (StudyRecord record : records) {
-      recodeResponses.add(studyUtil.convertRecodeResponse(record));
+    List<RecodeResponse> recodeResponses = records.stream()
+        .map(studyUtil::convertRecodeResponse)
+        .toList();
 
-    }
     return ResponseEntity.status(HttpStatus.OK)
         .body(recodeResponses);
   }

@@ -13,7 +13,6 @@ import com.github.dadogk.group.util.GroupUtil;
 import com.github.dadogk.security.util.SecurityUtil;
 import com.github.dadogk.user.dto.UserResponse;
 import com.github.dadogk.user.util.UserUtil;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -87,33 +86,24 @@ public class GroupApiController {
   public ResponseEntity<List<GroupResponse>> getGroupList(GroupNameRequest request) {
     if (request.getGroupName() == null) {
       List<Group> inGroups = groupService.getGroupList(); // 들어있는 그룹 목록 요청
-
-      List<GroupResponse> responses = new ArrayList<>(); // 응답할 수 있도록 가공
-      for (Group group : inGroups) {
-        responses.add(groupUtil.convertGroup(group));
-      }
+      List<GroupResponse> responses = inGroups.stream().map(groupUtil::convertGroup).toList();
 
       return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
 
     List<Group> groups = groupService.getSearchGroups(request.getGroupName());
+    List<GroupResponse> responses = groups.stream().map(groupUtil::convertGroup).toList();
 
-    List<GroupResponse> groupResponses = new ArrayList<>(); // response로 가공
-    for (Group group : groups) {
-      groupResponses.add(groupUtil.convertGroup(group));
-    }
-
-    return ResponseEntity.status(HttpStatus.OK).body(groupResponses);
+    return ResponseEntity.status(HttpStatus.OK).body(responses);
   }
 
   @GetMapping("/{groupId}/members")
   public ResponseEntity<List<UserResponse>> getGroupMembers(@PathVariable Long groupId) {
     List<GroupMember> groupMembers = groupService.getGroupMemberList(groupId); // 그룹원 가져오기
 
-    List<UserResponse> userResponses = new ArrayList<>();
-    for (GroupMember member : groupMembers) { // response로 변환
-      userResponses.add(userUtil.convertUserResponse(member.getUser()));
-    }
+    List<UserResponse> userResponses = groupMembers.stream()
+        .map(member -> userUtil.convertUserResponse(member.getUser()))
+        .toList();
 
     return ResponseEntity.status(HttpStatus.OK).body(userResponses);
   }

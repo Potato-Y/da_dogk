@@ -11,13 +11,11 @@ import com.github.dadogk.study.entity.StudySubject;
 import com.github.dadogk.study.entity.StudySubjectRepository;
 import com.github.dadogk.study.exception.NotFoundStudyException;
 import com.github.dadogk.study.util.StudyUtil;
-import com.github.dadogk.user.dto.UserResponse;
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.util.UserUtil;
 import com.github.dadogk.utils.DateTimeUtil;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -112,17 +110,9 @@ public class StudyService {
 
     log.info("getUserStudySubjectList: userId={}, findUserId={}", user.getId(), findUser.getId());
 
-    List<SubjectResponse> subjectRespons = new ArrayList<>();
-    if (studySubjects.isEmpty()) { // 만약 비어있다면 빈 리스트를 반환한다.
-      return subjectRespons;
-    }
-
-    UserResponse userResponse = userUtil.convertUserResponse(findUser);
-    for (StudySubject subject : studySubjects) { // 유저의 과목 목록을 dto 리스트에 담는다.
-      subjectRespons.add(studyUtil.convertSubjectResponse(subject));
-    }
-
-    return subjectRespons;
+    return studySubjects.stream()
+        .map(studyUtil::convertSubjectResponse)
+        .toList();
   }
 
   @Transactional
