@@ -9,8 +9,6 @@ import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.util.UserUtil;
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -21,7 +19,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class TokenService {
 
-  private static final Logger logger = LoggerFactory.getLogger(TokenService.class);
   private static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14);
   private static final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(1);
 
@@ -76,8 +73,6 @@ public class TokenService {
     String accessToken = tokenProvider.generateToken(user, ACCESS_TOKEN_DURATION);
 
     UserResponse userResponse = userUtil.convertUserResponse(user);
-
-    logger.info("createNewTokenSet. 새로운 token set이 생성됨. userId={}", user.getId());
 
     return new AuthenticateResponse(accessToken, refreshToken, userResponse);
   }

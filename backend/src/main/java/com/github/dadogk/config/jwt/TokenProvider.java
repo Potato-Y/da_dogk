@@ -50,7 +50,6 @@ public class TokenProvider {
   private String makeToken(Date expiry, User user) {
     Date now = new Date();
 
-    logger.info("makeToken. token 생성. userId={}", user.getId());
     return Jwts.builder().setHeaderParam(Header.TYPE, Header.JWT_TYPE) // 헤더 type: JWT
         // 내용 iss: propertise에서 가져온 값
         .setIssuer(jwtProperties.getIssuer()).setIssuedAt(now) // 내용 isa: 현재 시간

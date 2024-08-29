@@ -108,7 +108,6 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
       }
 
       sendSimpleMessage(session, new SimpleResponse(OK, SUCCESS_PROCESSED));
-      log.info("studyStart. Start Study. sessionId={}", session.getId());
     } catch (NotFoundException e) {
       sendSimpleMessage(session, new SimpleResponse(NOT_FOUND, e.getMessage()));
       session.close();
@@ -169,8 +168,6 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
       List<String> sessionsList = entry.getValue();
       sessionsList.removeIf(valueSession -> valueSession.equals(session.getId()));
     }
-
-    log.info("afterConnectionClosed. Close session. sessionId={}", session.getId());
   }
 
   private void broadcastClosedUserForGroup(WebSocketSession session) throws IOException {

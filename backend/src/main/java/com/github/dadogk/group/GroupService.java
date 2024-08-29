@@ -64,8 +64,6 @@ public class GroupService {
     GroupMember groupMember = GroupMember.builder().group(group).user(hostUser).build();
     groupMemberRepository.save(groupMember);
 
-    log.info("createGroup: userId={}, groupId={}, groupMemberId={}", hostUser.getId(),
-        group.getId(), groupMember.getId());
     return groupUtil.convertGroup(group);
   }
 
@@ -93,7 +91,6 @@ public class GroupService {
 
     GroupMember signupMember = GroupMember.builder().group(group.get()).user(user).build();
 
-    log.info("signupGroup: userId={}, groupId={}", user.getId(), groupId);
     groupMemberRepository.save(signupMember);
   }
 
@@ -124,7 +121,6 @@ public class GroupService {
     }
 
     groupMemberRepository.delete(groupMember.get());
-    log.info("leaveGroup: Leave group. userId={}, groupId={}", user.getId(), group.get().getId());
   }
 
   /**
@@ -146,7 +142,6 @@ public class GroupService {
       throw new PermissionException("호스트 유저가 아님");
     }
 
-    log.info("deleteGroup: userId={}, groupId={}", user.getId(), groupId);
     groupRepository.delete(group.get()); // 그룹 삭제
   }
 
@@ -162,8 +157,6 @@ public class GroupService {
 
     List<Group> inGroups = inGroupMembers.stream().map(GroupMember::getGroup).toList();
 
-    log.info("getGroupList: userId={}", user.getId());
-
     return inGroups;
   }
 
@@ -177,9 +170,6 @@ public class GroupService {
   public List<Group> getSearchGroups(String groupName) {
     User user = securityUtil.getCurrentUser();
     List<Group> groups = groupRepository.findByGroupNameContaining(groupName);
-
-    log.info("getSearchGroups: userId={}, searchGroupName={}, resultCount={}", user.getId(),
-        groupName, groups.size());
 
     return groups;
   }
@@ -202,7 +192,6 @@ public class GroupService {
       throw new NotFoundGroupMemberException("그룹 멤버가 아님");
     }
 
-    log.info("getGroupMemberList: userId={}, groupId={}", user.getId(), groupId);
     List<GroupMember> groupMembers = groupMemberRepository.findAllByGroup(group.get());
     return groupMembers;
   }
@@ -236,8 +225,6 @@ public class GroupService {
     }
     count += members.size(); // 사람 수 만큼 카운트 추가
 
-    log.info("getGroupAverage: userId={}, groupId={}, findYear={}, findMonth={}", user.getId(),
-        groupId, dto.getYear(), dto.getMonth());
     if (count == 0) { // 0인 경우 나눌 수 없다. 그대로 리턴한다.
       return totalStudyTime;
     }
@@ -278,7 +265,6 @@ public class GroupService {
       }
     }
 
-    log.info("updateGroup: userId={}, groupId={}", user.getId(), groupId);
     return groupRepository.save(updateGroup);
   }
 
@@ -292,7 +278,6 @@ public class GroupService {
       throw new NotFoundException("그룹을  찾을 수 없음.");
     }
 
-    log.info("findGroup: userId={}, groupId={}", user.getId(), groupId);
     return group.get();
   }
 }

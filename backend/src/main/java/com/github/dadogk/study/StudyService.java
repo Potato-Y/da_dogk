@@ -49,7 +49,6 @@ public class StudyService {
         .user(user)
         .build();
 
-    logger.info("defaultSetting: default 설정 추가 userId={}", user.getId());
     subjectRepository.save(subject);
   }
 
@@ -63,7 +62,6 @@ public class StudyService {
 
     validateSubjectUserMatch(subject.get(), userId);
 
-    log.info("getSubject: Get subject. userId={}, subjectId={}", userId, subjectId);
     return subject.get();
   }
 
@@ -85,14 +83,11 @@ public class StudyService {
         .subject(subject)
         .build());
 
-    log.info("startStudy: Start study. userId={}, subjectId={}", user.getId(), subject.getId());
     return record;
   }
 
   @Transactional
   public StudyRecord endStudy(StudyRecord record) {
-    log.info("endStudy: End study. userId={}, recordId={}", record.getUser().getId(),
-        record.getId());
     return studyRecordRepository.save(record.updateEndAt());
   }
 
@@ -108,8 +103,6 @@ public class StudyService {
     User findUser = userUtil.findById(userId); // 찾으려는 유저 불러오기
     List<StudySubject> studySubjects = subjectRepository.findAllByUser(findUser); // 유저의 목록을 가져온다.
 
-    log.info("getUserStudySubjectList: userId={}, findUserId={}", user.getId(), findUser.getId());
-
     return studySubjects.stream()
         .map(studyUtil::convertSubjectResponse)
         .toList();
@@ -122,8 +115,6 @@ public class StudyService {
         .title(dto.getTitle())
         .user(user)
         .build());
-
-    log.info("createSubject: userId={}, subjectId={}", user.getId(), subject.getId());
 
     return subject;
   }
@@ -144,7 +135,6 @@ public class StudyService {
       throw new PermissionException("유저가 같지 않음");
     }
 
-    log.info("deleteSubject: userId={}, subjectId={}", user.getId(), subjectId);
     subjectRepository.delete(subject.get()); // 검증이 끝난 다음에 삭제
   }
 
@@ -165,9 +155,6 @@ public class StudyService {
     List<StudyRecord> records = studyRecordRepository.findByUserAndStartAtBetween(user,
         startDateTime, endDateTime);
 
-    log.info("getCurrentUserRecodes: userId={}, findYear={}, findMonth={}", user.getId(),
-        dto.getYear(),
-        dto.getMonth());
     return records;
   }
 
@@ -189,8 +176,7 @@ public class StudyService {
     List<StudyRecord> records = studyRecordRepository.findByUserAndStartAtBetween(findUser,
         startDateTime,
         endDateTime);
-    log.info("getUserRecodes: userId={}, findUserId={}, findYear={}, findMonth={}",
-        securityUtil.getCurrentUser().getId(), findUser.getId(), dto.getYear(), dto.getMonth());
+
     return records;
   }
 }
