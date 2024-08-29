@@ -19,18 +19,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
-@Log4j2
 public class StudyService {
 
-  private static final Logger logger = LoggerFactory.getLogger(StudyService.class);
   private final StudySubjectRepository subjectRepository;
   private final StudyRecordRepository studyRecordRepository;
   private final StudyUtil studyUtil;
@@ -56,7 +53,7 @@ public class StudyService {
   public StudySubject getSubject(Long subjectId, Long userId) {
     Optional<StudySubject> subject = subjectRepository.findById(subjectId);
     if (subject.isEmpty()) {
-      logger.warn("getSubject. 잘못된 StudySubject id={}", subjectId);
+      log.warn("getSubject. 잘못된 StudySubject id={}", subjectId);
       throw new IllegalArgumentException("잘못된 StudySubject id");
     }
 
@@ -70,7 +67,7 @@ public class StudyService {
       return;
     }
 
-    logger.warn("validateSubjectUserMatch: User와 Subject User가 동일하지 않음. userId={}, subjectId={}",
+    log.warn("validateSubjectUserMatch: User와 Subject User가 동일하지 않음. userId={}, subjectId={}",
         userId,
         subject.getId());
     throw new IllegalArgumentException("User와 Subject user가 맞지 않음");

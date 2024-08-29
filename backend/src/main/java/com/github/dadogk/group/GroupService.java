@@ -30,13 +30,13 @@ import com.github.dadogk.user.exception.DuplicateGroupMemberException;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
-@Log4j2
 public class GroupService {
 
   private final StudyService studyService;

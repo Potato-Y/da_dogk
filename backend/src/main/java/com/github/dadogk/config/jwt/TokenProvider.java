@@ -10,8 +10,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -20,11 +19,11 @@ import org.springframework.stereotype.Service;
 /**
  * 토큰 생성, 토큰 유효성 검사, 토큰에서 정보 추출하는 클래스
  */
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class TokenProvider {
 
-  private static final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
   private final JwtProperties jwtProperties;
 
   /**
@@ -74,7 +73,7 @@ public class TokenProvider {
 
       return true;
     } catch (Exception e) { // 복호화 과정에서 오류가 발생할 경우 false 반환
-      logger.warn("validToken. Token 검증 실패. token={}", token);
+      log.warn("validToken. Token 검증 실패. token={}", token);
       return false;
     }
   }

@@ -34,15 +34,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ConcurrentReferenceHashMap;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
+@Slf4j
 @RequiredArgsConstructor
-@Log4j2
 public class StudyConnectionHandler extends AbstractWebSocketHandler {
 
   private static final Map<String, ClientInfo> CLIENTS = Collections.synchronizedMap(
