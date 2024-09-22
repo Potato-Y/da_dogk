@@ -65,21 +65,21 @@ public class GroupApiController {
   public ResponseEntity<String> deleteGroup(@PathVariable Long groupId) {
     groupService.deleteGroup(groupId);
 
-    return ResponseEntity.status(HttpStatus.OK).body(null);
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 
   @DeleteMapping("/{groupId}/members")
   public ResponseEntity<String> leaveGroup(@PathVariable Long groupId) {
     groupService.leaveGroup(groupId, securityUtil.getCurrentUser());
 
-    return ResponseEntity.status(HttpStatus.OK).body(null);
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 
   @PostMapping("/{groupId}/members")
   public ResponseEntity<String> signupGroup(@PathVariable Long groupId,
       @Validated @RequestBody SignupGroupRequest request) {
     groupService.signupGroup(groupId, request);
-    return ResponseEntity.status(HttpStatus.OK).body(null);
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 
   @GetMapping("")

@@ -28,21 +28,21 @@ public class SchoolApiController {
   public ResponseEntity<String> requestAuthEmail(@Validated @RequestBody AuthMailRequest request) {
     schoolService.sendAuthCodeMail(request);
 
-    return ResponseEntity.status(HttpStatus.OK).body("");
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 
   @PostMapping("/auth/verify")
   public ResponseEntity<String> verifyEmail(@Validated @RequestBody VerifyEmailRequest request) {
     schoolService.verifyEmail(request);
 
-    return ResponseEntity.status(HttpStatus.OK).body("");
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 
   @DeleteMapping("") // school 인증 삭제
   public ResponseEntity<String> leaveSchool() {
     schoolService.leaveSchool();
 
-    return ResponseEntity.status(HttpStatus.OK).body("");
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 
   @GetMapping("") // 가입한 학교 정보 가져오기

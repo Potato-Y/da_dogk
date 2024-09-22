@@ -46,8 +46,7 @@ public class UserApiController {
   public ResponseEntity<String> deleteUser() {
     userService.deleteUser();
 
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(null);
+    return ResponseEntity.status(HttpStatus.OK).build();
 
   }
 

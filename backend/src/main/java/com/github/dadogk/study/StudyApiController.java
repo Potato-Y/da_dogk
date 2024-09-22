@@ -54,7 +54,7 @@ public class StudyApiController {
     studyService.deleteSubject(subjectId);
 
     return ResponseEntity.status(HttpStatus.OK)
-        .body(null);
+        .build();
   }
 
   @GetMapping("/recodes")
