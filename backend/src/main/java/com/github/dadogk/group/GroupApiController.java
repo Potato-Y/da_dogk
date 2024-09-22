@@ -12,7 +12,7 @@ import com.github.dadogk.group.entity.GroupMember;
 import com.github.dadogk.group.util.GroupUtil;
 import com.github.dadogk.security.util.SecurityUtil;
 import com.github.dadogk.user.dto.UserResponse;
-import com.github.dadogk.user.util.UserUtil;
+import com.github.dadogk.user.mapper.UserResponseMapper;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -35,7 +35,7 @@ public class GroupApiController {
   private final GroupService groupService;
   private final SecurityUtil securityUtil;
   private final GroupUtil groupUtil;
-  private final UserUtil userUtil;
+  private final UserResponseMapper userResponseMapper;
 
   @PostMapping("")
   public ResponseEntity<GroupResponse> createGroup(
@@ -102,7 +102,7 @@ public class GroupApiController {
     List<GroupMember> groupMembers = groupService.getGroupMemberList(groupId); // 그룹원 가져오기
 
     List<UserResponse> userResponses = groupMembers.stream()
-        .map(member -> userUtil.convertUserResponse(member.getUser()))
+        .map(member -> userResponseMapper.convertUserResponse(member.getUser()))
         .toList();
 
     return ResponseEntity.status(HttpStatus.OK).body(userResponses);

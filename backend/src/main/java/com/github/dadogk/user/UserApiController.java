@@ -4,7 +4,7 @@ import com.github.dadogk.security.util.SecurityUtil;
 import com.github.dadogk.user.dto.AddUserDto;
 import com.github.dadogk.user.dto.UserResponse;
 import com.github.dadogk.user.entity.User;
-import com.github.dadogk.user.util.UserUtil;
+import com.github.dadogk.user.mapper.UserResponseMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,7 @@ public class UserApiController {
 
   private final UserService userService;
   private final SecurityUtil securityUtil;
-  private final UserUtil userUtil;
+  private final UserResponseMapper userResponseMapper;
 
   @PostMapping("/signup")
   public ResponseEntity<AddUserDto.AddUserResponse> signup(
@@ -39,7 +39,7 @@ public class UserApiController {
     User user = securityUtil.getCurrentUser();
 
     return ResponseEntity.status(HttpStatus.OK)
-        .body(userUtil.convertUserResponse(user));
+        .body(userResponseMapper.convertUserResponse(user));
   }
 
   @DeleteMapping("/user")

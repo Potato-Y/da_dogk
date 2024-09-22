@@ -11,9 +11,9 @@ import com.github.dadogk.study.entity.StudySubject;
 import com.github.dadogk.study.entity.StudySubjectRepository;
 import com.github.dadogk.study.exception.NotFoundStudyException;
 import com.github.dadogk.study.util.StudyUtil;
+import com.github.dadogk.user.UserService;
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.event.UserCreateEvent;
-import com.github.dadogk.user.util.UserUtil;
 import com.github.dadogk.utils.DateTimeUtil;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -34,9 +34,9 @@ public class StudyService {
 
   private final StudySubjectRepository subjectRepository;
   private final StudyRecordRepository studyRecordRepository;
+  private final UserService userService;
   private final StudyUtil studyUtil;
   private final SecurityUtil securityUtil;
-  private final UserUtil userUtil;
 
   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
   @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -107,7 +107,7 @@ public class StudyService {
   @Transactional(readOnly = true)
   public List<SubjectResponse> getUserStudySubjectList(Long userId) {
     User user = securityUtil.getCurrentUser();
-    User findUser = userUtil.findById(userId); // 찾으려는 유저 불러오기
+    User findUser = userService.findById(userId); // 찾으려는 유저 불러오기
     List<StudySubject> studySubjects = subjectRepository.findAllByUser(findUser); // 유저의 목록을 가져온다.
 
     return studySubjects.stream()

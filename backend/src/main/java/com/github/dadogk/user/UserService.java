@@ -5,6 +5,7 @@ import com.github.dadogk.user.dto.AddUserDto;
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.entity.UserRepository;
 import com.github.dadogk.user.event.UserCreateEvent;
+import com.github.dadogk.user.exception.NotFoundUserException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,6 +19,16 @@ public class UserService {
   private final UserRepository userRepository;
   private final SecurityUtil securityUtil;
   private final ApplicationEventPublisher publisher;
+
+  public User findById(Long userId) {
+    return userRepository.findById(userId)
+        .orElseThrow(() -> new NotFoundUserException("Unexpected user"));
+  }
+
+  public User findByEmail(String email) {
+    return userRepository.findByEmail(email)
+        .orElseThrow(() -> new NotFoundUserException("Unexpected user"));
+  }
 
   @Transactional
   public User save(AddUserDto.AddUserRequest dto) {

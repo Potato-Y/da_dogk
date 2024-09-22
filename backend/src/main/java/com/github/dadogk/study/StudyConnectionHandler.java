@@ -24,9 +24,10 @@ import com.github.dadogk.study.entity.StudyRecord;
 import com.github.dadogk.study.entity.StudySubject;
 import com.github.dadogk.study.model.ClientInfo;
 import com.github.dadogk.study.model.RequestType;
+import com.github.dadogk.user.UserService;
 import com.github.dadogk.user.dto.UserResponse;
 import com.github.dadogk.user.entity.User;
-import com.github.dadogk.user.util.UserUtil;
+import com.github.dadogk.user.mapper.UserResponseMapper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,9 +50,10 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
       new HashMap<>());
   private static final Map<Long, List<String>> GROUP_MEMBERS = new ConcurrentReferenceHashMap<>();
   private final ObjectMapper objectMapper = new ObjectMapper();
+  private final UserService userService;
   private final StudyService studyService;
   private final TokenProvider tokenProvider;
-  private final UserUtil userUtil;
+  private final UserResponseMapper userResponseMapper;
 
   @Override
   protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
@@ -95,7 +97,7 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
 
     Long userId = tokenProvider.getUserId(dto.getAccessToken());
     try {
-      User user = userUtil.findById(userId);
+      User user = userService.findById(userId);
       StudySubject subject = studyService.getSubject(dto.getSubjectId(), userId);
       StudyRecord studyRecord = studyService.startStudy(user, subject);
 
@@ -135,8 +137,8 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
       List<String> groupMemberSessionIds = GROUP_MEMBERS.get(groupId); // 그룹 id로 그룹원 세션 id를 가져온다.
       for (String memberSessionId : groupMemberSessionIds) {
         ClientInfo info = CLIENTS.get(memberSessionId); // 해당 클라이언트의 정보를 가져온다.
-        User user = userUtil.findById(info.getUserId()); // 유저 객체를 가져온다.
-        userResponses.add(userUtil.convertUserResponse(user));
+        User user = userService.findById(info.getUserId()); // 유저 객체를 가져온다.
+        userResponses.add(userResponseMapper.convertUserResponse(user));
       }
       responseDto.addGroupMembers(new GroupMembersResponse(groupId, userResponses));
     }
@@ -172,7 +174,7 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
 
   private void broadcastClosedUserForGroup(WebSocketSession session) throws IOException {
     ClientInfo clientInfo = CLIENTS.get(session.getId());
-    User closeUser = userUtil.findById(clientInfo.getUserId());
+    User closeUser = userService.findById(clientInfo.getUserId());
     List<Long> groupIds = clientInfo.getGroups();
     for (Long groupId : groupIds) {
       List<String> groupMemberSessionIds = GROUP_MEMBERS.get(groupId);
@@ -183,7 +185,7 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
 
         WebSocketSession memberSession = CLIENTS.get(sessionId).getSession();
         CloseGroupMemberResponse dto = new CloseGroupMemberResponse(groupId,
-            userUtil.convertUserResponse(closeUser));
+            userResponseMapper.convertUserResponse(closeUser));
         memberSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(dto)));
       }
     }

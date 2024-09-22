@@ -4,9 +4,10 @@ import com.github.dadogk.config.jwt.TokenProvider;
 import com.github.dadogk.token.dto.AuthenticateRequest;
 import com.github.dadogk.token.dto.AuthenticateResponse;
 import com.github.dadogk.token.dto.TokenRequest;
+import com.github.dadogk.user.UserService;
 import com.github.dadogk.user.dto.UserResponse;
 import com.github.dadogk.user.entity.User;
-import com.github.dadogk.user.util.UserUtil;
+import com.github.dadogk.user.mapper.UserResponseMapper;
 import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,7 +25,8 @@ public class TokenService {
 
   private final TokenProvider tokenProvider;
   private final AuthenticationManagerBuilder authenticationManagerBuilder;
-  private final UserUtil userUtil;
+  private final UserResponseMapper userResponseMapper;
+  private final UserService userService;
 
   /**
    * 새로운 Access Token을 생성
@@ -45,7 +47,7 @@ public class TokenService {
     ////
 
     Long userId = tokenProvider.getUserId(dto.getRefreshToken());
-    User user = userUtil.findById(userId);
+    User user = userService.findById(userId);
 
     return tokenProvider.generateToken(user, ACCESS_TOKEN_DURATION);
   }
@@ -65,14 +67,14 @@ public class TokenService {
 
     // 정상적으로 수행될 경우 user 객체 생성
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-    User user = userUtil.findByEmail(userDetails.getUsername());
+    User user = userService.findByEmail(userDetails.getUsername());
 
     // refresh token 생성
     String refreshToken = tokenProvider.generateToken(user, REFRESH_TOKEN_DURATION);
     // access token 생성
     String accessToken = tokenProvider.generateToken(user, ACCESS_TOKEN_DURATION);
 
-    UserResponse userResponse = userUtil.convertUserResponse(user);
+    UserResponse userResponse = userResponseMapper.convertUserResponse(user);
 
     return new AuthenticateResponse(accessToken, refreshToken, userResponse);
   }

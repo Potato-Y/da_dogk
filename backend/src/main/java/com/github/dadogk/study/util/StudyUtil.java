@@ -6,7 +6,7 @@ import com.github.dadogk.study.entity.StudyRecord;
 import com.github.dadogk.study.entity.StudyRecordRepository;
 import com.github.dadogk.study.entity.StudySubject;
 import com.github.dadogk.user.dto.UserResponse;
-import com.github.dadogk.user.util.UserUtil;
+import com.github.dadogk.user.mapper.UserResponseMapper;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class StudyUtil {
 
-  private final UserUtil userUtil;
+  private final UserResponseMapper userResponseMapper;
   private final StudyRecordRepository studyRecordRepository;
 
   public SubjectResponse convertSubjectResponse(StudySubject subject) {
@@ -34,7 +34,7 @@ public class StudyUtil {
       totalTime += calculateStudyTime(record);
     }
 
-    UserResponse userResponse = userUtil.convertUserResponse(subject.getUser());
+    UserResponse userResponse = userResponseMapper.convertUserResponse(subject.getUser());
     SubjectResponse response = new SubjectResponse(subject.getId(), userResponse,
         subject.getTitle(), totalTime);
 

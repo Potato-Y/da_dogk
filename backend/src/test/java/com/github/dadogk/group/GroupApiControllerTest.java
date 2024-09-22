@@ -22,7 +22,7 @@ import com.github.dadogk.user.UserService;
 import com.github.dadogk.user.dto.AddUserDto.AddUserRequest;
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.entity.UserRepository;
-import com.github.dadogk.user.util.TestUserUtil;
+import com.github.dadogk.user.mapper.TestUserUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package com.github.dadogk.user.util;
+package com.github.dadogk.user.mapper;
 
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.entity.UserRepository;
@@ -10,7 +10,7 @@ public class TestUserUtil {
 
   private BCryptPasswordEncoder bCryptPasswordEncoder;
   private UserRepository userRepository;
-  
+
   public User createTestUser(String email, String password) {
 
     return userRepository.save(
