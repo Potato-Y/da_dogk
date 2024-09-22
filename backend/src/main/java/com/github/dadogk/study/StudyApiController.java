@@ -6,7 +6,7 @@ import com.github.dadogk.study.dto.api.recode.GetUserRecodesRequest;
 import com.github.dadogk.study.dto.api.recode.RecodeResponse;
 import com.github.dadogk.study.entity.StudyRecord;
 import com.github.dadogk.study.entity.StudySubject;
-import com.github.dadogk.study.util.StudyUtil;
+import com.github.dadogk.study.mapper.StudyResponseMapper;
 import com.github.dadogk.user.UserService;
 import com.github.dadogk.user.entity.User;
 import java.util.List;
@@ -29,7 +29,7 @@ public class StudyApiController {
 
   private final UserService userService;
   private final StudyService studyService;
-  private final StudyUtil studyUtil;
+  private final StudyResponseMapper studyResponseMapper;
 
   @GetMapping("/subjects/{userId}") // 특정 사용자의 과목 리스트를 요청한다.
   public ResponseEntity<List<SubjectResponse>> getSubjectList(@PathVariable Long userId) {
@@ -43,7 +43,7 @@ public class StudyApiController {
   public ResponseEntity<SubjectResponse> createSubject(
       @Validated @RequestBody CreateSubjectRequest request) {
     StudySubject subject = studyService.createSubject(request);
-    SubjectResponse response = studyUtil.convertSubjectResponse(subject);
+    SubjectResponse response = studyResponseMapper.convertSubjectResponse(subject);
 
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(response);
@@ -61,7 +61,7 @@ public class StudyApiController {
   public ResponseEntity<List<RecodeResponse>> getCurrentUserRecodes(GetUserRecodesRequest request) {
     List<StudyRecord> records = studyService.getCurrentUserRecodes(request);
     List<RecodeResponse> recodeResponses = records.stream()
-        .map(studyUtil::convertRecodeResponse)
+        .map(studyResponseMapper::convertRecodeResponse)
         .toList();
 
     return ResponseEntity.status(HttpStatus.OK)
@@ -74,7 +74,7 @@ public class StudyApiController {
     User findUser = userService.findById(userId);
     List<StudyRecord> records = studyService.getUserRecodes(findUser, request);
     List<RecodeResponse> recodeResponses = records.stream()
-        .map(studyUtil::convertRecodeResponse)
+        .map(studyResponseMapper::convertRecodeResponse)
         .toList();
 
     return ResponseEntity.status(HttpStatus.OK)

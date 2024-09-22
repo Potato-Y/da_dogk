@@ -10,7 +10,7 @@ import com.github.dadogk.study.entity.StudyRecordRepository;
 import com.github.dadogk.study.entity.StudySubject;
 import com.github.dadogk.study.entity.StudySubjectRepository;
 import com.github.dadogk.study.exception.NotFoundStudyException;
-import com.github.dadogk.study.util.StudyUtil;
+import com.github.dadogk.study.mapper.StudyResponseMapper;
 import com.github.dadogk.user.UserService;
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.event.UserCreateEvent;
@@ -35,7 +35,7 @@ public class StudyService {
   private final StudySubjectRepository subjectRepository;
   private final StudyRecordRepository studyRecordRepository;
   private final UserService userService;
-  private final StudyUtil studyUtil;
+  private final StudyResponseMapper studyResponseMapper;
   private final SecurityUtil securityUtil;
 
   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -111,7 +111,7 @@ public class StudyService {
     List<StudySubject> studySubjects = subjectRepository.findAllByUser(findUser); // 유저의 목록을 가져온다.
 
     return studySubjects.stream()
-        .map(studyUtil::convertSubjectResponse)
+        .map(studyResponseMapper::convertSubjectResponse)
         .toList();
   }
 
