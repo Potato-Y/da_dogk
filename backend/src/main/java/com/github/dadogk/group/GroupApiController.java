@@ -9,7 +9,7 @@ import com.github.dadogk.group.dto.create.CreateGroupRequest;
 import com.github.dadogk.group.dto.create.GroupResponse;
 import com.github.dadogk.group.entity.Group;
 import com.github.dadogk.group.entity.GroupMember;
-import com.github.dadogk.group.util.GroupUtil;
+import com.github.dadogk.group.mapper.GroupResponseMapper;
 import com.github.dadogk.security.util.SecurityUtil;
 import com.github.dadogk.user.dto.UserResponse;
 import com.github.dadogk.user.mapper.UserResponseMapper;
@@ -34,7 +34,7 @@ public class GroupApiController {
 
   private final GroupService groupService;
   private final SecurityUtil securityUtil;
-  private final GroupUtil groupUtil;
+  private final GroupResponseMapper groupResponseMapper;
   private final UserResponseMapper userResponseMapper;
 
   @PostMapping("")
@@ -49,7 +49,7 @@ public class GroupApiController {
   public ResponseEntity<GroupResponse> getGroup(@PathVariable Long groupId) {
     Group group = groupService.findGroup(groupId);
 
-    return ResponseEntity.status(HttpStatus.OK).body(groupUtil.convertGroup(group));
+    return ResponseEntity.status(HttpStatus.OK).body(groupResponseMapper.convertGroup(group));
   }
 
   @PatchMapping("/{groupId}")
@@ -57,7 +57,7 @@ public class GroupApiController {
       @RequestBody UpdateGroupRequest request) {
     Group group = groupService.updateGroup(groupId, request);
 
-    GroupResponse groupResponse = groupUtil.convertGroup(group);
+    GroupResponse groupResponse = groupResponseMapper.convertGroup(group);
     return ResponseEntity.status(HttpStatus.OK).body(groupResponse);
   }
 
@@ -86,13 +86,14 @@ public class GroupApiController {
   public ResponseEntity<List<GroupResponse>> getGroupList(GroupNameRequest request) {
     if (request.getGroupName() == null) {
       List<Group> inGroups = groupService.getGroupList(); // 들어있는 그룹 목록 요청
-      List<GroupResponse> responses = inGroups.stream().map(groupUtil::convertGroup).toList();
+      List<GroupResponse> responses = inGroups.stream().map(groupResponseMapper::convertGroup)
+          .toList();
 
       return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
 
     List<Group> groups = groupService.getSearchGroups(request.getGroupName());
-    List<GroupResponse> responses = groups.stream().map(groupUtil::convertGroup).toList();
+    List<GroupResponse> responses = groups.stream().map(groupResponseMapper::convertGroup).toList();
 
     return ResponseEntity.status(HttpStatus.OK).body(responses);
   }

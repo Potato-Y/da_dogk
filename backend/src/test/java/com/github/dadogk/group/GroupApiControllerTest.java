@@ -17,7 +17,7 @@ import com.github.dadogk.group.entity.Group;
 import com.github.dadogk.group.entity.GroupMemberRepository;
 import com.github.dadogk.group.entity.GroupRepository;
 import com.github.dadogk.group.entity.GroupType;
-import com.github.dadogk.group.util.TestGroupUtil;
+import com.github.dadogk.group.mapper.TestGroupUtil;
 import com.github.dadogk.user.UserService;
 import com.github.dadogk.user.dto.AddUserDto.AddUserRequest;
 import com.github.dadogk.user.entity.User;

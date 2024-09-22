@@ -1,4 +1,4 @@
-package com.github.dadogk.school.util;
+package com.github.dadogk.school.mapper;
 
 import com.github.dadogk.school.dto.SchoolInfoResponse;
 import com.github.dadogk.school.entity.SchoolMember;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class SchoolUtil {
+public class SchoolResponseMapper {
 
   private final StudyService studyService;
 

@@ -18,7 +18,7 @@ import com.github.dadogk.group.entity.GroupType;
 import com.github.dadogk.group.exception.HostWithdrawalException;
 import com.github.dadogk.group.exception.NotFoundGroupException;
 import com.github.dadogk.group.exception.NotFoundGroupMemberException;
-import com.github.dadogk.group.util.GroupUtil;
+import com.github.dadogk.group.mapper.GroupResponseMapper;
 import com.github.dadogk.security.exception.PasswordIncorrectException;
 import com.github.dadogk.security.util.PasswordUtil;
 import com.github.dadogk.security.util.SecurityUtil;
@@ -42,7 +42,7 @@ public class GroupService {
   private final StudyService studyService;
   private final GroupRepository groupRepository;
   private final GroupMemberRepository groupMemberRepository;
-  private final GroupUtil groupUtil;
+  private final GroupResponseMapper groupResponseMapper;
   private final SecurityUtil securityUtil;
   private final PasswordUtil passwordUtil;
 
@@ -64,7 +64,7 @@ public class GroupService {
     GroupMember groupMember = GroupMember.builder().group(group).user(hostUser).build();
     groupMemberRepository.save(groupMember);
 
-    return groupUtil.convertGroup(group);
+    return groupResponseMapper.convertGroup(group);
   }
 
   @Transactional

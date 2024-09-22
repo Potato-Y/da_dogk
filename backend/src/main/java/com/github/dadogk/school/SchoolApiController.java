@@ -4,7 +4,7 @@ import com.github.dadogk.school.dto.AuthMailRequest;
 import com.github.dadogk.school.dto.SchoolInfoResponse;
 import com.github.dadogk.school.dto.VerifyEmailRequest;
 import com.github.dadogk.school.entity.SchoolMember;
-import com.github.dadogk.school.util.SchoolUtil;
+import com.github.dadogk.school.mapper.SchoolResponseMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SchoolApiController {
 
   private final SchoolService schoolService;
-  private final SchoolUtil schoolUtil;
+  private final SchoolResponseMapper schoolResponseMapper;
 
   @PostMapping("/auth/mail")
   public ResponseEntity<String> requestAuthEmail(@Validated @RequestBody AuthMailRequest request) {
@@ -49,6 +49,7 @@ public class SchoolApiController {
   public ResponseEntity<SchoolInfoResponse> getMySchool() {
     SchoolMember schoolMember = schoolService.getMySchool();
 
-    return ResponseEntity.status(HttpStatus.OK).body(schoolUtil.convertSchoolInfo(schoolMember));
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(schoolResponseMapper.convertSchoolInfo(schoolMember));
   }
 }

@@ -1,4 +1,4 @@
-package com.github.dadogk.group.util;
+package com.github.dadogk.group.mapper;
 
 import com.github.dadogk.group.dto.create.GroupResponse;
 import com.github.dadogk.group.entity.Group;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-public class GroupUtil {
+public class GroupResponseMapper {
 
   private final UserResponseMapper userResponseMapper;
 
