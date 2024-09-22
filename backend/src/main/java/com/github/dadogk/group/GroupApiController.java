@@ -79,6 +79,7 @@ public class GroupApiController {
   public ResponseEntity<String> signupGroup(@PathVariable Long groupId,
       @Validated @RequestBody SignupGroupRequest request) {
     groupService.signupGroup(groupId, request);
+
     return ResponseEntity.status(HttpStatus.OK).build();
   }
 

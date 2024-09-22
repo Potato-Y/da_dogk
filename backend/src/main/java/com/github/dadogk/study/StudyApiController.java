@@ -35,8 +35,7 @@ public class StudyApiController {
   public ResponseEntity<List<SubjectResponse>> getSubjectList(@PathVariable Long userId) {
     List<SubjectResponse> responses = studyService.getUserStudySubjectList(userId);
 
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(responses);
+    return ResponseEntity.status(HttpStatus.OK).body(responses);
   }
 
   @PostMapping("/subjects")
@@ -45,16 +44,14 @@ public class StudyApiController {
     StudySubject subject = studyService.createSubject(request);
     SubjectResponse response = studyResponseMapper.convertSubjectResponse(subject);
 
-    return ResponseEntity.status(HttpStatus.CREATED)
-        .body(response);
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
   @DeleteMapping("/subjects/{subjectId}")
   public ResponseEntity<String> deleteSubject(@PathVariable Long subjectId) {
     studyService.deleteSubject(subjectId);
 
-    return ResponseEntity.status(HttpStatus.OK)
-        .build();
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 
   @GetMapping("/recodes")
@@ -64,8 +61,7 @@ public class StudyApiController {
         .map(studyResponseMapper::convertRecodeResponse)
         .toList();
 
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(recodeResponses);
+    return ResponseEntity.status(HttpStatus.OK).body(recodeResponses);
   }
 
   @GetMapping("/recodes/{userId}")
@@ -77,7 +73,6 @@ public class StudyApiController {
         .map(studyResponseMapper::convertRecodeResponse)
         .toList();
 
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(recodeResponses);
+    return ResponseEntity.status(HttpStatus.OK).body(recodeResponses);
   }
 }

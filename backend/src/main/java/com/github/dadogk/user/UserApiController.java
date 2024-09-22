@@ -47,7 +47,6 @@ public class UserApiController {
     userService.deleteUser();
 
     return ResponseEntity.status(HttpStatus.OK).build();
-
   }
 
   // TODO: 특정 유저 조회
