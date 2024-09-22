@@ -1,11 +1,12 @@
 package com.github.dadogk.user;
 
 import com.github.dadogk.security.util.SecurityUtil;
-import com.github.dadogk.study.StudyService;
 import com.github.dadogk.user.dto.AddUserDto;
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.entity.UserRepository;
+import com.github.dadogk.user.event.UserCreateEvent;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,8 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
   private final UserRepository userRepository;
-  private final StudyService studyService;
   private final SecurityUtil securityUtil;
+  private final ApplicationEventPublisher publisher;
 
   @Transactional
   public User save(AddUserDto.AddUserRequest dto) {
@@ -28,7 +29,7 @@ public class UserService {
         .nickname(dto.getNickname())
         .build());
 
-    studyService.defaultSetting(user); // 과목 기본 설정
+    publisher.publishEvent(new UserCreateEvent(user)); // 과목 기본 설정
     return user;
   }
 

@@ -12,6 +12,7 @@ import com.github.dadogk.study.entity.StudySubjectRepository;
 import com.github.dadogk.study.exception.NotFoundStudyException;
 import com.github.dadogk.study.util.StudyUtil;
 import com.github.dadogk.user.entity.User;
+import com.github.dadogk.user.event.UserCreateEvent;
 import com.github.dadogk.user.util.UserUtil;
 import com.github.dadogk.utils.DateTimeUtil;
 import java.time.LocalDate;
@@ -21,7 +22,10 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -33,6 +37,12 @@ public class StudyService {
   private final StudyUtil studyUtil;
   private final SecurityUtil securityUtil;
   private final UserUtil userUtil;
+
+  @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  public void handleUserCreatedEvent(UserCreateEvent event) {
+    defaultSetting(event.getUser());
+  }
 
   /**
    * 과목 기본 설정을 한다.
