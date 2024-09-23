@@ -142,24 +142,6 @@ public class StudyService {
   }
 
   /**
-   * 특정 달의 기록 가져오기
-   *
-   * @param dto GetUserRecodesRequest
-   * @return List<StudyRecord>
-   */
-  @Transactional(readOnly = true)
-  public List<StudyRecord> getCurrentUserRecodes(GetUserRecodesRequest dto) {
-    User user = securityUtil.getCurrentUser();
-    LocalDate startDate = LocalDate.of(dto.getYear(), dto.getMonth(), 1);
-    LocalDate endDate = DateTimeUtil.getLastDayOfMonth(dto.getYear(), dto.getMonth());
-
-    LocalDateTime startDateTime = startDate.atStartOfDay();
-    LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
-
-    return studyRecordRepository.findByUserAndStartAtBetween(user, startDateTime, endDateTime);
-  }
-
-  /**
    * 유저의 특정 월의 기록을 조회한다.
    *
    * @param findUser 검색할 유저
