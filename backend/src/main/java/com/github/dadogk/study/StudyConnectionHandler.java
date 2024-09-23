@@ -123,6 +123,7 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
     ClientInfo clientInfo = CLIENTS.get(session.getId());
     if (clientInfo == null) { // 클라이언트 정보가 없다면 정상 진입이 아닌 것으로 판단
       sendSimpleMessage(session, new SimpleResponse(NOT_FOUND, NOT_FOUND_SESSION));
+      return;
     }
 
     ConnectingGroupMembersResponse responseDto = new ConnectingGroupMembersResponse();
@@ -175,7 +176,7 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
     for (Long groupId : groupIds) {
       List<String> groupMemberSessionIds = GROUP_MEMBERS.get(groupId);
       for (String sessionId : groupMemberSessionIds) {
-        if (session.getId() == sessionId) { // 본인은 건너뛴다.
+        if (session.getId().equals(sessionId)) { // 본인은 건너뛴다.
           continue;
         }
 
