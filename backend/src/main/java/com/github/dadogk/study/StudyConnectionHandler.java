@@ -148,10 +148,6 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
 
   /**
    * 사용자가 접속을 종료하면 공부를 끝내고 아이템을 정리한다.
-   *
-   * @param session
-   * @param status
-   * @throws Exception
    */
   @Override
   public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {

@@ -148,7 +148,7 @@ public class StudyService {
   /**
    * 특정 달의 기록 가져오기
    *
-   * @param dto
+   * @param dto GetUserRecodesRequest
    * @return List<StudyRecord>
    */
   @Transactional(readOnly = true)

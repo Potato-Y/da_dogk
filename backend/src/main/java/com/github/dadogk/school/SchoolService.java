@@ -92,9 +92,9 @@ public class SchoolService {
   /**
    * 인증 정보를 추가한다.
    *
-   * @param user
-   * @param school
-   * @param code
+   * @param user   대상 사용자
+   * @param school 대상 학교
+   * @param code   인증 코드
    */
   @Transactional
   public void saveAuthInfo(User user, School school, String mail, String code) {
@@ -114,8 +114,8 @@ public class SchoolService {
   /**
    * 유저가 입력한 이메일을 사용하는 학교를 찾는다.
    *
-   * @param email
-   * @return
+   * @param email 사용자 이메일
+   * @return 학교 엔티티
    */
   private School findSchool(String email) {
     String domain = email.split("@")[1]; // @를 기점으로 뒷 내용 가져오기

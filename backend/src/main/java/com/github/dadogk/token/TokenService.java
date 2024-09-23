@@ -31,8 +31,8 @@ public class TokenService {
   /**
    * 새로운 Access Token을 생성
    *
-   * @param dto
-   * @return
+   * @param dto TokenRequest
+   * @return token
    */
   public String createNewAccessToken(TokenRequest dto) {
     // 토큰 유효성 검사에 실패하면 예외 발생
@@ -55,8 +55,8 @@ public class TokenService {
   /**
    * 새로운 Access Token과 Refresh Token을 생성
    *
-   * @param dto
-   * @return
+   * @param dto AuthenticateRequest
+   * @return AuthenticateResponse
    */
   public AuthenticateResponse createNewTokenSet(AuthenticateRequest dto) {
     // 유저의 이메일과 패스워드를 통해 유저를 확인
