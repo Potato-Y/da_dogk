@@ -85,17 +85,15 @@ public class StudyService {
 
   @Transactional
   public StudyRecord startStudy(User user, StudySubject subject) {
-    StudyRecord record = studyRecordRepository.save(StudyRecord.builder()
+    return studyRecordRepository.save(StudyRecord.builder()
         .user(user)
         .subject(subject)
         .build());
-
-    return record;
   }
 
   @Transactional
-  public StudyRecord endStudy(StudyRecord record) {
-    return studyRecordRepository.save(record.updateEndAt());
+  public void endStudy(StudyRecord record) {
+    studyRecordRepository.save(record.updateEndAt());
   }
 
   /**
@@ -106,7 +104,6 @@ public class StudyService {
    */
   @Transactional(readOnly = true)
   public List<SubjectResponse> getUserStudySubjectList(Long userId) {
-    User user = securityUtil.getCurrentUser();
     User findUser = userService.findById(userId); // 찾으려는 유저 불러오기
     List<StudySubject> studySubjects = subjectRepository.findAllByUser(findUser); // 유저의 목록을 가져온다.
 
@@ -118,12 +115,11 @@ public class StudyService {
   @Transactional
   public StudySubject createSubject(CreateSubjectRequest dto) {
     User user = securityUtil.getCurrentUser();
-    StudySubject subject = subjectRepository.save(StudySubject.builder()
+
+    return subjectRepository.save(StudySubject.builder()
         .title(dto.getTitle())
         .user(user)
         .build());
-
-    return subject;
   }
 
   @Transactional
@@ -159,10 +155,8 @@ public class StudyService {
 
     LocalDateTime startDateTime = startDate.atStartOfDay();
     LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
-    List<StudyRecord> records = studyRecordRepository.findByUserAndStartAtBetween(user,
-        startDateTime, endDateTime);
 
-    return records;
+    return studyRecordRepository.findByUserAndStartAtBetween(user, startDateTime, endDateTime);
   }
 
   /**
@@ -180,10 +174,6 @@ public class StudyService {
     LocalDateTime startDateTime = startDate.atStartOfDay();
     LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
 
-    List<StudyRecord> records = studyRecordRepository.findByUserAndStartAtBetween(findUser,
-        startDateTime,
-        endDateTime);
-
-    return records;
+    return studyRecordRepository.findByUserAndStartAtBetween(findUser, startDateTime, endDateTime);
   }
 }

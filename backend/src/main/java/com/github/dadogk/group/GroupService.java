@@ -84,7 +84,7 @@ public class GroupService {
     }
 
     Optional<GroupMember> member = groupMemberRepository.findByGroupAndUser(group.get(), user);
-    if (!member.isEmpty()) { // 그룹에 이미 있는 경우 예외 발생
+    if (member.isPresent()) { // 그룹에 이미 있는 경우 예외 발생
       log.warn("signupGroup: Duplicate group. userId={}, groupId={}", user.getId(), groupId);
       throw new DuplicateGroupMemberException("중복 가입");
     }
@@ -155,9 +155,7 @@ public class GroupService {
     User user = securityUtil.getCurrentUser();
     List<GroupMember> inGroupMembers = groupMemberRepository.findAllByUser(user); // 가입한 그룹 조회
 
-    List<Group> inGroups = inGroupMembers.stream().map(GroupMember::getGroup).toList();
-
-    return inGroups;
+    return inGroupMembers.stream().map(GroupMember::getGroup).toList();
   }
 
   /**
@@ -168,10 +166,7 @@ public class GroupService {
    */
   @Transactional(readOnly = true)
   public List<Group> getSearchGroups(String groupName) {
-    User user = securityUtil.getCurrentUser();
-    List<Group> groups = groupRepository.findByGroupNameContaining(groupName);
-
-    return groups;
+    return groupRepository.findByGroupNameContaining(groupName);
   }
 
   @Transactional(readOnly = true)
@@ -192,8 +187,7 @@ public class GroupService {
       throw new NotFoundGroupMemberException("그룹 멤버가 아님");
     }
 
-    List<GroupMember> groupMembers = groupMemberRepository.findAllByGroup(group.get());
-    return groupMembers;
+    return groupMemberRepository.findAllByGroup(group.get());
   }
 
   /**
