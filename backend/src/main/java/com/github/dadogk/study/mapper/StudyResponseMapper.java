@@ -27,7 +27,7 @@ public class StudyResponseMapper {
     LocalDateTime startDate = today.atStartOfDay();
     LocalDateTime endDate = today.atTime(23, 59, 59);
 
-    Long totalTime = 0L;
+    long totalTime = 0L;
     List<StudyRecord> records = studyRecordRepository.findBySubjectAndStartAtBetween(subject,
         startDate,
         endDate);
@@ -36,10 +36,8 @@ public class StudyResponseMapper {
     }
 
     UserResponse userResponse = userResponseMapper.convertUserResponse(subject.getUser());
-    SubjectResponse response = new SubjectResponse(subject.getId(), userResponse,
-        subject.getTitle(), totalTime);
 
-    return response;
+    return new SubjectResponse(subject.getId(), userResponse, subject.getTitle(), totalTime);
   }
 
   public RecodeResponse convertRecodeResponse(StudyRecord record) {
