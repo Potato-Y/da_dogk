@@ -1,5 +1,8 @@
 package com.github.dadogk.study;
 
+import static com.github.dadogk.common.constants.DateTimeConstants.END_OF_DAY;
+import static com.github.dadogk.common.constants.DateTimeConstants.FIRST_DAY_OF_MONTH;
+
 import com.github.dadogk.exceptions.PermissionException;
 import com.github.dadogk.security.util.SecurityUtil;
 import com.github.dadogk.study.dto.api.SubjectResponse;
@@ -21,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +35,9 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RequiredArgsConstructor
 @Service
 public class StudyService {
+
+  @Value("${default.subject.title}")
+  private String defaultSubjectTitle;
 
   private final StudySubjectRepository subjectRepository;
   private final StudyRecordRepository studyRecordRepository;
@@ -52,7 +59,7 @@ public class StudyService {
   @Transactional
   public void defaultSetting(User user) {
     StudySubject subject = StudySubject.builder()
-        .title("개인 공부")
+        .title(defaultSubjectTitle)
         .user(user)
         .build();
 
@@ -150,11 +157,11 @@ public class StudyService {
    */
   @Transactional(readOnly = true)
   public List<StudyRecord> getUserRecodes(User findUser, GetUserRecodesRequest dto) {
-    LocalDate startDate = LocalDate.of(dto.getYear(), dto.getMonth(), 1);
+    LocalDate startDate = LocalDate.of(dto.getYear(), dto.getMonth(), FIRST_DAY_OF_MONTH);
     LocalDate endDate = DateTimeUtil.getLastDayOfMonth(dto.getYear(), dto.getMonth());
 
     LocalDateTime startDateTime = startDate.atStartOfDay();
-    LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
+    LocalDateTime endDateTime = endDate.atTime(END_OF_DAY);
 
     return studyRecordRepository.findByUserAndStartAtBetween(findUser, startDateTime, endDateTime);
   }

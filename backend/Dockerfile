@@ -15,7 +15,7 @@ RUN ./gradlew build -x test --stacktrace
 # App 구동
 FROM openjdk:17-jdk-alpine
 
-ENV ARTIFACT_NAME=dadogk-0.0.1-SNAPSHOT.jar
+ENV ARTIFACT_NAME=dadogk-1.0.1-RELEASE.jar
 ENV APP_HOME=/app
 WORKDIR $APP_HOME
 COPY --from=TEMP_BUILD_IMAGE $APP_HOME/build/libs/$ARTIFACT_NAME $APP_HOME/app.jar

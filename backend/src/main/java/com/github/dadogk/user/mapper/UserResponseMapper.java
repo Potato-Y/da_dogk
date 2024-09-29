@@ -1,5 +1,6 @@
 package com.github.dadogk.user.mapper;
 
+import static com.github.dadogk.common.constants.DateTimeConstants.END_OF_DAY;
 import static com.github.dadogk.study.util.StudyUtil.calculateStudyTime;
 
 import com.github.dadogk.study.entity.StudyRecord;
@@ -21,7 +22,7 @@ public class UserResponseMapper {
   public UserResponse convertUserResponse(User findUser) {
     LocalDate nowDate = LocalDate.now();
     LocalDateTime startTime = nowDate.atStartOfDay();
-    LocalDateTime endTime = nowDate.atTime(23, 59, 59);
+    LocalDateTime endTime = nowDate.atTime(END_OF_DAY);
 
     List<StudyRecord> records = studyRecordRepository.findByUserAndStartAtBetween(findUser,
         startTime, endTime);
