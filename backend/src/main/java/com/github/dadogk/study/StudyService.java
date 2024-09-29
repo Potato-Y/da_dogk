@@ -41,7 +41,7 @@ public class StudyService {
   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
   @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void handleUserCreatedEvent(UserCreateEvent event) {
-    defaultSetting(event.getUser());
+    defaultSetting(event.user());
   }
 
   /**
