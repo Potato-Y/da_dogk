@@ -1,6 +1,6 @@
 package com.github.dadogk.user;
 
-import com.github.dadogk.security.util.SecurityUtil;
+import com.github.dadogk.security.CurrentUserProvider;
 import com.github.dadogk.user.dto.AddUserDto;
 import com.github.dadogk.user.dto.UserResponse;
 import com.github.dadogk.user.entity.User;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserApiController {
 
   private final UserService userService;
-  private final SecurityUtil securityUtil;
+  private final CurrentUserProvider currentUserProvider;
   private final UserResponseMapper userResponseMapper;
 
   @PostMapping("/signup")
@@ -36,7 +36,7 @@ public class UserApiController {
 
   @GetMapping("/user")
   public ResponseEntity<UserResponse> user() {
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(userResponseMapper.convertUserResponse(user));

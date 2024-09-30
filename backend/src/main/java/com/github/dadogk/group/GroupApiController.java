@@ -10,7 +10,7 @@ import com.github.dadogk.group.dto.create.GroupResponse;
 import com.github.dadogk.group.entity.Group;
 import com.github.dadogk.group.entity.GroupMember;
 import com.github.dadogk.group.mapper.GroupResponseMapper;
-import com.github.dadogk.security.util.SecurityUtil;
+import com.github.dadogk.security.CurrentUserProvider;
 import com.github.dadogk.user.dto.UserResponse;
 import com.github.dadogk.user.mapper.UserResponseMapper;
 import java.util.List;
@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class GroupApiController {
 
   private final GroupService groupService;
-  private final SecurityUtil securityUtil;
+  private final CurrentUserProvider currentUserProvider;
   private final GroupResponseMapper groupResponseMapper;
   private final UserResponseMapper userResponseMapper;
 
@@ -70,7 +70,7 @@ public class GroupApiController {
 
   @DeleteMapping("/{groupId}/members")
   public ResponseEntity<String> leaveGroup(@PathVariable Long groupId) {
-    groupService.leaveGroup(groupId, securityUtil.getCurrentUser());
+    groupService.leaveGroup(groupId, currentUserProvider.getCurrentUser());
 
     return ResponseEntity.status(HttpStatus.OK).build();
   }

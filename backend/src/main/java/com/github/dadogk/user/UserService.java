@@ -1,6 +1,6 @@
 package com.github.dadogk.user;
 
-import com.github.dadogk.security.util.SecurityUtil;
+import com.github.dadogk.security.CurrentUserProvider;
 import com.github.dadogk.user.dto.AddUserDto;
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.entity.UserRepository;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
   private final UserRepository userRepository;
-  private final SecurityUtil securityUtil;
+  private final CurrentUserProvider currentUserProvider;
   private final ApplicationEventPublisher publisher;
 
   public User findById(Long userId) {
@@ -46,7 +46,7 @@ public class UserService {
 
   @Transactional
   public void deleteUser() {
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
     userRepository.delete(user);
   }
 }

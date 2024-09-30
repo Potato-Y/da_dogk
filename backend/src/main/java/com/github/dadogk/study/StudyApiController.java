@@ -1,6 +1,6 @@
 package com.github.dadogk.study;
 
-import com.github.dadogk.security.util.SecurityUtil;
+import com.github.dadogk.security.CurrentUserProvider;
 import com.github.dadogk.study.dto.api.SubjectResponse;
 import com.github.dadogk.study.dto.api.create.CreateSubjectRequest;
 import com.github.dadogk.study.dto.api.recode.GetUserRecodesRequest;
@@ -30,7 +30,7 @@ public class StudyApiController {
 
   private final UserService userService;
   private final StudyService studyService;
-  private final SecurityUtil securityUtil;
+  private final CurrentUserProvider currentUserProvider;
   private final StudyResponseMapper studyResponseMapper;
 
   @GetMapping("/subjects/{userId}") // 특정 사용자의 과목 리스트를 요청한다.
@@ -58,7 +58,7 @@ public class StudyApiController {
 
   @GetMapping("/recodes")
   public ResponseEntity<List<RecodeResponse>> getCurrentUserRecodes(GetUserRecodesRequest request) {
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
     List<StudyRecord> records = studyService.getUserRecodes(user, request);
     List<RecodeResponse> recodeResponses = records.stream()
         .map(studyResponseMapper::convertRecodeResponse)

@@ -11,10 +11,10 @@ import com.github.dadogk.school.entity.SchoolMember;
 import com.github.dadogk.school.entity.SchoolMemberRepository;
 import com.github.dadogk.school.entity.SchoolRepository;
 import com.github.dadogk.school.exception.SchoolMailDuplicatedException;
+import com.github.dadogk.security.CurrentUserProvider;
 import com.github.dadogk.security.exception.PasswordIncorrectException;
 import com.github.dadogk.security.util.CodeMaker;
 import com.github.dadogk.security.util.PasswordUtil;
-import com.github.dadogk.security.util.SecurityUtil;
 import com.github.dadogk.user.entity.User;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -39,11 +39,11 @@ public class SchoolService {
   private final SchoolMemberRepository schoolMemberRepository;
   private final MailAuthInfoRepository mailAuthInfoRepository;
   private final PasswordUtil passwordUtil;
-  private final SecurityUtil securityUtil;
+  private final CurrentUserProvider currentUserProvider;
 
   @Transactional
   public void sendAuthCodeMail(AuthMailRequest dto) {
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
 
     Optional<SchoolMember> schoolMember = schoolMemberRepository.findByUser(user);
     if (schoolMember.isPresent()) {
@@ -130,7 +130,7 @@ public class SchoolService {
 
   @Transactional
   public void verifyEmail(VerifyEmailRequest dto) {
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
     Optional<MailAuthInfo> mailAuthCode = mailAuthInfoRepository.findByUser(user);
 
     if (mailAuthCode.isEmpty()) {
@@ -156,7 +156,7 @@ public class SchoolService {
 
   @Transactional
   public void leaveSchool() {
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
 
     Optional<SchoolMember> schoolMember = schoolMemberRepository.findByUser(user);
     if (schoolMember.isEmpty()) {
@@ -169,7 +169,7 @@ public class SchoolService {
 
   @Transactional(readOnly = true)
   public SchoolMember getMySchool() {
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
     Optional<SchoolMember> schoolMember = schoolMemberRepository.findByUser(user);
     if (schoolMember.isEmpty()) {
       log.warn("getMySchool: Not found school member. userId={}", user.getId());

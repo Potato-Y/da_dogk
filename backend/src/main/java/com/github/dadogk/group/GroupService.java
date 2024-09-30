@@ -19,9 +19,9 @@ import com.github.dadogk.group.exception.HostWithdrawalException;
 import com.github.dadogk.group.exception.NotFoundGroupException;
 import com.github.dadogk.group.exception.NotFoundGroupMemberException;
 import com.github.dadogk.group.mapper.GroupResponseMapper;
+import com.github.dadogk.security.CurrentUserProvider;
 import com.github.dadogk.security.exception.PasswordIncorrectException;
 import com.github.dadogk.security.util.PasswordUtil;
-import com.github.dadogk.security.util.SecurityUtil;
 import com.github.dadogk.study.StudyService;
 import com.github.dadogk.study.dto.api.recode.GetUserRecodesRequest;
 import com.github.dadogk.study.entity.StudyRecord;
@@ -43,12 +43,12 @@ public class GroupService {
   private final GroupRepository groupRepository;
   private final GroupMemberRepository groupMemberRepository;
   private final GroupResponseMapper groupResponseMapper;
-  private final SecurityUtil securityUtil;
+  private final CurrentUserProvider currentUserProvider;
   private final PasswordUtil passwordUtil;
 
   @Transactional
   public GroupResponse createGroup(CreateGroupRequest dto) {
-    User hostUser = securityUtil.getCurrentUser(); // 그룹을 생성하려는 사람의 정보를 가져온다.
+    User hostUser = currentUserProvider.getCurrentUser(); // 그룹을 생성하려는 사람의 정보를 가져온다.
 
     // 그룹을 생성한다.
     Group group = Group.builder().groupName(dto.getGroupName()).groupIntro(dto.getGroupIntro())
@@ -70,7 +70,7 @@ public class GroupService {
   @Transactional
   public void signupGroup(Long groupId, SignupGroupRequest dto) {
     Optional<Group> group = groupRepository.findById(groupId);
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
 
     if (group.isEmpty()) {
       log.warn("signupGroup: Not found group. userId={}, groupId={}", user.getId(), groupId);
@@ -130,7 +130,7 @@ public class GroupService {
    */
   @Transactional
   public void deleteGroup(Long groupId) {
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
     Optional<Group> group = groupRepository.findById(groupId);
     if (group.isEmpty()) {
       log.warn("deleteGroup: Not found group. userId={}, groupId={}", user.getId(), groupId);
@@ -152,7 +152,7 @@ public class GroupService {
    */
   @Transactional(readOnly = true)
   public List<Group> getGroupList() {
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
     List<GroupMember> inGroupMembers = groupMemberRepository.findAllByUser(user); // 가입한 그룹 조회
 
     return inGroupMembers.stream().map(GroupMember::getGroup).toList();
@@ -171,7 +171,7 @@ public class GroupService {
 
   @Transactional(readOnly = true)
   public List<GroupMember> getGroupMemberList(Long groupId) {
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
     Optional<Group> group = groupRepository.findById(groupId);
     if (group.isEmpty()) {
       log.warn("getGroupMemberList: Not found group. userId={}, groupId={}", user.getId(), groupId);
@@ -199,7 +199,7 @@ public class GroupService {
    */
   @Transactional(readOnly = true)
   public Long getGroupAverage(Long groupId, GetGroupAverageRequest dto) {
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
     Optional<Group> group = groupRepository.findById(groupId);
     if (group.isEmpty()) {
       log.warn("getGroupAverage: Not found group. userId={}, groupId={}", user.getId(), groupId);
@@ -228,7 +228,7 @@ public class GroupService {
 
   @Transactional
   public Group updateGroup(Long groupId, UpdateGroupRequest dto) {
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
     Optional<Group> group = groupRepository.findById(groupId);
 
     if (group.isEmpty()) {
@@ -264,7 +264,7 @@ public class GroupService {
 
   @Transactional(readOnly = true)
   public Group findGroup(Long groupId) {
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
     Optional<Group> group = groupRepository.findById(groupId);
 
     if (group.isEmpty()) {

@@ -5,7 +5,7 @@ import static com.github.dadogk.common.constants.DateTimeConstants.FIRST_DAY_OF_
 
 import com.github.dadogk.common.utils.DateTimeUtil;
 import com.github.dadogk.exceptions.PermissionException;
-import com.github.dadogk.security.util.SecurityUtil;
+import com.github.dadogk.security.CurrentUserProvider;
 import com.github.dadogk.study.dto.api.SubjectResponse;
 import com.github.dadogk.study.dto.api.create.CreateSubjectRequest;
 import com.github.dadogk.study.dto.api.recode.GetUserRecodesRequest;
@@ -43,7 +43,7 @@ public class StudyService {
   private final StudyRecordRepository studyRecordRepository;
   private final UserService userService;
   private final StudyResponseMapper studyResponseMapper;
-  private final SecurityUtil securityUtil;
+  private final CurrentUserProvider currentUserProvider;
 
   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
   @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -121,7 +121,7 @@ public class StudyService {
 
   @Transactional
   public StudySubject createSubject(CreateSubjectRequest dto) {
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
 
     return subjectRepository.save(StudySubject.builder()
         .title(dto.getTitle())
@@ -131,7 +131,7 @@ public class StudyService {
 
   @Transactional
   public void deleteSubject(Long subjectId) {
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
     Optional<StudySubject> subject = subjectRepository.findById(subjectId);
     if (subject.isEmpty()) {
       log.warn("deleteSubject: Not Found Subject. userId={}, subjectId={}", user.getId(),
