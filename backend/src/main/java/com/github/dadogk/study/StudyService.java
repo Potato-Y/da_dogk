@@ -3,6 +3,7 @@ package com.github.dadogk.study;
 import static com.github.dadogk.common.constants.DateTimeConstants.END_OF_DAY;
 import static com.github.dadogk.common.constants.DateTimeConstants.FIRST_DAY_OF_MONTH;
 
+import com.github.dadogk.common.utils.DateTimeUtil;
 import com.github.dadogk.exceptions.PermissionException;
 import com.github.dadogk.security.util.SecurityUtil;
 import com.github.dadogk.study.dto.api.SubjectResponse;
@@ -17,7 +18,6 @@ import com.github.dadogk.study.mapper.StudyResponseMapper;
 import com.github.dadogk.user.UserService;
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.event.UserCreateEvent;
-import com.github.dadogk.utils.DateTimeUtil;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
