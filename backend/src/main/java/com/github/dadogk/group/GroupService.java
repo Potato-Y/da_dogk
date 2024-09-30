@@ -20,8 +20,8 @@ import com.github.dadogk.group.exception.NotFoundGroupException;
 import com.github.dadogk.group.exception.NotFoundGroupMemberException;
 import com.github.dadogk.group.mapper.GroupResponseMapper;
 import com.github.dadogk.security.CurrentUserProvider;
+import com.github.dadogk.security.PasswordEncryptionService;
 import com.github.dadogk.security.exception.PasswordIncorrectException;
-import com.github.dadogk.security.util.PasswordUtil;
 import com.github.dadogk.study.StudyService;
 import com.github.dadogk.study.dto.api.recode.GetUserRecodesRequest;
 import com.github.dadogk.study.entity.StudyRecord;
@@ -44,7 +44,7 @@ public class GroupService {
   private final GroupMemberRepository groupMemberRepository;
   private final GroupResponseMapper groupResponseMapper;
   private final CurrentUserProvider currentUserProvider;
-  private final PasswordUtil passwordUtil;
+  private final PasswordEncryptionService passwordEncryptionService;
 
   @Transactional
   public GroupResponse createGroup(CreateGroupRequest dto) {
@@ -57,7 +57,7 @@ public class GroupService {
     boolean isPassword = dto.getPassword() != null; // 암호 여부
     group.updatePrivacyState(isPassword);
     if (isPassword) {
-      group.updatePassword(passwordUtil.convertPassword(dto.getPassword()));
+      group.updatePassword(passwordEncryptionService.encryptPassword(dto.getPassword()));
     }
     groupRepository.save(group);
 
@@ -78,7 +78,7 @@ public class GroupService {
     }
 
     if (group.get().isPrivacyState()) { // 암호가 있는 그룹일 경우
-      if (!passwordUtil.matches(dto.getPassword(), group.get().getPassword())) {
+      if (!passwordEncryptionService.verifyPassword(dto.getPassword(), group.get().getPassword())) {
         throw new PasswordIncorrectException("그룹 암호가 틀림");
       }
     }
@@ -255,7 +255,7 @@ public class GroupService {
       }
       if (!dto.getPassword().isBlank()) {
         updateGroup.updatePrivacyState(true);
-        updateGroup.updatePassword(passwordUtil.convertPassword(dto.getPassword()));
+        updateGroup.updatePassword(passwordEncryptionService.encryptPassword(dto.getPassword()));
       }
     }
 

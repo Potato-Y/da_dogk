@@ -12,9 +12,9 @@ import com.github.dadogk.school.entity.SchoolMemberRepository;
 import com.github.dadogk.school.entity.SchoolRepository;
 import com.github.dadogk.school.exception.SchoolMailDuplicatedException;
 import com.github.dadogk.security.CurrentUserProvider;
+import com.github.dadogk.security.PasswordEncryptionService;
 import com.github.dadogk.security.authentication.VerificationCodeGenerator;
 import com.github.dadogk.security.exception.PasswordIncorrectException;
-import com.github.dadogk.security.util.PasswordUtil;
 import com.github.dadogk.user.entity.User;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -38,7 +38,7 @@ public class SchoolService {
   private final SchoolRepository schoolRepository;
   private final SchoolMemberRepository schoolMemberRepository;
   private final MailAuthInfoRepository mailAuthInfoRepository;
-  private final PasswordUtil passwordUtil;
+  private final PasswordEncryptionService passwordEncryptionService;
   private final CurrentUserProvider currentUserProvider;
 
   @Transactional
@@ -101,14 +101,15 @@ public class SchoolService {
     Optional<MailAuthInfo> mailAuthCode = mailAuthInfoRepository.findByUser(user);
     if (mailAuthCode.isEmpty()) {
       MailAuthInfo createInfo = MailAuthInfo.builder().user(user).school(school).mail(mail)
-          .code(passwordUtil.convertPassword(code)).build();
+          .code(passwordEncryptionService.encryptPassword(code)).build();
       mailAuthInfoRepository.save(createInfo);
 
       return;
     }
 
     mailAuthInfoRepository.save(
-        mailAuthCode.get().updateNewAuth(school, mail, passwordUtil.convertPassword(code)));
+        mailAuthCode.get()
+            .updateNewAuth(school, mail, passwordEncryptionService.encryptPassword(code)));
   }
 
   /**
@@ -138,7 +139,8 @@ public class SchoolService {
       throw new NotFoundException("요청한 인증 정보가 없음");
     }
 
-    boolean result = passwordUtil.matches(dto.getCode(), mailAuthCode.get().getCode());
+    boolean result = passwordEncryptionService.verifyPassword(dto.getCode(),
+        mailAuthCode.get().getCode());
     if (!result) {
       log.warn("verifyEmail: Not match code. userId={}, school={}", user.getId(),
           mailAuthCode.get().getSchool().getDomain());
