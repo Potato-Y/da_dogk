@@ -12,8 +12,8 @@ import com.github.dadogk.school.entity.SchoolMemberRepository;
 import com.github.dadogk.school.entity.SchoolRepository;
 import com.github.dadogk.school.exception.SchoolMailDuplicatedException;
 import com.github.dadogk.security.CurrentUserProvider;
+import com.github.dadogk.security.authentication.VerificationCodeGenerator;
 import com.github.dadogk.security.exception.PasswordIncorrectException;
-import com.github.dadogk.security.util.CodeMaker;
 import com.github.dadogk.security.util.PasswordUtil;
 import com.github.dadogk.user.entity.User;
 import jakarta.mail.MessagingException;
@@ -56,7 +56,7 @@ public class SchoolService {
       // 학교 정보 가져오기, 코드 저장
       School school = findSchool(dto.getEmail());
       validateMailDuplicated(dto.getEmail());
-      String code = CodeMaker.createCode();
+      String code = VerificationCodeGenerator.createCode();
       saveAuthInfo(user, school, dto.getEmail(), code);
 
       MimeMessage mimeMessage = javaMailSender.createMimeMessage();

@@ -1,8 +1,8 @@
-package com.github.dadogk.security.util;
+package com.github.dadogk.security.authentication;
 
 import java.util.Random;
 
-public class CodeMaker {
+public class VerificationCodeGenerator {
 
   private static final String CHARACTERS = "0123456789";
 
