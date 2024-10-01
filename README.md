@@ -8,7 +8,8 @@
 
 ## 개발 기술 스택
 ### Backend
-<img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white">
+<img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"> 개발 당시: `3.1.1` / 현재: `3.3.3` 
+
 <img src="https://img.shields.io/badge/jwt-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white">
 
 ### Client
@@ -37,6 +38,26 @@
 **요구사항이 미충족 된 기능**
 - 서버의 비정상 종료 시 공부 종료 시간이 저장되지 않음 (Backend)
 - 그룹원의 실시간 공부 정보를 Socket이 아닌 RestAPI로 반복 요청 (Client)
+
+## 프로젝트 시연
+`Docker`를 통해 [backend](https://github.com/Potato-Y/da_dogk/tree/main/backend) 프로젝트를 구동하고 사용해 볼 수 있습니다. 
+
+> 본 프로젝트는 민감 정보를 분리하기 위해 `resources` 디렉터리가 `submodule`로 분리되어 있습니다. 정상적으로 의도한 작동을 위해서는 프로젝트에 포함된 Docker Compose를 활용해 주세요.
+
+<br>
+
+1. `Docker`를 준비합니다.
+2. 프로젝트를 `clone` 합니다.
+    ```bash
+    git clone https://github.com/Potato-Y/da_dogk.git
+    ```
+3. `docker compose`로 앱을 빌드하고 실행합니다.
+    ```bash
+    docker compose up -d
+    ```
+4. `80`번 포트를 통해 API를 사용할 수 있습니다. 
+    [Postman API Docs](https://documenter.getpostman.com/view/26755334/2s9YXcd5BK)를 참고해 주세요.
+    **mail과 관련된 기능은 작동하지 않습니다.**
 
 ## 프로젝트 시스템 아키텍처
 ![팀프 drawio](https://github.com/Potato-Y/da_dogk/assets/68105481/c31d210d-81be-4751-ac29-8b0d6900a074)

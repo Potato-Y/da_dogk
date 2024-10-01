@@ -24,8 +24,6 @@ public class WebSecurityConfig {
 
   /**
    * 스프링 시큐리티 기능 비활성화
-   *
-   * @return
    */
   @Bean
   public WebSecurityCustomizer configure() {
@@ -54,8 +52,6 @@ public class WebSecurityConfig {
 
   /**
    * 패스워드 인코더로 사용할 빈 등록
-   *
-   * @return
    */
   @Bean
   public BCryptPasswordEncoder bCryptPasswordEncoder() {

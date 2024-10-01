@@ -9,11 +9,10 @@ import com.github.dadogk.group.dto.create.CreateGroupRequest;
 import com.github.dadogk.group.dto.create.GroupResponse;
 import com.github.dadogk.group.entity.Group;
 import com.github.dadogk.group.entity.GroupMember;
-import com.github.dadogk.group.util.GroupUtil;
-import com.github.dadogk.security.util.SecurityUtil;
+import com.github.dadogk.group.mapper.GroupResponseMapper;
+import com.github.dadogk.security.CurrentUserProvider;
 import com.github.dadogk.user.dto.UserResponse;
-import com.github.dadogk.user.util.UserUtil;
-import java.util.ArrayList;
+import com.github.dadogk.user.mapper.UserResponseMapper;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,9 +33,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class GroupApiController {
 
   private final GroupService groupService;
-  private final SecurityUtil securityUtil;
-  private final GroupUtil groupUtil;
-  private final UserUtil userUtil;
+  private final CurrentUserProvider currentUserProvider;
+  private final GroupResponseMapper groupResponseMapper;
+  private final UserResponseMapper userResponseMapper;
 
   @PostMapping("")
   public ResponseEntity<GroupResponse> createGroup(
@@ -50,7 +49,7 @@ public class GroupApiController {
   public ResponseEntity<GroupResponse> getGroup(@PathVariable Long groupId) {
     Group group = groupService.findGroup(groupId);
 
-    return ResponseEntity.status(HttpStatus.OK).body(groupUtil.convertGroup(group));
+    return ResponseEntity.status(HttpStatus.OK).body(groupResponseMapper.convertGroup(group));
   }
 
   @PatchMapping("/{groupId}")
@@ -58,7 +57,7 @@ public class GroupApiController {
       @RequestBody UpdateGroupRequest request) {
     Group group = groupService.updateGroup(groupId, request);
 
-    GroupResponse groupResponse = groupUtil.convertGroup(group);
+    GroupResponse groupResponse = groupResponseMapper.convertGroup(group);
     return ResponseEntity.status(HttpStatus.OK).body(groupResponse);
   }
 
@@ -66,54 +65,47 @@ public class GroupApiController {
   public ResponseEntity<String> deleteGroup(@PathVariable Long groupId) {
     groupService.deleteGroup(groupId);
 
-    return ResponseEntity.status(HttpStatus.OK).body(null);
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 
   @DeleteMapping("/{groupId}/members")
   public ResponseEntity<String> leaveGroup(@PathVariable Long groupId) {
-    groupService.leaveGroup(groupId, securityUtil.getCurrentUser());
+    groupService.leaveGroup(groupId, currentUserProvider.getCurrentUser());
 
-    return ResponseEntity.status(HttpStatus.OK).body(null);
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 
   @PostMapping("/{groupId}/members")
   public ResponseEntity<String> signupGroup(@PathVariable Long groupId,
       @Validated @RequestBody SignupGroupRequest request) {
     groupService.signupGroup(groupId, request);
-    return ResponseEntity.status(HttpStatus.OK).body(null);
+
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 
   @GetMapping("")
   public ResponseEntity<List<GroupResponse>> getGroupList(GroupNameRequest request) {
     if (request.getGroupName() == null) {
       List<Group> inGroups = groupService.getGroupList(); // 들어있는 그룹 목록 요청
-
-      List<GroupResponse> responses = new ArrayList<>(); // 응답할 수 있도록 가공
-      for (Group group : inGroups) {
-        responses.add(groupUtil.convertGroup(group));
-      }
+      List<GroupResponse> responses = inGroups.stream().map(groupResponseMapper::convertGroup)
+          .toList();
 
       return ResponseEntity.status(HttpStatus.OK).body(responses);
     }
 
     List<Group> groups = groupService.getSearchGroups(request.getGroupName());
+    List<GroupResponse> responses = groups.stream().map(groupResponseMapper::convertGroup).toList();
 
-    List<GroupResponse> groupResponses = new ArrayList<>(); // response로 가공
-    for (Group group : groups) {
-      groupResponses.add(groupUtil.convertGroup(group));
-    }
-
-    return ResponseEntity.status(HttpStatus.OK).body(groupResponses);
+    return ResponseEntity.status(HttpStatus.OK).body(responses);
   }
 
   @GetMapping("/{groupId}/members")
   public ResponseEntity<List<UserResponse>> getGroupMembers(@PathVariable Long groupId) {
     List<GroupMember> groupMembers = groupService.getGroupMemberList(groupId); // 그룹원 가져오기
 
-    List<UserResponse> userResponses = new ArrayList<>();
-    for (GroupMember member : groupMembers) { // response로 변환
-      userResponses.add(userUtil.convertUserResponse(member.getUser()));
-    }
+    List<UserResponse> userResponses = groupMembers.stream()
+        .map(member -> userResponseMapper.convertUserResponse(member.getUser()))
+        .toList();
 
     return ResponseEntity.status(HttpStatus.OK).body(userResponses);
   }

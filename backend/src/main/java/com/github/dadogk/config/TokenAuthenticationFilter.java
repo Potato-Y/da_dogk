@@ -37,9 +37,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
   /**
    * 정상적인 토큰일 경우 접두사를 제거
-   *
-   * @param authorizationHeader
-   * @return
    */
   private String getAccessToken(String authorizationHeader) {
     if (authorizationHeader != null && authorizationHeader.startsWith(TOKEN_PREFIX)) {

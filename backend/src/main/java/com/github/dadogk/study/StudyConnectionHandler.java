@@ -24,9 +24,10 @@ import com.github.dadogk.study.entity.StudyRecord;
 import com.github.dadogk.study.entity.StudySubject;
 import com.github.dadogk.study.model.ClientInfo;
 import com.github.dadogk.study.model.RequestType;
+import com.github.dadogk.user.UserService;
 import com.github.dadogk.user.dto.UserResponse;
 import com.github.dadogk.user.entity.User;
-import com.github.dadogk.user.util.UserUtil;
+import com.github.dadogk.user.mapper.UserResponseMapper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,24 +35,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ConcurrentReferenceHashMap;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
+@Slf4j
 @RequiredArgsConstructor
-@Log4j2
 public class StudyConnectionHandler extends AbstractWebSocketHandler {
 
   private static final Map<String, ClientInfo> CLIENTS = Collections.synchronizedMap(
       new HashMap<>());
   private static final Map<Long, List<String>> GROUP_MEMBERS = new ConcurrentReferenceHashMap<>();
   private final ObjectMapper objectMapper = new ObjectMapper();
+  private final UserService userService;
   private final StudyService studyService;
   private final TokenProvider tokenProvider;
-  private final UserUtil userUtil;
+  private final UserResponseMapper userResponseMapper;
 
   @Override
   protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
@@ -95,7 +97,7 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
 
     Long userId = tokenProvider.getUserId(dto.getAccessToken());
     try {
-      User user = userUtil.findById(userId);
+      User user = userService.findById(userId);
       StudySubject subject = studyService.getSubject(dto.getSubjectId(), userId);
       StudyRecord studyRecord = studyService.startStudy(user, subject);
 
@@ -108,7 +110,6 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
       }
 
       sendSimpleMessage(session, new SimpleResponse(OK, SUCCESS_PROCESSED));
-      log.info("studyStart. Start Study. sessionId={}", session.getId());
     } catch (NotFoundException e) {
       sendSimpleMessage(session, new SimpleResponse(NOT_FOUND, e.getMessage()));
       session.close();
@@ -122,6 +123,7 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
     ClientInfo clientInfo = CLIENTS.get(session.getId());
     if (clientInfo == null) { // 클라이언트 정보가 없다면 정상 진입이 아닌 것으로 판단
       sendSimpleMessage(session, new SimpleResponse(NOT_FOUND, NOT_FOUND_SESSION));
+      return;
     }
 
     ConnectingGroupMembersResponse responseDto = new ConnectingGroupMembersResponse();
@@ -136,8 +138,8 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
       List<String> groupMemberSessionIds = GROUP_MEMBERS.get(groupId); // 그룹 id로 그룹원 세션 id를 가져온다.
       for (String memberSessionId : groupMemberSessionIds) {
         ClientInfo info = CLIENTS.get(memberSessionId); // 해당 클라이언트의 정보를 가져온다.
-        User user = userUtil.findById(info.getUserId()); // 유저 객체를 가져온다.
-        userResponses.add(userUtil.convertUserResponse(user));
+        User user = userService.findById(info.getUserId()); // 유저 객체를 가져온다.
+        userResponses.add(userResponseMapper.convertUserResponse(user));
       }
       responseDto.addGroupMembers(new GroupMembersResponse(groupId, userResponses));
     }
@@ -147,10 +149,6 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
 
   /**
    * 사용자가 접속을 종료하면 공부를 끝내고 아이템을 정리한다.
-   *
-   * @param session
-   * @param status
-   * @throws Exception
    */
   @Override
   public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
@@ -169,24 +167,22 @@ public class StudyConnectionHandler extends AbstractWebSocketHandler {
       List<String> sessionsList = entry.getValue();
       sessionsList.removeIf(valueSession -> valueSession.equals(session.getId()));
     }
-
-    log.info("afterConnectionClosed. Close session. sessionId={}", session.getId());
   }
 
   private void broadcastClosedUserForGroup(WebSocketSession session) throws IOException {
     ClientInfo clientInfo = CLIENTS.get(session.getId());
-    User closeUser = userUtil.findById(clientInfo.getUserId());
+    User closeUser = userService.findById(clientInfo.getUserId());
     List<Long> groupIds = clientInfo.getGroups();
     for (Long groupId : groupIds) {
       List<String> groupMemberSessionIds = GROUP_MEMBERS.get(groupId);
       for (String sessionId : groupMemberSessionIds) {
-        if (session.getId() == sessionId) { // 본인은 건너뛴다.
+        if (session.getId().equals(sessionId)) { // 본인은 건너뛴다.
           continue;
         }
 
         WebSocketSession memberSession = CLIENTS.get(sessionId).getSession();
         CloseGroupMemberResponse dto = new CloseGroupMemberResponse(groupId,
-            userUtil.convertUserResponse(closeUser));
+            userResponseMapper.convertUserResponse(closeUser));
         memberSession.sendMessage(new TextMessage(objectMapper.writeValueAsString(dto)));
       }
     }

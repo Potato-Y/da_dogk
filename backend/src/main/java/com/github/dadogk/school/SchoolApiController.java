@@ -4,7 +4,7 @@ import com.github.dadogk.school.dto.AuthMailRequest;
 import com.github.dadogk.school.dto.SchoolInfoResponse;
 import com.github.dadogk.school.dto.VerifyEmailRequest;
 import com.github.dadogk.school.entity.SchoolMember;
-import com.github.dadogk.school.util.SchoolUtil;
+import com.github.dadogk.school.mapper.SchoolResponseMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,33 +22,34 @@ import org.springframework.web.bind.annotation.RestController;
 public class SchoolApiController {
 
   private final SchoolService schoolService;
-  private final SchoolUtil schoolUtil;
+  private final SchoolResponseMapper schoolResponseMapper;
 
   @PostMapping("/auth/mail")
   public ResponseEntity<String> requestAuthEmail(@Validated @RequestBody AuthMailRequest request) {
     schoolService.sendAuthCodeMail(request);
 
-    return ResponseEntity.status(HttpStatus.OK).body("");
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 
   @PostMapping("/auth/verify")
   public ResponseEntity<String> verifyEmail(@Validated @RequestBody VerifyEmailRequest request) {
     schoolService.verifyEmail(request);
 
-    return ResponseEntity.status(HttpStatus.OK).body("");
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 
   @DeleteMapping("") // school 인증 삭제
   public ResponseEntity<String> leaveSchool() {
     schoolService.leaveSchool();
 
-    return ResponseEntity.status(HttpStatus.OK).body("");
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 
   @GetMapping("") // 가입한 학교 정보 가져오기
   public ResponseEntity<SchoolInfoResponse> getMySchool() {
     SchoolMember schoolMember = schoolService.getMySchool();
 
-    return ResponseEntity.status(HttpStatus.OK).body(schoolUtil.convertSchoolInfo(schoolMember));
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(schoolResponseMapper.convertSchoolInfo(schoolMember));
   }
 }
