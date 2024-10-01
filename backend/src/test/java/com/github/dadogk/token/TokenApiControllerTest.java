@@ -11,7 +11,7 @@ import com.github.dadogk.token.dto.AuthenticateRequest;
 import com.github.dadogk.token.dto.TokenRequest;
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.entity.UserRepository;
-import com.github.dadogk.user.util.TestUserUtil;
+import com.github.dadogk.user.mapper.TestUserUtil;
 import java.time.Duration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

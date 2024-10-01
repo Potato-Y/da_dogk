@@ -1,4 +1,4 @@
-package com.github.dadogk.security.util;
+package com.github.dadogk.security;
 
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.entity.UserRepository;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-public class SecurityUtil {
+public class CurrentUserProvider {
 
   private final UserRepository userRepository;
 

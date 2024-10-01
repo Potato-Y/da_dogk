@@ -11,16 +11,16 @@ import com.github.dadogk.school.entity.SchoolMember;
 import com.github.dadogk.school.entity.SchoolMemberRepository;
 import com.github.dadogk.school.entity.SchoolRepository;
 import com.github.dadogk.school.exception.SchoolMailDuplicatedException;
+import com.github.dadogk.security.CurrentUserProvider;
+import com.github.dadogk.security.PasswordEncryptionService;
+import com.github.dadogk.security.authentication.VerificationCodeGenerator;
 import com.github.dadogk.security.exception.PasswordIncorrectException;
-import com.github.dadogk.security.util.CodeMaker;
-import com.github.dadogk.security.util.PasswordUtil;
-import com.github.dadogk.security.util.SecurityUtil;
 import com.github.dadogk.user.entity.User;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -28,20 +28,22 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Log4j2
 public class SchoolService {
 
+  // application.yml에 smtp 정보가 입력되지 않아 밑줄이 표시되나 active profiles에 명시됨
   private final JavaMailSender javaMailSender;
   private final SchoolRepository schoolRepository;
   private final SchoolMemberRepository schoolMemberRepository;
   private final MailAuthInfoRepository mailAuthInfoRepository;
-  private final PasswordUtil passwordUtil;
-  private final SecurityUtil securityUtil;
+  private final PasswordEncryptionService passwordEncryptionService;
+  private final CurrentUserProvider currentUserProvider;
 
+  @Transactional
   public void sendAuthCodeMail(AuthMailRequest dto) {
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
 
     Optional<SchoolMember> schoolMember = schoolMemberRepository.findByUser(user);
     if (schoolMember.isPresent()) {
@@ -54,7 +56,7 @@ public class SchoolService {
       // 학교 정보 가져오기, 코드 저장
       School school = findSchool(dto.getEmail());
       validateMailDuplicated(dto.getEmail());
-      String code = CodeMaker.createCode();
+      String code = VerificationCodeGenerator.createCode();
       saveAuthInfo(user, school, dto.getEmail(), code);
 
       MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -90,35 +92,31 @@ public class SchoolService {
   /**
    * 인증 정보를 추가한다.
    *
-   * @param user
-   * @param school
-   * @param code
+   * @param user   대상 사용자
+   * @param school 대상 학교
+   * @param code   인증 코드
    */
   @Transactional
   public void saveAuthInfo(User user, School school, String mail, String code) {
     Optional<MailAuthInfo> mailAuthCode = mailAuthInfoRepository.findByUser(user);
     if (mailAuthCode.isEmpty()) {
       MailAuthInfo createInfo = MailAuthInfo.builder().user(user).school(school).mail(mail)
-          .code(passwordUtil.convertPassword(code)).build();
+          .code(passwordEncryptionService.encryptPassword(code)).build();
       mailAuthInfoRepository.save(createInfo);
 
-      log.info("saveAuthInfo: Save auth info. userId={}, mailAuthInfoId={}", user.getId(),
-          createInfo.getId());
       return;
     }
 
-    // 이미 있으면 정보 업데이트
-    log.info("saveAuthInfo: Update auth info. userId={}, mailAuthInfoId={}", user.getId(),
-        mailAuthCode.get().getId());
     mailAuthInfoRepository.save(
-        mailAuthCode.get().updateNewAuth(school, mail, passwordUtil.convertPassword(code)));
+        mailAuthCode.get()
+            .updateNewAuth(school, mail, passwordEncryptionService.encryptPassword(code)));
   }
 
   /**
    * 유저가 입력한 이메일을 사용하는 학교를 찾는다.
    *
-   * @param email
-   * @return
+   * @param email 사용자 이메일
+   * @return 학교 엔티티
    */
   private School findSchool(String email) {
     String domain = email.split("@")[1]; // @를 기점으로 뒷 내용 가져오기
@@ -133,7 +131,7 @@ public class SchoolService {
 
   @Transactional
   public void verifyEmail(VerifyEmailRequest dto) {
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
     Optional<MailAuthInfo> mailAuthCode = mailAuthInfoRepository.findByUser(user);
 
     if (mailAuthCode.isEmpty()) {
@@ -141,7 +139,8 @@ public class SchoolService {
       throw new NotFoundException("요청한 인증 정보가 없음");
     }
 
-    boolean result = passwordUtil.matches(dto.getCode(), mailAuthCode.get().getCode());
+    boolean result = passwordEncryptionService.verifyPassword(dto.getCode(),
+        mailAuthCode.get().getCode());
     if (!result) {
       log.warn("verifyEmail: Not match code. userId={}, school={}", user.getId(),
           mailAuthCode.get().getSchool().getDomain());
@@ -154,14 +153,12 @@ public class SchoolService {
         .user(user).mail(mailAuthCode.get().getMail()).build();
     schoolMemberRepository.save(schoolMember);
 
-    log.info("verifyEmail: Success verify email. userId={}, schoolMemberId={}, mailAuthCodeId={}",
-        user.getId(), schoolMember.getId(), mailAuthCode.get().getId());
     mailAuthInfoRepository.delete(mailAuthCode.get()); // 인증 정보 삭제
   }
 
   @Transactional
   public void leaveSchool() {
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
 
     Optional<SchoolMember> schoolMember = schoolMemberRepository.findByUser(user);
     if (schoolMember.isEmpty()) {
@@ -169,21 +166,18 @@ public class SchoolService {
       throw new NotFoundException("인증한 학교가 없음");
     }
 
-    log.info("leaveSchool: Leave school. userId={}, schoolMember={}", user.getId(),
-        schoolMember.get().getId());
     schoolMemberRepository.delete(schoolMember.get());
   }
 
+  @Transactional(readOnly = true)
   public SchoolMember getMySchool() {
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
     Optional<SchoolMember> schoolMember = schoolMemberRepository.findByUser(user);
     if (schoolMember.isEmpty()) {
       log.warn("getMySchool: Not found school member. userId={}", user.getId());
       throw new NotFoundException("학교 정보를 찾을 수 없음.");
     }
 
-    log.info("getMySchool: Get my school info. userId={}, schoolId={}", user.getId(),
-        schoolMember.get().getId());
     return schoolMember.get();
   }
 }

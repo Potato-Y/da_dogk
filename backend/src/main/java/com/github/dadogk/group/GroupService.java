@@ -18,38 +18,37 @@ import com.github.dadogk.group.entity.GroupType;
 import com.github.dadogk.group.exception.HostWithdrawalException;
 import com.github.dadogk.group.exception.NotFoundGroupException;
 import com.github.dadogk.group.exception.NotFoundGroupMemberException;
-import com.github.dadogk.group.util.GroupUtil;
+import com.github.dadogk.group.mapper.GroupResponseMapper;
+import com.github.dadogk.security.CurrentUserProvider;
+import com.github.dadogk.security.PasswordEncryptionService;
 import com.github.dadogk.security.exception.PasswordIncorrectException;
-import com.github.dadogk.security.util.PasswordUtil;
-import com.github.dadogk.security.util.SecurityUtil;
 import com.github.dadogk.study.StudyService;
 import com.github.dadogk.study.dto.api.recode.GetUserRecodesRequest;
 import com.github.dadogk.study.entity.StudyRecord;
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.exception.DuplicateGroupMemberException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
-@Log4j2
 public class GroupService {
 
   private final StudyService studyService;
   private final GroupRepository groupRepository;
   private final GroupMemberRepository groupMemberRepository;
-  private final GroupUtil groupUtil;
-  private final SecurityUtil securityUtil;
-  private final PasswordUtil passwordUtil;
+  private final GroupResponseMapper groupResponseMapper;
+  private final CurrentUserProvider currentUserProvider;
+  private final PasswordEncryptionService passwordEncryptionService;
 
   @Transactional
   public GroupResponse createGroup(CreateGroupRequest dto) {
-    User hostUser = securityUtil.getCurrentUser(); // 그룹을 생성하려는 사람의 정보를 가져온다.
+    User hostUser = currentUserProvider.getCurrentUser(); // 그룹을 생성하려는 사람의 정보를 가져온다.
 
     // 그룹을 생성한다.
     Group group = Group.builder().groupName(dto.getGroupName()).groupIntro(dto.getGroupIntro())
@@ -58,22 +57,20 @@ public class GroupService {
     boolean isPassword = dto.getPassword() != null; // 암호 여부
     group.updatePrivacyState(isPassword);
     if (isPassword) {
-      group.updatePassword(passwordUtil.convertPassword(dto.getPassword()));
+      group.updatePassword(passwordEncryptionService.encryptPassword(dto.getPassword()));
     }
     groupRepository.save(group);
 
     GroupMember groupMember = GroupMember.builder().group(group).user(hostUser).build();
     groupMemberRepository.save(groupMember);
 
-    log.info("createGroup: userId={}, groupId={}, groupMemberId={}", hostUser.getId(),
-        group.getId(), groupMember.getId());
-    return groupUtil.convertGroup(group);
+    return groupResponseMapper.convertGroup(group);
   }
 
   @Transactional
   public void signupGroup(Long groupId, SignupGroupRequest dto) {
     Optional<Group> group = groupRepository.findById(groupId);
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
 
     if (group.isEmpty()) {
       log.warn("signupGroup: Not found group. userId={}, groupId={}", user.getId(), groupId);
@@ -81,20 +78,19 @@ public class GroupService {
     }
 
     if (group.get().isPrivacyState()) { // 암호가 있는 그룹일 경우
-      if (!passwordUtil.matches(dto.getPassword(), group.get().getPassword())) {
+      if (!passwordEncryptionService.verifyPassword(dto.getPassword(), group.get().getPassword())) {
         throw new PasswordIncorrectException("그룹 암호가 틀림");
       }
     }
 
     Optional<GroupMember> member = groupMemberRepository.findByGroupAndUser(group.get(), user);
-    if (!member.isEmpty()) { // 그룹에 이미 있는 경우 예외 발생
+    if (member.isPresent()) { // 그룹에 이미 있는 경우 예외 발생
       log.warn("signupGroup: Duplicate group. userId={}, groupId={}", user.getId(), groupId);
       throw new DuplicateGroupMemberException("중복 가입");
     }
 
     GroupMember signupMember = GroupMember.builder().group(group.get()).user(user).build();
 
-    log.info("signupGroup: userId={}, groupId={}", user.getId(), groupId);
     groupMemberRepository.save(signupMember);
   }
 
@@ -125,7 +121,6 @@ public class GroupService {
     }
 
     groupMemberRepository.delete(groupMember.get());
-    log.info("leaveGroup: Leave group. userId={}, groupId={}", user.getId(), group.get().getId());
   }
 
   /**
@@ -135,7 +130,7 @@ public class GroupService {
    */
   @Transactional
   public void deleteGroup(Long groupId) {
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
     Optional<Group> group = groupRepository.findById(groupId);
     if (group.isEmpty()) {
       log.warn("deleteGroup: Not found group. userId={}, groupId={}", user.getId(), groupId);
@@ -147,7 +142,6 @@ public class GroupService {
       throw new PermissionException("호스트 유저가 아님");
     }
 
-    log.info("deleteGroup: userId={}, groupId={}", user.getId(), groupId);
     groupRepository.delete(group.get()); // 그룹 삭제
   }
 
@@ -158,17 +152,10 @@ public class GroupService {
    */
   @Transactional(readOnly = true)
   public List<Group> getGroupList() {
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
     List<GroupMember> inGroupMembers = groupMemberRepository.findAllByUser(user); // 가입한 그룹 조회
 
-    List<Group> inGroups = new ArrayList<>(); // Group으로 반환
-    for (GroupMember groupMember : inGroupMembers) {
-      inGroups.add(groupMember.getGroup());
-    }
-
-    log.info("getGroupList: userId={}", user.getId());
-
-    return inGroups;
+    return inGroupMembers.stream().map(GroupMember::getGroup).toList();
   }
 
   /**
@@ -179,18 +166,12 @@ public class GroupService {
    */
   @Transactional(readOnly = true)
   public List<Group> getSearchGroups(String groupName) {
-    User user = securityUtil.getCurrentUser();
-    List<Group> groups = groupRepository.findByGroupNameContaining(groupName);
-
-    log.info("getSearchGroups: userId={}, searchGroupName={}, resultCount={}", user.getId(),
-        groupName, groups.size());
-
-    return groups;
+    return groupRepository.findByGroupNameContaining(groupName);
   }
 
   @Transactional(readOnly = true)
   public List<GroupMember> getGroupMemberList(Long groupId) {
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
     Optional<Group> group = groupRepository.findById(groupId);
     if (group.isEmpty()) {
       log.warn("getGroupMemberList: Not found group. userId={}, groupId={}", user.getId(), groupId);
@@ -206,9 +187,7 @@ public class GroupService {
       throw new NotFoundGroupMemberException("그룹 멤버가 아님");
     }
 
-    log.info("getGroupMemberList: userId={}, groupId={}", user.getId(), groupId);
-    List<GroupMember> groupMembers = groupMemberRepository.findAllByGroup(group.get());
-    return groupMembers;
+    return groupMemberRepository.findAllByGroup(group.get());
   }
 
   /**
@@ -220,7 +199,7 @@ public class GroupService {
    */
   @Transactional(readOnly = true)
   public Long getGroupAverage(Long groupId, GetGroupAverageRequest dto) {
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
     Optional<Group> group = groupRepository.findById(groupId);
     if (group.isEmpty()) {
       log.warn("getGroupAverage: Not found group. userId={}, groupId={}", user.getId(), groupId);
@@ -240,8 +219,6 @@ public class GroupService {
     }
     count += members.size(); // 사람 수 만큼 카운트 추가
 
-    log.info("getGroupAverage: userId={}, groupId={}, findYear={}, findMonth={}", user.getId(),
-        groupId, dto.getYear(), dto.getMonth());
     if (count == 0) { // 0인 경우 나눌 수 없다. 그대로 리턴한다.
       return totalStudyTime;
     }
@@ -251,7 +228,7 @@ public class GroupService {
 
   @Transactional
   public Group updateGroup(Long groupId, UpdateGroupRequest dto) {
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
     Optional<Group> group = groupRepository.findById(groupId);
 
     if (group.isEmpty()) {
@@ -278,17 +255,16 @@ public class GroupService {
       }
       if (!dto.getPassword().isBlank()) {
         updateGroup.updatePrivacyState(true);
-        updateGroup.updatePassword(passwordUtil.convertPassword(dto.getPassword()));
+        updateGroup.updatePassword(passwordEncryptionService.encryptPassword(dto.getPassword()));
       }
     }
 
-    log.info("updateGroup: userId={}, groupId={}", user.getId(), groupId);
     return groupRepository.save(updateGroup);
   }
 
   @Transactional(readOnly = true)
   public Group findGroup(Long groupId) {
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
     Optional<Group> group = groupRepository.findById(groupId);
 
     if (group.isEmpty()) {
@@ -296,7 +272,6 @@ public class GroupService {
       throw new NotFoundException("그룹을  찾을 수 없음.");
     }
 
-    log.info("findGroup: userId={}, groupId={}", user.getId(), groupId);
     return group.get();
   }
 }

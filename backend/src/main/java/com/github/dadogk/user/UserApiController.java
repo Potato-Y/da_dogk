@@ -1,13 +1,11 @@
 package com.github.dadogk.user;
 
-import com.github.dadogk.security.util.SecurityUtil;
+import com.github.dadogk.security.CurrentUserProvider;
 import com.github.dadogk.user.dto.AddUserDto;
 import com.github.dadogk.user.dto.UserResponse;
 import com.github.dadogk.user.entity.User;
-import com.github.dadogk.user.util.UserUtil;
+import com.github.dadogk.user.mapper.UserResponseMapper;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -23,10 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class UserApiController {
 
-  private static final Logger logger = LoggerFactory.getLogger(UserApiController.class);
   private final UserService userService;
-  private final SecurityUtil securityUtil;
-  private final UserUtil userUtil;
+  private final CurrentUserProvider currentUserProvider;
+  private final UserResponseMapper userResponseMapper;
 
   @PostMapping("/signup")
   public ResponseEntity<AddUserDto.AddUserResponse> signup(
@@ -39,21 +36,17 @@ public class UserApiController {
 
   @GetMapping("/user")
   public ResponseEntity<UserResponse> user() {
-    User user = securityUtil.getCurrentUser();
-
-    logger.info("user. userId={}", user.getId());
+    User user = currentUserProvider.getCurrentUser();
 
     return ResponseEntity.status(HttpStatus.OK)
-        .body(userUtil.convertUserResponse(user));
+        .body(userResponseMapper.convertUserResponse(user));
   }
 
   @DeleteMapping("/user")
   public ResponseEntity<String> deleteUser() {
     userService.deleteUser();
 
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(null);
-
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 
   // TODO: 특정 유저 조회

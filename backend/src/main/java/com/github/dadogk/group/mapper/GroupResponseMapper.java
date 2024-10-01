@@ -1,20 +1,21 @@
-package com.github.dadogk.group.util;
+package com.github.dadogk.group.mapper;
 
 import com.github.dadogk.group.dto.create.GroupResponse;
 import com.github.dadogk.group.entity.Group;
-import com.github.dadogk.user.util.UserUtil;
+import com.github.dadogk.user.mapper.UserResponseMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-public class GroupUtil {
+public class GroupResponseMapper {
 
-  private final UserUtil userUtil;
+  private final UserResponseMapper userResponseMapper;
 
   public GroupResponse convertGroup(Group group) {
     return new GroupResponse(group.getId(), group.getGroupName(), group.getGroupIntro(),
-        userUtil.convertUserResponse(group.getHostUser()), group.getState(), group.getType(),
+        userResponseMapper.convertUserResponse(group.getHostUser()), group.getState(),
+        group.getType(),
         group.isPrivacyState(), group.getCreatedAt(), group.getGroupMembers().size());
   }
 }

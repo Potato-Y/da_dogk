@@ -1,15 +1,15 @@
 package com.github.dadogk.study;
 
+import com.github.dadogk.security.CurrentUserProvider;
 import com.github.dadogk.study.dto.api.SubjectResponse;
 import com.github.dadogk.study.dto.api.create.CreateSubjectRequest;
 import com.github.dadogk.study.dto.api.recode.GetUserRecodesRequest;
 import com.github.dadogk.study.dto.api.recode.RecodeResponse;
 import com.github.dadogk.study.entity.StudyRecord;
 import com.github.dadogk.study.entity.StudySubject;
-import com.github.dadogk.study.util.StudyUtil;
+import com.github.dadogk.study.mapper.StudyResponseMapper;
+import com.github.dadogk.user.UserService;
 import com.github.dadogk.user.entity.User;
-import com.github.dadogk.user.util.UserUtil;
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,59 +28,54 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/study")
 public class StudyApiController {
 
+  private final UserService userService;
   private final StudyService studyService;
-  private final StudyUtil studyUtil;
-  private final UserUtil userUtil;
+  private final CurrentUserProvider currentUserProvider;
+  private final StudyResponseMapper studyResponseMapper;
 
   @GetMapping("/subjects/{userId}") // 특정 사용자의 과목 리스트를 요청한다.
   public ResponseEntity<List<SubjectResponse>> getSubjectList(@PathVariable Long userId) {
     List<SubjectResponse> responses = studyService.getUserStudySubjectList(userId);
 
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(responses);
+    return ResponseEntity.status(HttpStatus.OK).body(responses);
   }
 
   @PostMapping("/subjects")
   public ResponseEntity<SubjectResponse> createSubject(
       @Validated @RequestBody CreateSubjectRequest request) {
     StudySubject subject = studyService.createSubject(request);
-    SubjectResponse response = studyUtil.convertSubjectResponse(subject);
+    SubjectResponse response = studyResponseMapper.convertSubjectResponse(subject);
 
-    return ResponseEntity.status(HttpStatus.CREATED)
-        .body(response);
+    return ResponseEntity.status(HttpStatus.CREATED).body(response);
   }
 
   @DeleteMapping("/subjects/{subjectId}")
   public ResponseEntity<String> deleteSubject(@PathVariable Long subjectId) {
     studyService.deleteSubject(subjectId);
 
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(null);
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 
   @GetMapping("/recodes")
   public ResponseEntity<List<RecodeResponse>> getCurrentUserRecodes(GetUserRecodesRequest request) {
-    List<StudyRecord> records = studyService.getCurrentUserRecodes(request);
-    List<RecodeResponse> recodeResponses = new ArrayList<>();
-    for (StudyRecord record : records) {
-      recodeResponses.add(studyUtil.convertRecodeResponse(record));
+    User user = currentUserProvider.getCurrentUser();
+    List<StudyRecord> records = studyService.getUserRecodes(user, request);
+    List<RecodeResponse> recodeResponses = records.stream()
+        .map(studyResponseMapper::convertRecodeResponse)
+        .toList();
 
-    }
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(recodeResponses);
+    return ResponseEntity.status(HttpStatus.OK).body(recodeResponses);
   }
 
   @GetMapping("/recodes/{userId}")
   public ResponseEntity<List<RecodeResponse>> getUserRecodes(@PathVariable Long userId,
       GetUserRecodesRequest request) {
-    User findUser = userUtil.findById(userId);
+    User findUser = userService.findById(userId);
     List<StudyRecord> records = studyService.getUserRecodes(findUser, request);
-    List<RecodeResponse> recodeResponses = new ArrayList<>();
-    for (StudyRecord record : records) {
-      recodeResponses.add(studyUtil.convertRecodeResponse(record));
+    List<RecodeResponse> recodeResponses = records.stream()
+        .map(studyResponseMapper::convertRecodeResponse)
+        .toList();
 
-    }
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(recodeResponses);
+    return ResponseEntity.status(HttpStatus.OK).body(recodeResponses);
   }
 }

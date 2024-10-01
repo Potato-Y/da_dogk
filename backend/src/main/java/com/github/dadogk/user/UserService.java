@@ -1,13 +1,13 @@
 package com.github.dadogk.user;
 
-import com.github.dadogk.security.util.SecurityUtil;
-import com.github.dadogk.study.StudyService;
+import com.github.dadogk.security.CurrentUserProvider;
 import com.github.dadogk.user.dto.AddUserDto;
 import com.github.dadogk.user.entity.User;
 import com.github.dadogk.user.entity.UserRepository;
+import com.github.dadogk.user.event.UserCreateEvent;
+import com.github.dadogk.user.exception.NotFoundUserException;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,10 +16,19 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserService {
 
-  private static final Logger logger = LoggerFactory.getLogger(UserService.class);
   private final UserRepository userRepository;
-  private final StudyService studyService;
-  private final SecurityUtil securityUtil;
+  private final CurrentUserProvider currentUserProvider;
+  private final ApplicationEventPublisher publisher;
+
+  public User findById(Long userId) {
+    return userRepository.findById(userId)
+        .orElseThrow(() -> new NotFoundUserException("Unexpected user"));
+  }
+
+  public User findByEmail(String email) {
+    return userRepository.findByEmail(email)
+        .orElseThrow(() -> new NotFoundUserException("Unexpected user"));
+  }
 
   @Transactional
   public User save(AddUserDto.AddUserRequest dto) {
@@ -31,16 +40,13 @@ public class UserService {
         .nickname(dto.getNickname())
         .build());
 
-    logger.info("save. userId={}, userEmail={}, userNickname={}",
-        user.getId(), user.getEmail(), user.getNickname());
-
-    studyService.defaultSetting(user); // 과목 기본 설정
+    publisher.publishEvent(new UserCreateEvent(user)); // 과목 기본 설정
     return user;
   }
 
   @Transactional
   public void deleteUser() {
-    User user = securityUtil.getCurrentUser();
+    User user = currentUserProvider.getCurrentUser();
     userRepository.delete(user);
   }
 }

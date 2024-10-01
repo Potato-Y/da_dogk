@@ -52,6 +52,8 @@ services:
 
       - JWT_ISSUER=dadogk@issuer
       - JWT_SECRET_KEY=jwt_secret
+
+      - DEFAULT_SUBJECT_TITLE=개인 공부
     restart: on-failure
     networks:
       - dadogk_network

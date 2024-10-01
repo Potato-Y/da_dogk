@@ -1,4 +1,4 @@
-package com.github.dadogk.group.util;
+package com.github.dadogk.group.mapper;
 
 import com.github.dadogk.enums.State;
 import com.github.dadogk.group.entity.Group;

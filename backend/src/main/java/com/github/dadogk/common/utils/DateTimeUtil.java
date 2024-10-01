@@ -1,4 +1,4 @@
-package com.github.dadogk.utils;
+package com.github.dadogk.common.utils;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
